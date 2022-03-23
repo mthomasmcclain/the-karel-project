@@ -1,14 +1,13 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <div> Hellllllo </div>
+    <PlayerWrapper />
   </div>
 </template>
 
 <script>
-
+import PlayerWrapper from '@/components/PlayerWrapper'
 export default {
   name: 'Home',
-  components: { }
+  components: { PlayerWrapper },
 }
 </script>

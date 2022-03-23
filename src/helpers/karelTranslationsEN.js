@@ -1,0 +1,22 @@
+export default {
+    PROCEDURES_DEFAULT_NAME: "my name",
+    PROCEDURES_DEFNOARGSNORETURN_TITLE: "define",
+    KAREL_MAIN_TITLE: "define main",
+    KAREL_MOVE_FORWARD: "move forward",
+    KAREL_TURN_LEFT: "turn left",
+    KAREL_PLACE_STONE: "place stone",
+    KAREL_PICKUP_STONE: "pickup stone",
+    KAREL_FRONT_IS_CLEAR: "front is clear",
+    KAREL_FRONT_IS_BLOCKED: "front is blocked",
+    KAREL_STONES_PRESENT: "stones present",
+    KAREL_STONES_NOT_PRESENT: "stones not present",
+    KAREL_IF_FRONT_IS: "if front is",
+    KAREL_CLEAR: "clear",
+    KAREL_BLOCKED: "blocked",
+    KAREL_IF_STONES_ARE: "if stones are",
+    KAREL_PRESENT: "present",
+    KAREL_NOT_PRESENT: "not present",
+    KAREL_WHILE: "while",
+    KAREL_WHILE_FRONT_IS: "while front is",
+    KAREL_WHILE_STONES_ARE: "while stones are"
+}
