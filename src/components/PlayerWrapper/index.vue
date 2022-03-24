@@ -1,5 +1,5 @@
 <template>
-  <SimplifiedTaskPlayer :key="`task-player-${counter}`"
+  <TaskPlayer :key="`task-player-${counter}`"
     @taskCorrect="handleCorrect"
     :name="name"
     :preWorld="preWorld"
@@ -15,12 +15,12 @@
 </template>
 
 <script>
-import SimplifiedTaskPlayer from '@/components/SimplifiedTaskPlayer'
+import TaskPlayer from '@/components/TaskPlayer'
 import demoTask1 from '@/helpers/demoTask1'
 import demoTask2 from '@/helpers/demoTask2'
 
 export default {
-  components: { SimplifiedTaskPlayer },
+  components: { TaskPlayer },
   data: () => ({
     ...demoTask2,
     counter: 0

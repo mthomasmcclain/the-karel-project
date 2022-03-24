@@ -1,5 +1,13 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <MapPlayer />
   </div>
 </template>
+
+<script>
+import MapPlayer from '@/components/MapPlayer'
+export default {
+  name: 'About',
+  components: { MapPlayer },
+}
+</script>

@@ -59,7 +59,6 @@ const KarelBlocklyWorld = (world, { toolbox, workspace }) => {
         })
 
     const source = Object.values(functions).join(';') + '; main().then(done);'
-    console.log(source)
     return new KarelWorld(world, source)
 }
 

@@ -81,9 +81,7 @@ export default {
   watch: {
     async codeCorrect(isCorrect) {
       if (isCorrect) {
-        console.log('before await correct swal')
         await taskSuccessSwal()
-        console.log('after correct await swal')
         this.$emit('taskCorrect')
       }
       else if (this.error) await taskIncorrectSwal(this.error)

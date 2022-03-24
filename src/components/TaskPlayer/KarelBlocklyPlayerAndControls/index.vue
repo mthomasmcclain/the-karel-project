@@ -74,7 +74,7 @@
           .step(this.currentStepData ? this.currentStepData.step + 1 : 0)
           .then( stepData => {
             this.currentStepData = stepData
-          	this.$emit('step', stepData)
+            this.$emit('step', stepData)
             if (stepData.isDone || stepData.error) this.$emit('pause')
             else this.nextStep = setTimeout(() => this.step(), 1000/this.stepSpeed)
           })

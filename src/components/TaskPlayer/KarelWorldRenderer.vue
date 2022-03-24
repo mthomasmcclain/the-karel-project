@@ -115,8 +115,8 @@
 </template>
 
 <script>
-import SvgPositioner from './SvgPositioner'
-import KarelVueSvg from './KarelVueSvg'
+import SvgPositioner from '@/assets/SvgPositioner'
+import KarelVueSvg from '@/assets/KarelVueSvg'
 export default {
   components: { SvgPositioner, KarelVueSvg },
   props: {
