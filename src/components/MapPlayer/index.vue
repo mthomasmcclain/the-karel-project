@@ -38,7 +38,7 @@
       >
         <TaskPlayer
             :key="`task-player-in-map-${activeTaskId}`"
-            @taskCorrect="handleCorrect"
+            @taskCorrect="handleTaskCorrect"
 
             :name="activeTaskData.name"
             :preWorld="activeTaskData.preWorld"
@@ -95,10 +95,12 @@ export default {
       if (this.isAccessible(id)) this.graph.selected = id
     },
     handleNodeSelected(id) {
-      if (id && this.graph.nodes[id]) {
-        this.graph.selected = id
-        this.graph.nodes[id].visited = true
-      }
+      this.graph.selected = id
+      if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
+    },
+    handleTaskCorrect() {
+      this.graph.nodes[ this.graph.selected ].correct = true
+      this.graph.selected = null
     },
     isFrontierNode(id) {
       // is on 'frontier' iff ( not visited AND all immediate predecessors are visited )
