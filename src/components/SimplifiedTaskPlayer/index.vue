@@ -51,8 +51,6 @@ import KarelBlockly from '@/components/KarelBlockly'
 import worldsMatch from './karelWorldsMatch'
 import { taskSuccessSwal, taskIncorrectSwal, taskHintSwal } from './karelTaskAndMapSwallows'
 
-const copy = value => JSON.parse(JSON.stringify(value))
-
 export default {
   components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls },
   props: [
@@ -98,12 +96,8 @@ export default {
     }
   },
   computed: {
-    world: {
-      get() {
-        if (this.currentStepData) return this.currentStepData.world
-        else return this.preWorld
-      },
-      set() {}
+    world() {
+      return this.currentStepData ? this.currentStepData.world : this.preWorld
     },
     codeCompletelyRun() {
       if (this.currentStepData) {
@@ -113,8 +107,7 @@ export default {
       else return false
     },
     error() {
-      if (this.currentStepData) return this.currentStepData.error
-      else return null
+      return this.currentStepData ? this.currentStepData.error : null
     },
     codeCorrect() {
         if (!this.codeCompletelyRun) return null
@@ -123,7 +116,7 @@ export default {
     }
   },
   methods: {
-    showHint() { taskHintSwal(this.hint ) }
+    showHint() { taskHintSwal(this.hint) }
   },
 }
 </script>
