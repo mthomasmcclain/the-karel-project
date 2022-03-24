@@ -36,7 +36,7 @@ export function forkContentSwal() {
 }
 
 export function invalidResizeSwal(message) {
-    Swal.fire('Invalid World Resize', message, 'warning')
+   return Swal.fire('Invalid World Resize', message, 'warning')
 }
 export function invalidResizeStonesSwal() { return invalidResizeSwal('Can\'t change world size. Stone would be outside world boundary.') }
 export function invalidResizeWallsSwal() { return invalidResizeSwal('Can\'t change world size. Wall would be outside world or on world edge.') }
@@ -56,7 +56,7 @@ export function taskSuccessSwal() {
     const bodyOptions = ['Good job!', 'Nice Work.', 'You did it!', 'Well Done!', 'Awesome']
     const body = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
     const header = ''
-    Swal.fire(header, body, 'success')
+    return Swal.fire(header, body, 'success')
 }
 
 export function taskIncorrectSwal(errorMessage) {

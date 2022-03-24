@@ -118,65 +118,65 @@
 import SvgPositioner from './SvgPositioner'
 import KarelVueSvg from './KarelVueSvg'
 export default {
-    components: { SvgPositioner, KarelVueSvg },
-    props: {
-        borderWidth: {
-            type: Number,
-            required: false,
-            default: 0.35,
-        },
-        world: {
-          type: Object,
-          default: {
-            "nRows": 3,
-            "nCols": 3,
-            "stones": [{ "r": 0, "c": 0, "n": 1 }],
-            "pickedStones": null,
-            "walls": [],
-            "karelDir": "East",
-            "karelRow": 2,
-            "karelCol": 0
-          }
-        }
+  components: { SvgPositioner, KarelVueSvg },
+  props: {
+    borderWidth: {
+      type: Number,
+      required: false,
+      default: 0.35,
     },
-    methods: {
-        handleClick(r,c,region) {
-          // in the karel world json standard, walls are only North or East,
-          // north wall cannot be present on 0th row
-          // east  wall cannot be present on final column
-          // possibly the logic that outputs/format the 'nearest
-          // wall' to fit that karel world schema could live elsewhere... but whatever
-          let wall;
-          const { nRows, nCols } = this.world
-          if (region === 'top' && r !== 0) {
-            wall = { r, c, d: 'North' }
-          } else if (region ==='bot' && r !== nRows-1) {
-            wall = { r: r+1, c, d: 'North' }
-          } else if (region === 'left' && c !== 0) {
-            wall = { r, c: c-1, d: 'East' }
-          } else if (region === 'right' && c !== nCols-1) {
-            wall = { r, c, d: 'East' }
-          }
-          this.$emit('worldClick', { r, c, wall, timestamp: Date.now() })
-        }
+    world: {
+      type: Object,
+      default: () => ({
+        "nRows": 3,
+        "nCols": 3,
+        "stones": [{ "r": 0, "c": 0, "n": 1 }],
+        "pickedStones": null,
+        "walls": [],
+        "karelDir": "East",
+        "karelRow": 2,
+        "karelCol": 0
+      })
+    }
+  },
+  methods: {
+    handleClick(r,c,region) {
+      // in the karel world json standard, walls are only North or East,
+      // north wall cannot be present on 0th row
+      // east  wall cannot be present on final column
+      // possibly the logic that outputs/format the 'nearest
+      // wall' to fit that karel world schema could live elsewhere... but whatever
+      let wall;
+      const { nRows, nCols } = this.world
+      if (region === 'top' && r !== 0) {
+        wall = { r, c, d: 'North' }
+      } else if (region ==='bot' && r !== nRows-1) {
+        wall = { r: r+1, c, d: 'North' }
+      } else if (region === 'left' && c !== 0) {
+        wall = { r, c: c-1, d: 'East' }
+      } else if (region === 'right' && c !== nCols-1) {
+        wall = { r, c, d: 'East' }
+      }
+      this.$emit('worldClick', { r, c, wall, timestamp: Date.now() })
+    }
+  },
+  computed: {
+    viewBoxW() { return this.world.nCols * 10 },
+    viewBoxH() { return this.world.nRows * 10 },
+    eastWalls()  { return this.world.walls.filter(wall => wall.d.toLowerCase() === 'east' )},
+    northWalls() { return this.world.walls.filter(wall => wall.d.toLowerCase() === 'north')},
+    rotation() {
+      const { karelDir } = this.world
+      if (!karelDir) return 0
+      const dir = karelDir.toLowerCase();
+      if (dir === 'south') return 0
+      else if (dir === 'west') return 90
+      else if (dir === 'north') return 180
+      else if (dir === 'east') return 270
+      else return 0
     },
-    computed: {
-        viewBoxW() { return this.world.nCols * 10 },
-        viewBoxH() { return this.world.nRows * 10 },
-        eastWalls()  { return this.world.walls.filter(wall => wall.d.toLowerCase() === 'east' )},
-        northWalls() { return this.world.walls.filter(wall => wall.d.toLowerCase() === 'north')},
-        rotation() {
-          const { karelDir } = this.world
-          if (!karelDir) return 0
-          const dir = karelDir.toLowerCase();
-          if (dir === 'south') return 0
-          else if (dir === 'west') return 90
-          else if (dir === 'north') return 180
-          else if (dir === 'east') return 270
-          else return 0
-      	},
-    }, // end computed
-};
+  } // end computed
+}
 </script>
 
 <style scoped>

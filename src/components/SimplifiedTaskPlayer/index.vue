@@ -45,9 +45,9 @@
 </template>
 
 <script>
-import KarelBlocklyPlayerAndControls from '@/components/KarelBlocklyPlayerAndControls'
-import KarelWorldRenderer from '@/components/KarelWorldRenderer'
-import KarelBlockly from '@/components/KarelBlockly'
+import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls'
+import KarelWorldRenderer from './KarelWorldRenderer'
+import KarelBlockly from './KarelBlockly'
 import worldsMatch from './karelWorldsMatch'
 import { taskSuccessSwal, taskIncorrectSwal, taskHintSwal } from './karelTaskAndMapSwallows'
 
@@ -81,7 +81,9 @@ export default {
   watch: {
     async codeCorrect(isCorrect) {
       if (isCorrect) {
+        console.log('before await correct swal')
         await taskSuccessSwal()
+        console.log('after correct await swal')
         this.$emit('taskCorrect')
       }
       else if (this.error) await taskIncorrectSwal(this.error)

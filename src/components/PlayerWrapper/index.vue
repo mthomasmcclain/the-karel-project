@@ -1,5 +1,6 @@
 <template>
-  <SimplifiedTaskPlayer
+  <SimplifiedTaskPlayer :key="`task-player-${counter}`"
+    @taskCorrect="handleCorrect"
     :name="name"
     :preWorld="preWorld"
     :postWorld="postWorld"
@@ -15,10 +16,20 @@
 
 <script>
 import SimplifiedTaskPlayer from '@/components/SimplifiedTaskPlayer'
-import demoTaskData from '@/helpers/demoTaskData'
-  
+import demoTask1 from '@/helpers/demoTask1'
+import demoTask2 from '@/helpers/demoTask2'
+
 export default {
   components: { SimplifiedTaskPlayer },
-  data: () => ({ ...demoTaskData })
+  data: () => ({
+    ...demoTask2,
+    counter: 0
+  }),
+  methods: {
+    handleCorrect() {
+      Object.keys(demoTask1).forEach(key => this.$data[key]=demoTask1[key])
+      this.counter ++
+    }
+  }
 }
 </script>

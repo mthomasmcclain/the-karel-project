@@ -92,7 +92,7 @@ export default {
       const vb = innerSvg.getAttribute('viewBox')
       const [ x, y, w, h ] = vb.split(/\s+/).map(el => parseInt(el))
       this.viewBox = { x, y, w, h }
-	  const offsets = this.getOffsetsFromAnchor(this.anchor)      
+      const offsets = this.getOffsetsFromAnchor(this.anchor)      
 
       innerSvg.setAttribute('x', this.xPos + offsets.x)
       innerSvg.setAttribute('y', this.yPos + offsets.y)
@@ -100,8 +100,8 @@ export default {
       innerSvg.setAttribute('height', this.finalHeight)
 
       // set rotation on wrapping <g>, not inner <svg>
-	  let diffBtwOffsets
-	  if (!this.rotationAnchor) {
+      let diffBtwOffsets
+      if (!this.rotationAnchor) {
         diffBtwOffsets = { x: 0, y: 0 }
       } else {
         const posOffset = this.getOffsetsFromAnchor(this.anchor)
@@ -117,7 +117,7 @@ export default {
     },
     getOffsetsFromAnchor(anchor) {
       let x, y
-	  const xAnchor = anchor.split(' ')[0] // 'left' 'center' or 'right'
+      const xAnchor = anchor.split(' ')[0] // 'left' 'center' or 'right'
       const yAnchor = anchor.split(' ')[1]  // 'top' 'center' or 'bottom'
       
       if (xAnchor === 'right') {
