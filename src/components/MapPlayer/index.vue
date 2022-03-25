@@ -15,7 +15,7 @@
       </div>
       <div v-else
         class="back-button"
-        @click="$router.push('/')"
+        @click="$emit('exitMap')"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="map-icon" viewBox="0 0 576 512">
             <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
@@ -55,15 +55,15 @@
 <script>
 import MapGraph from './MapGraph'
 import TaskPlayer from '@/components/TaskPlayer'
-import tasks from '@/helpers/tasks'
-import demoMap from '@/helpers/demoMap'
 
 export default {
   components: { MapGraph, TaskPlayer },
-  data: () => ({
-      graph: demoMap.graph,
-      name: demoMap.name
-  }),
+  data() {
+    return {
+      graph: this.$store.state.karelMaps['a29398a0-ac91-11ec-91d1-fdff893a2b6c'].graph,
+      name: this.$store.state.karelMaps['a29398a0-ac91-11ec-91d1-fdff893a2b6c'].name
+    }
+  },
   computed: {
     taskIsActive() {
       return this.graph.selected && this.graph.nodes[this.graph.selected]
@@ -72,7 +72,7 @@ export default {
         if (!this.taskIsActive) return null
 
         const activeNode = this.graph.nodes[this.graph.selected]
-        return tasks[activeNode.content]
+        return this.$store.state.karelTasks[activeNode.content]
     }
   },
   methods: {
