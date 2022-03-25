@@ -3,9 +3,8 @@
   <div class="karel-map-wrapper">
     
     <div class="navbar">
-
       <div v-if="taskIsActive"
-        class="back-to-map"
+        class="back-button"
         @click="graph.selected = null"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="map-icon" viewBox="0 0 576 512">
@@ -15,8 +14,8 @@
         <div>Back</div><div>to Map</div>
       </div>
       <div v-else
-        class="back-to-map"
-        @click="graph.selected = null"
+        class="back-button"
+        @click="$router.push('/')"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="map-icon" viewBox="0 0 576 512">
             <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
@@ -26,45 +25,29 @@
       </div>
 
       <h3>{{ taskIsActive ? graph.nodes[graph.selected].label : name }}</h3>
+      <div></div>
       
-  </div>
+    </div>
     
-    <div
-      v-if="taskIsActive"
-      style="flex-grow: 1; margin:12px; position: relative;"
-    >
-      <div
-        style="position: absolute; top:0; left: 0; width:100%; height:100%;"
-        :key="`active-task-${graph.selected}`"
-      >
-        <TaskPlayer
-            :key="`task-player-in-map-${activeTaskId}`"
-            @taskCorrect="handleTaskCorrect"
+    <TaskPlayer v-if="taskIsActive"
+      :key="`task-player-in-map-${graph.selected}`"
+      @taskCorrect="handleTaskCorrect"
+      :name="activeTaskData.name"
+      :preWorld="activeTaskData.preWorld"
+      :postWorld="activeTaskData.postWorld"
+      :instructions="activeTaskData.instructions"
+      :hint="activeTaskData.hint"
+      :hideToolbox="activeTaskData.hideToolbox"
+      :maxBlocks="activeTaskData.maxBlocks"
+      :initialWorkspace="activeTaskData.karelBlockly.workspace"
+      :initialToolbox="activeTaskData.karelBlockly.toolbox"
+      :initialSettings="activeTaskData.karelBlockly.settings"
+    />
 
-            :name="activeTaskData.name"
-            :preWorld="activeTaskData.preWorld"
-            :postWorld="activeTaskData.postWorld"
-            :instructions="activeTaskData.instructions"
-            :hint="activeTaskData.hint"
-            :hideToolbox="activeTaskData.hideToolbox"
-            :maxBlocks="activeTaskData.maxBlocks"
-            :initialWorkspace="activeTaskData.karelBlockly.workspace"
-            :initialToolbox="activeTaskData.karelBlockly.toolbox"
-            :initialSettings="activeTaskData.karelBlockly.settings"
-        
-        />
-        <!-- :id="graph.nodes[graph.selected].content" -->
-        <!-- v-model="graph.nodes[graph.selected].state" -->
-
-      </div>
-    </div>
-
-    <div v-else class="map-body">
-        <MapGraph
-            :graph="graph"
-            @selectId="handleNodeSelected"
-        />
-    </div>
+    <MapGraph v-else class="map-body"
+        :graph="graph"
+        @selectId="handleNodeSelected"
+    />
 
   </div>
 </template>
@@ -79,6 +62,7 @@ export default {
   components: { MapGraph, TaskPlayer },
   data: () => ({
       graph: demoMap.graph,
+      name: demoMap.name
   }),
   computed: {
     taskIsActive() {
@@ -139,10 +123,9 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
-.navbar #pila-logo { height: 30px; }
 .navbar h3 { margin: 0; }
 
-.navbar .back-to-map {
+.navbar .back-button {
   display: flex;
   width: 50px;
   flex-direction: column;
@@ -151,11 +134,11 @@ export default {
   font-size: 0.9em;
   cursor: pointer;
 }
-.navbar svg{
+.navbar .back-button svg {
+  padding-top:6px;
+  padding-bottom: 2px;
   height: 20px;
-  margin-bottom: 5px;
 }
-
 
 .map-body {
     flex-grow: 1;
