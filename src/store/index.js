@@ -7,6 +7,18 @@ export default createStore({
     karelTasks: { ...tasks },
     karelMaps: { ...maps }
   },
+  getters: {
+    tasks: state => () => Object.keys(state.karelTasks),
+    maps: state => () => Object.keys(state.karelMaps),
+
+    task: state => id => state.karelTasks[id],
+    map: state => id => state.karelMaps[id],
+    type: ( _state , {task, map} ) => id => {
+      if (task(id)) return 'task'
+      else if (map(id)) return 'map'
+      else return null
+    }
+  },
   mutations: {
   
   },

@@ -46,10 +46,10 @@
 
 <script>
 import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls'
-import KarelWorldRenderer from './KarelWorldRenderer'
+import KarelWorldRenderer from '@/components/KarelWorldRenderer'
 import KarelBlockly from './KarelBlockly'
 import worldsMatch from './karelWorldsMatch'
-import { taskSuccessSwal, taskIncorrectSwal, taskHintSwal } from './karelTaskAndMapSwallows'
+import { taskSuccessSwal, taskIncorrectSwal, taskHintSwal } from '@/helpers/projectSwallows'
 
 export default {
   components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls },

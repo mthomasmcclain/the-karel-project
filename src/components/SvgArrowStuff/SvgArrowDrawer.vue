@@ -11,7 +11,7 @@
       fill="rgba(0,0,0,0)"
       stroke="none"
     />
-    <SVGArrow
+    <SvgArrow
       v-if="to"
       :from="from"
       :to="to"
@@ -21,10 +21,10 @@
 
 <script>
 
-import SVGArrow from './SVGArrow.vue'
+import SvgArrow from './SvgArrow'
 
 export default {
-  components: { SVGArrow },
+  components: { SvgArrow },
   props: {
     x: { type: Number, default: 0 },
     y: { type: Number, default: 0 },
@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     drag(event) {
-      const {x, y} = event.svg
+      const {x, y} = event.Svg
       if (this.from === null) {
         this.from = {x,y}
         this.$emit('start', {x,y})

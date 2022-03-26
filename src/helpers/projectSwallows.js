@@ -36,7 +36,7 @@ export function forkContentSwal() {
 }
 
 export function invalidResizeSwal(message) {
-   return Swal.fire('Invalid World Resize', message, 'warning')
+    return Swal.fire('Invalid World Resize', message, 'warning')
 }
 export function invalidResizeStonesSwal() { return invalidResizeSwal('Can\'t change world size. Stone would be outside world boundary.') }
 export function invalidResizeWallsSwal() { return invalidResizeSwal('Can\'t change world size. Wall would be outside world or on world edge.') }

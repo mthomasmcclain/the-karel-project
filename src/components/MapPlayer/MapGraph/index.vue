@@ -14,7 +14,7 @@
       class="underlay"
       :viewBox="`0 0 ${width} ${height}`"
     >
-      <SVGArrowDrawer
+      <SvgArrowDrawer
         v-if="!uneditable"
         :width="width"
         :height="height"
@@ -22,7 +22,7 @@
         @move="setPotentialEndNode"
         @end="addDrawnEdge"
       />
-      <SVGArrow
+      <SvgArrow
         v-for="[id, { from, to }] in Object.entries(edges)"
         :key="id"
         :from="nodes[from]"
@@ -56,8 +56,8 @@
 
 <script>
 import { v1 as uuid } from 'uuid'
-import SVGArrow from './SVGArrow'
-import SVGArrowDrawer from './SVGArrowDrawer'
+import SvgArrow from '@/components/SvgArrowStuff/SvgArrow'
+import SvgArrowDrawer from '@/components/SvgArrowStuff/SvgArrowDrawer'
 import Swal from 'sweetalert2'
 import IconAndName from './IconAndNameForMap'
 
@@ -78,7 +78,7 @@ const closest = (set, pos) => {
 }
 
 export default {
-  components: { SVGArrow, SVGArrowDrawer, IconAndName },
+  components: { SvgArrow, SvgArrowDrawer, IconAndName },
   props: [ 'graph' ],
   data() {
     return {
