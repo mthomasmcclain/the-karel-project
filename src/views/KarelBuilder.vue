@@ -7,7 +7,10 @@
       :editing="editing"
       @close="closeModal"
     >
-      <TaskPlayer v-if="!modalEditing && modalContentType === 'task'"/>
+      <TaskPlayer
+        v-if="!modalEditing && modalContentType === 'task'"
+        :id="modalContent"
+      />
       <TaskCustomizer v-else-if="modalEditing && modalContentType === 'task'" />
       <MapPlayer v-else-if="!modalEditing && modalContentType === 'map'"/>
       <MapCustomizer v-else-if="modalEditing && modalContentType === 'map'"/>
@@ -42,11 +45,11 @@
 import Modal from '@/helpers/VueModal'
 import Navbar from '@/components/BuilderComponents/Navbar'
 import ContentCard from '@/components/BuilderComponents/ContentCard'
-import generateKarelTaskCustomizerStateFromRunState from '@/components/BuilderComponents/generateKarelTaskCustomizerStateFromRunState'
-import getDefaultTaskCustomizerState from '@/components/BuilderComponents/getDefaultTaskCustomizerState'
-import getDefaultMapCustomizerState from '@/components/BuilderComponents/getDefaultMapCustomizerState'
+// import generateKarelTaskCustomizerStateFromRunState from '@/components/BuilderComponents/generateKarelTaskCustomizerStateFromRunState'
+// import getDefaultTaskCustomizerState from '@/components/BuilderComponents/getDefaultTaskCustomizerState'
+// import getDefaultMapCustomizerState from '@/components/BuilderComponents/getDefaultMapCustomizerState'
 
-import { noBlankNameSwal, confirmCloseWithoutSaveSwal } from '@/helpers/projectSwallows'
+// import { noBlankNameSwal, confirmCloseWithoutSaveSwal } from '@/helpers/projectSwallows'
 import TaskCustomizer from '@/components/BuilderComponents/TaskCustomizer'
 import TaskPlayer from '@/components/TaskPlayer'
 import MapCustomizer from '@/components/BuilderComponents/MapCustomizer'
@@ -98,47 +101,47 @@ export default {
       if (index === -1) this.favorites.push(id)
       else this.favorites.splice(index,1)
     },
-    async launchCustomizer(id) {
+    // async launchCustomizer(id) {
 
-      this.editBaseContent = id
-      const source  = this.loadedContent[id].source
-      const { state } = JSON.parse(source)
+    //   this.editBaseContent = id
+    //   const source  = this.loadedContent[id].source
+    //   const { state } = JSON.parse(source)
 
-      this.modalTitle = `Customizing "${ this.loadedContent[id].name }"`
-      if (this.mode === 'tasks') {
-        this.modalContent = KAREL_TASK_CUSTOMIZER
-        this.modalState = generateKarelTaskCustomizerStateFromRunState(state)
-      }
-      else if (this.mode === 'maps') {
-        // generate Map Customizer State from Content Run State and Defaults
-        this.modalContent = KAREL_MAP_CUSTOMIZER
-        this.modalState = {
-          ...getDefaultMapCustomizerState(),
-          ...state,
-          graph: { ...state.graph, uneditable: false },
-          favorites: [ ...this.favorites]
-        }
-      }
-    },
+    //   this.modalTitle = `Customizing "${ this.loadedContent[id].name }"`
+    //   if (this.mode === 'tasks') {
+    //     this.modalContent = KAREL_TASK_CUSTOMIZER
+    //     this.modalState = generateKarelTaskCustomizerStateFromRunState(state)
+    //   }
+    //   else if (this.mode === 'maps') {
+    //     // generate Map Customizer State from Content Run State and Defaults
+    //     this.modalContent = KAREL_MAP_CUSTOMIZER
+    //     this.modalState = {
+    //       ...getDefaultMapCustomizerState(),
+    //       ...state,
+    //       graph: { ...state.graph, uneditable: false },
+    //       favorites: [ ...this.favorites]
+    //     }
+    //   }
+    // },
     launchPreviewModal(id) {
       this.modalTitle = `Previewing`
       this.modalContent = id
       this.modalEditing = false
     },
 
-    async customizeNewContent() {
-      const taskMode = this.mode === 'tasks'
-      this.modalTitle = `Creating a New Karel ${taskMode ? 'Task' : 'Map'}`
-      this.modalContent = taskMode ? KAREL_TASK_CUSTOMIZER : KAREL_MAP_CUSTOMIZER
-      this.modalState = taskMode ? getDefaultTaskCustomizerState() : { ...getDefaultMapCustomizerState(), favorites: [...this.favorites] }
-    },
-    async saveCustomizedContent() {
-      const { name } = this.modalState
+    // async customizeNewContent() {
+    //   const taskMode = this.mode === 'tasks'
+    //   this.modalTitle = `Creating a New Karel ${taskMode ? 'Task' : 'Map'}`
+    //   this.modalContent = taskMode ? KAREL_TASK_CUSTOMIZER : KAREL_MAP_CUSTOMIZER
+    //   this.modalState = taskMode ? getDefaultTaskCustomizerState() : { ...getDefaultMapCustomizerState(), favorites: [...this.favorites] }
+    // },
+    // async saveCustomizedContent() {
+    //   const { name } = this.modalState
 
-      if (name === '') {
-        noBlankNameSwal()
-        return
-      }
+    //   if (name === '') {
+    //     noBlankNameSwal()
+    //     return
+    //   }
 
       // destructure modalContent and set content differently in maps vs tasks
 //       let content
@@ -176,7 +179,7 @@ export default {
 //         }
 //       }
 
-    },
+    // },
 
     closeModal() {
       this.modalTitle = null

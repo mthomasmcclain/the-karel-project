@@ -53,26 +53,16 @@ import { taskSuccessSwal, taskIncorrectSwal, taskHintSwal } from '@/helpers/proj
 
 export default {
   components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls },
-  props: [
-    'name',
-    'preWorld',
-    'postWorld',
-    'instructions',
-    'hint',
-    'hideToolbox',
-    'maxBlocks',
-    'initialWorkspace',
-    'initialToolbox',
-    'initialSettings'
-  ],
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
   data() {
+    const { karelBlockly } = this.$store.getters.task(this.id)
     return {
-      karelBlockly: {
-        workspace: this.initialWorkspace,
-        toolbox: this.initialToolbox,
-        settings: this.initialSettings,
-        highlight: []
-      },
+      karelBlockly,
       currentStepData: null,
       playing: false,
       stepSpeed: 5,
@@ -96,6 +86,18 @@ export default {
     }
   },
   computed: {
+    task() { return this.$store.getters.task(this.id) },
+    name() { return this.task.name },
+    preWorld() { return this.task.preWorld },
+    postWorld() { return this.task.postWorld },
+    instructions() { return this.task.instructions },
+    hint() { return this.task.hint },
+    hideToolbox() { return this.task.hideToolbox },
+    maxBlocks() { return this.task.maxBlocks },
+    initialWorkspace() { return this.task.initialWorkspace },
+    initialToolbox() { return this.task.initialToolbox },
+    initialSettings() { return this.task.initialSettings },
+
     world() {
       return this.currentStepData ? this.currentStepData.world : this.preWorld
     },

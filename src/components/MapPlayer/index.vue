@@ -32,16 +32,7 @@
     <TaskPlayer v-if="taskIsActive"
       :key="`task-player-in-map-${graph.selected}`"
       @taskCorrect="handleTaskCorrect"
-      :name="activeTaskData.name"
-      :preWorld="activeTaskData.preWorld"
-      :postWorld="activeTaskData.postWorld"
-      :instructions="activeTaskData.instructions"
-      :hint="activeTaskData.hint"
-      :hideToolbox="activeTaskData.hideToolbox"
-      :maxBlocks="activeTaskData.maxBlocks"
-      :initialWorkspace="activeTaskData.karelBlockly.workspace"
-      :initialToolbox="activeTaskData.karelBlockly.toolbox"
-      :initialSettings="activeTaskData.karelBlockly.settings"
+      :id="activeTask"
     />
 
     <MapGraph v-else class="map-body"
@@ -68,11 +59,9 @@ export default {
     taskIsActive() {
       return this.graph.selected && this.graph.nodes[this.graph.selected]
     },
-    activeTaskData() {
+    activeTask() {
         if (!this.taskIsActive) return null
-
-        const activeNode = this.graph.nodes[this.graph.selected]
-        return this.$store.state.karelTasks[activeNode.content]
+        else return this.graph.nodes[this.graph.selected].content
     }
   },
   methods: {
@@ -84,7 +73,7 @@ export default {
       if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
     },
     handleTaskCorrect() {
-      this.graph.nodes[ this.graph.selected ].correct = true
+      this.graph.nodes[this.graph.selected].correct = true
       this.graph.selected = null
     },
     isFrontierNode(id) {

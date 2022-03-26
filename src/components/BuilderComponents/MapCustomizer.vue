@@ -5,7 +5,7 @@
       <li>Search Favite Filter</li>
       <li>List that matches search and filter</li>
       <li>Preview on Hover (cool!)</li>
-  	</ul>
+    </ul>
     
     <div id="build-area">
       
