@@ -1,38 +1,17 @@
 <template>
   <div class="karel-galler">
 
-    <Modal v-if="modalContent" @closeModal="editing ? confirmCloseModal() : closeModal()">
-      <div id="modal-wrapper">
-        <div class="modal-header">
-          <h3>{{ modalTitle }}</h3>
-        </div>
-        <div class="modal-main">
-          <component :is="modalContent" v-model="modalState" />
-        </div>
-        <div v-if="editing" class="modal-buttons">     
-           <button class="mdc-button mdc-button--outlined" @click="confirmCloseModal">
-             <span class="mdc-button__ripple"></span>
-             <span class="mdc-button__label">Cancel</span>
-          </button>    
-           <button class="mdc-button mdc-button--outlined" @click="saveCustomizedContent">
-             <span class="mdc-button__ripple"></span>
-             <span class="mdc-button__label">Save</span>
-          </button>
-           <button class="mdc-button mdc-button--outlined"
-             @click="deleteContent"
-             :disabled="!userOwnsEditContent"
-           >
-             <span class="mdc-button__ripple"></span>
-             <span class="mdc-button__label">Delete</span>
-          </button>
-        </div>
-        <div v-else class="modal-buttons" style="margin-top: 6px;">
-           <button class="mdc-button mdc-button--outlined" @click="closeModal">
-             <span class="mdc-button__ripple"></span>
-             <span class="mdc-button__label">Close</span>
-          </button>
-        </div>
-      </div>
+    <Modal
+      v-if="modalContent"
+      :title="modalTitle"
+      :editing="editing"
+      @close="closeModal"
+    >
+      <TaskPlayer v-if="!modalEditing && modalContentType === 'task'"/>
+      <TaskCustomizer v-else-if="modalEditing && modalContentType === 'task'" />
+      <MapPlayer v-else-if="!modalEditing && modalContentType === 'map'"/>
+      <MapCustomizer v-else-if="modalEditing && modalContentType === 'map'"/>
+      
     </Modal>
 
     <Navbar
@@ -68,33 +47,47 @@ import getDefaultTaskCustomizerState from '@/components/BuilderComponents/getDef
 import getDefaultMapCustomizerState from '@/components/BuilderComponents/getDefaultMapCustomizerState'
 
 import { noBlankNameSwal, confirmCloseWithoutSaveSwal } from '@/helpers/projectSwallows'
-const KAREL_TASK_CUSTOMIZER = '@/components/BuilderComponents/KarelTaskCustomizer'
-const KAREL_MAP_CUSTOMIZER = '@/components/BuilderComponents/KarelMapCustomizer'
+import TaskCustomizer from '@/components/BuilderComponents/TaskCustomizer'
+import TaskPlayer from '@/components/TaskPlayer'
+import MapCustomizer from '@/components/BuilderComponents/MapCustomizer'
+import MapPlayer from '@/components/MapPlayer'
 
 export default {
   name: 'task-and-map-browers-and-editor',
-  components: { Modal, Navbar, ContentCard },
+  components: {
+    Navbar,
+    Modal,
+    ContentCard,
+    TaskCustomizer,
+    TaskPlayer,
+    MapCustomizer,
+    MapPlayer
+  },
 
   async created() {
     //  TODO: load content from combo of default and local storage
   },
   data() {
     return {
-      content: Object.keys(this.$store.state.karelMaps) ,
+
       mode: 'maps',
       modalTitle: null,
       modalContent: null,
-      modalState: null,
+      modalEditing: false,
+      
       loadedContent: {},
       favorites: [],
       editBaseContent: null
     }
   },
   computed: {
-    editing() {
-       return this.modalContent === KAREL_TASK_CUSTOMIZER || this.modalContent === KAREL_MAP_CUSTOMIZER
+    content() {
+      return this.mode === 'maps' ? this.$store.getters.maps() : this.$store.getters.tasks()
     },
-
+    modalContentType() {
+      if (!this.modalContent) return null
+      else return this.$store.getters.type(this.modalContent)
+    }
   },
   methods: {
     setMode(mode) {
@@ -128,9 +121,9 @@ export default {
       }
     },
     launchPreviewModal(id) {
-      this.modalTitle = `Previewing "${ this.loadedContent[id].name }"`
+      this.modalTitle = `Previewing`
       this.modalContent = id
-      this.modalState = null
+      this.modalEditing = false
     },
 
     async customizeNewContent() {
@@ -184,15 +177,11 @@ export default {
 //       }
 
     },
-    async confirmCloseModal() {
-      const swalRes = await confirmCloseWithoutSaveSwal()
-      if (swalRes.isConfirmed) this.closeModal()
-    },
+
     closeModal() {
       this.modalTitle = null
-      this.editBaseContent = null
       this.modalContent = null
-      this.modalState = null
+      this.editing = null
     }
   }
 }
