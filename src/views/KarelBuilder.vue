@@ -17,7 +17,6 @@
     />
 
     <div class="karel-galler-body">
-
       <div class="card-wrapper">
         <ContentCard
           v-for="id in content" class="content-card"

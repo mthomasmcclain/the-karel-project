@@ -2,13 +2,13 @@
   <div>
 
     <div v-if="!activeMap">
-      Select Map Here
+      <h3>Select Map Here</h3>
       <div :key="mapId"
         v-for="mapId in $store.getters.maps()"
         @click="activeMap = mapId"
+        :style="$store.getters.mapIsComplete(mapId) ? 'color: green;' : ''"
       >
         {{ $store.getters.map(mapId).name }}
-        Complete: {{ $store.getters.mapIsComplete(mapId) }}
       </div>
 
       <button @click="addNew">Add New Map</button>
