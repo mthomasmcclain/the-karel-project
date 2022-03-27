@@ -6,7 +6,8 @@ import { v4 as uuid } from 'uuid'
 export default createStore({
   state: {
     karelTasks: { ...tasks },
-    karelMaps: { ...maps }
+    karelMaps: { ...maps },
+    favorites: [ ]
   },
   getters: {
     tasks: state => () => Object.keys(state.karelTasks),
@@ -18,11 +19,17 @@ export default createStore({
       if (task(id)) return 'task'
       else if (map(id)) return 'map'
       else return null
-    }
+    },
+    isFavorite: state => id => state.favorites.includes(id)
   },
   mutations: {
     addMap: (state,payload) => state.karelMaps[uuid()] = payload,
     addTask: (state, payload) => state.karelTasks[uuid()] = payload,
+    toggleFavorite: (state, id) => {
+      const index = state.favorites.indexOf(id)
+      if (index === -1) state.favorites.push(id)
+      else state.favorites.splice(index, 1)
+    }
   },
   actions: {
   },

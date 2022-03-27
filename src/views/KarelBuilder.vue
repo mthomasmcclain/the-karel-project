@@ -7,22 +7,12 @@
       :editing="modalEditing"
       @close="closeModal"
     >
-      <TaskPlayer
-        v-if="!modalEditing && modalContentType === 'task'"
-        :id="modalContent"
-      />
-      <TaskCustomizer v-else-if="modalEditing && modalContentType === 'task'" />
-      <MapPlayer
-        v-else-if="!modalEditing && modalContentType === 'map'"
-        :id="modalContent"
-      />
-      <MapCustomizer v-else-if="modalEditing && modalContentType === 'map'"/>
-      
+      <component :is="componentInModal" :id="modalContent" />
     </Modal>
 
     <Navbar
       :mode="mode"
-      @setMode="setMode"
+      @setMode="mode = $event"
       @newContent="customizeNewContent"
     />
 
@@ -33,10 +23,8 @@
           v-for="id in content" class="content-card"
           :key="`card-for-${id}`"
           :id="id"
-          :favorite="favorites.includes(id)"
           @previewAction="launchPreviewModal(id)"
           @editAction="launchCustomizer(id)"
-          @favAction="toggleFavorite(id)"
         />
       </div>
     </div>
@@ -75,35 +63,31 @@ export default {
   },
   data() {
     return {
+      mode: 'tasks',
 
-      mode: 'maps',
       modalTitle: null,
       modalContent: null,
       modalEditing: false,
       
-      loadedContent: {},
-      favorites: [],
       editBaseContent: null
     }
   },
   computed: {
+    componentInModal() {
+      const modalContentType = this.modalContent ? this.$store.getters.type(this.modalContent): null
+      if (this.modalEditing) {
+        if (modalContentType === 'task') return TaskCustomizer
+        else return MapCustomizer
+      } else {
+        if (modalContentType === 'task') return TaskPlayer
+        else return MapPlayer
+      }
+    },
     content() {
       return this.mode === 'maps' ? this.$store.getters.maps() : this.$store.getters.tasks()
     },
-    modalContentType() {
-      if (!this.modalContent) return null
-      else return this.$store.getters.type(this.modalContent)
-    }
   },
   methods: {
-    setMode(mode) {
-      if (this.mode !== mode) this.mode = mode
-    },
-    toggleFavorite(id) {
-      const index = this.favorites.indexOf(id)
-      if (index === -1) this.favorites.push(id)
-      else this.favorites.splice(index,1)
-    },
     // async launchCustomizer(id) {
 
     //   this.editBaseContent = id
