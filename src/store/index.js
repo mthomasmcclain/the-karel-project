@@ -1,7 +1,13 @@
 import { createStore } from 'vuex'
+import VuexPersistence from 'vuex-persist'
 import tasks from './tasks'
 import maps from './maps'
 import { v4 as uuid } from 'uuid'
+
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage,
+  key: 'the-karel-project'
+})
 
 export default createStore({
   state: {
@@ -46,5 +52,6 @@ export default createStore({
   actions: {
   },
   modules: {
-  }
+  },
+  plugins: [vuexLocal.plugin]
 })
