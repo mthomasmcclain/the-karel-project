@@ -66,8 +66,15 @@ export default {
   left:80px;
   right: 80px;
   bottom: 80px;
+
+  display: flex;
+  flex-direction: column;
+  
   background: white;
   border-radius: 10px;
   padding: 10px;
+}
+.modal-main {
+  flex-grow: 1;
 }
 </style>

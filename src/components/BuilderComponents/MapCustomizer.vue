@@ -154,6 +154,7 @@ export default {
   cursor: pointer;
 }
 #graph-area {
+  position: relative;
   flex-grow: 1;
 }
 .search-result {
