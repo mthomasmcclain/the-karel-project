@@ -4,7 +4,7 @@
     <Modal
       v-if="modalContent"
       :title="modalTitle"
-      :editing="editing"
+      :editing="modalEditing"
       @close="closeModal"
     >
       <TaskPlayer
@@ -12,7 +12,10 @@
         :id="modalContent"
       />
       <TaskCustomizer v-else-if="modalEditing && modalContentType === 'task'" />
-      <MapPlayer v-else-if="!modalEditing && modalContentType === 'map'"/>
+      <MapPlayer
+        v-else-if="!modalEditing && modalContentType === 'map'"
+        :id="modalContent"
+      />
       <MapCustomizer v-else-if="modalEditing && modalContentType === 'map'"/>
       
     </Modal>
@@ -184,7 +187,7 @@ export default {
     closeModal() {
       this.modalTitle = null
       this.modalContent = null
-      this.editing = null
+      this.modalEditing = null
     }
   }
 }

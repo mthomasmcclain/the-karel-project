@@ -4,7 +4,7 @@
     <div v-if="!activeMap">
       Select Map Here
       <div :key="map"
-        v-for="map in Object.keys($store.state.karelMaps)"
+        v-for="map in $store.getters.maps()"
         @click="activeMap = map"
       >{{ map }}</div>
       <button @click="addNew">Add New Map</button>
@@ -12,7 +12,7 @@
     
     <MapPlayer v-else
       @exitMap="activeMap = null"
-      class="karel-player"
+      :id="activeMap"
     />
 
   </div>

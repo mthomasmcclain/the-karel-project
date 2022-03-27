@@ -49,11 +49,15 @@ import TaskPlayer from '@/components/TaskPlayer'
 
 export default {
   components: { MapGraph, TaskPlayer },
-  data() {
-    return {
-      graph: this.$store.state.karelMaps['a29398a0-ac91-11ec-91d1-fdff893a2b6c'].graph,
-      name: this.$store.state.karelMaps['a29398a0-ac91-11ec-91d1-fdff893a2b6c'].name
+  props: {
+    id: {
+      type: String,
+      required: true
     }
+  },
+  data() {
+    const { graph, name } = this.$store.getters.map(this.id)
+    return { graph, name }
   },
   computed: {
     taskIsActive() {

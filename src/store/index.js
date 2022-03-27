@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import tasks from './tasks'
 import maps from './maps'
+import { v4 as uuid } from 'uuid'
 
 export default createStore({
   state: {
@@ -20,7 +21,8 @@ export default createStore({
     }
   },
   mutations: {
-  
+    addMap: (state,payload) => state.karelMaps[uuid()] = payload,
+    addTask: (state, payload) => state.karelTasks[uuid()] = payload,
   },
   actions: {
   },
