@@ -7,7 +7,8 @@ export default createStore({
   state: {
     karelTasks: { ...tasks },
     karelMaps: { ...maps },
-    favorites: [ ]
+    favorites: [ ],
+    completed: [ ]
   },
   getters: {
     tasks: state => () => Object.keys(state.karelTasks),
@@ -20,7 +21,14 @@ export default createStore({
       else if (map(id)) return 'map'
       else return null
     },
-    isFavorite: state => id => state.favorites.includes(id)
+    isFavorite: state => id => state.favorites.includes(id),
+    taskIsComplete: state => id => state.completed.includes(id),
+    mapIsComplete: (_state, getters) => id => {
+      const mapData = getters.map(id)
+      const mapTasks = Object.values(mapData.graph.nodes).map(nodeData => nodeData.content)
+      return mapTasks.every(taskId => getters.taskIsComplete(taskId))
+    }
+
   },
   mutations: {
     addMap: (state,payload) => state.karelMaps[uuid()] = payload,
@@ -29,6 +37,10 @@ export default createStore({
       const index = state.favorites.indexOf(id)
       if (index === -1) state.favorites.push(id)
       else state.favorites.splice(index, 1)
+    },
+    taskComplete: (state, id) => {
+      const index = state.completed.indexOf(id)
+      if (index === -1) state.completed.push(id)
     }
   },
   actions: {

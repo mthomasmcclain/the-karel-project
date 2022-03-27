@@ -3,10 +3,14 @@
 
     <div v-if="!activeMap">
       Select Map Here
-      <div :key="map"
-        v-for="map in $store.getters.maps()"
-        @click="activeMap = map"
-      >{{ map }}</div>
+      <div :key="mapId"
+        v-for="mapId in $store.getters.maps()"
+        @click="activeMap = mapId"
+      >
+        {{ $store.getters.map(mapId).name }}
+        Complete: {{ $store.getters.mapIsComplete(mapId) }}
+      </div>
+
       <button @click="addNew">Add New Map</button>
     </div>
     

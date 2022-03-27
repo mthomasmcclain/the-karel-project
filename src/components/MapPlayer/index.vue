@@ -77,16 +77,16 @@ export default {
       if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
     },
     handleTaskCorrect() {
-      this.graph.nodes[this.graph.selected].correct = true
+      this.$store.commit('taskComplete', this.activeTask)
       this.graph.selected = null
     },
     isFrontierNode(id) {
       // is on 'frontier' iff ( not visited AND all immediate predecessors are visited )
       if (this.graph.nodes[id].visited) return false
       else return Object.values(this.graph.edges)
-          .filter(({to}) => to === id)
-          .map(({from}) => from)
-          .every(fromId => this.graph.nodes[fromId] && this.graph.nodes[fromId].visited)
+        .filter(({to}) => to === id)
+        .map(({from}) => from)
+        .every(fromId => this.graph.nodes[fromId] && this.graph.nodes[fromId].visited)
     },
     isAccessible(id) {
       return !this.graph.progressivelyUnlock || this.isFrontierNode(id) || this.graph.nodes[id].visited

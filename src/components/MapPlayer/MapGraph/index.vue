@@ -34,7 +34,7 @@
 
     <div
       class="node-wrapper"
-      v-for="([nodeId, { x, y, w, h, content, visited, correct, label='loading...' }]) in Object.entries(nodes)"
+      v-for="([nodeId, { x, y, w, h, content, visited, label='loading...' }]) in Object.entries(nodes)"
       :key="nodeId"
       :ref="el => trackSize(el, nodes[nodeId])"
       :style="{ position: 'absolute', left: `${Math.round(x - w/2)}px`, top: `${Math.round(y - h/2)}px` }"
@@ -46,7 +46,7 @@
       <IconAndName class="icon-and-name"
         :label="label"
         :locked="!isAccessible(nodeId)"
-        :correct="correct"
+        :correct="taskAtNodeIsCorrect(nodeId)"
         :highlighted="nodeId === newFromNode || nodeId === newToNode || selected === nodeId"
         :activeColor="visited ? 'gainsboro' : 'orange'"
       />
@@ -102,6 +102,10 @@ export default {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
+    taskAtNodeIsCorrect(nodeId) {
+      const taskId = this.graph.nodes[nodeId].content
+      return this.$store.getters.taskIsComplete(taskId)
+    },
     handleResize() {
       this.height = window.innerHeight
       this.width = window.innerWidth
@@ -160,7 +164,6 @@ export default {
           w: 0, h: 0,
           state: null,
           visited: false,
-          correct: false,
         }
       }
     },
