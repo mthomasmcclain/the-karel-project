@@ -72,6 +72,15 @@ export function taskIncorrectSwal(errorMessage) {
     }
 }
 
+export function mapCompleteSwal() {
+    const bodyOptions = ['Good job!', 'Nice Work.', 'You did it!', 'Well Done!', 'Awesome']
+    const bodyStart = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
+    const body = bodyStart + '  You have completed every task in this map.'
+    const header = 'Map Complete'
+    return Swal.fire(header, body, 'success')
+}
+
+
 export function taskHintSwal(hint) {
     return Swal.fire('Hint:', hint, 'question')
 }
@@ -84,51 +93,4 @@ export function renameMapSwal(incomingName = '... name your map ...') {
         showCancelButton: true,
         confirmButtonText: 'Update Map Name',
     })
-}
-
-export function setMapFlowSwal(incomingMode) {
-    return Swal.fire({
-        title: 'Task Availablility',
-        input: 'radio',
-        inputValue: incomingMode ? 'prereq' : 'all',
-        inputOptions: {
-            all: 'All Available',
-            prereq: 'When Priors Complete'
-        }
-    })
-}
-
-export function setMapTimeLimitSwal(incomingTime) {
-    return Swal.fire({
-        title: 'Set Time Limit',
-        icon: 'question',
-        input: 'range',
-        inputLabel: 'How Many Minutes Will Learners Have?',
-        inputAttributes: { min: 1, max: 60, step: 1 },
-        inputValue: incomingTime ? incomingTime : 20,
-        showCancelButton: true,
-        confirmButtonText: 'Set Limit',
-        cancelButtonText: 'No Time Limit',
-    })
-}
-
-export function createAssignmentSwal(id) {
-    return Swal.fire({
-        title: 'Assignment Created',
-        text: `Share the following link with anyone you would like to complete your assignment.`,
-        icon: 'success',
-        footer: `
-      <div style="text-align:center;">
-        <a href="https://run.knowlearning.systems/${id}" target="_blank">run.knowlearning.systems/${id}</a>
-      </div>
-    `
-    })
-}
-
-export function surveySwal() {
-    return Swal.fire(
-        'Survey',
-        'Placeholder for end of activity survey!',
-        'question'
-    )
 }

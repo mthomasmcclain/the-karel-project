@@ -46,6 +46,7 @@
 <script>
 import MapGraph from './MapGraph'
 import TaskPlayer from '@/components/TaskPlayer'
+import { mapCompleteSwal } from '@/helpers/projectSwallows'
 
 export default {
   components: { MapGraph, TaskPlayer },
@@ -76,9 +77,13 @@ export default {
       this.graph.selected = id
       if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
     },
-    handleTaskCorrect() {
+    async handleTaskCorrect() {
       this.$store.commit('taskComplete', this.activeTask)
       this.graph.selected = null
+      if (this.$store.getters.mapIsComplete(this.id)) {
+        await mapCompleteSwal()
+        this.$emit('exitMap')
+      }
     },
     isFrontierNode(id) {
       // is on 'frontier' iff ( not visited AND all immediate predecessors are visited )

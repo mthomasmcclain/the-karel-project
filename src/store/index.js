@@ -6,7 +6,11 @@ import { v4 as uuid } from 'uuid'
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  key: 'the-karel-project'
+  key: 'the-karel-project',
+  reducer: state => ({
+    favorites: state.favorites,
+    completed: state.completed
+  }),
 })
 
 export default createStore({
