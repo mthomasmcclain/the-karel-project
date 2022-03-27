@@ -15,7 +15,7 @@
       :viewBox="`0 0 ${width} ${height}`"
     >
       <SvgArrowDrawer
-        v-if="!uneditable"
+        v-if="editMode"
         :width="width"
         :height="height"
         @start="setPotentialStartNode"
@@ -24,29 +24,29 @@
       />
       <SvgArrow
         v-for="[id, { from, to }] in Object.entries(edges)"
-        :key="id"
+        :key="`edge-arrow-${id}`"
         :from="nodes[from]"
         :to="nodes[to]"
         :highlighted="selected === id || (from === newFromNode && to === newToNode)"
-        @click.stop="$emit('selectId', uneditable ? null : id)"
+        @click.stop="$emit('selectId', editMode ? id : null)"
       />
     </svg>
 
     <div
       class="node-wrapper"
-      v-for="([nodeId, { x, y, w, h, content, visited, label='loading...' }]) in Object.entries(nodes)"
+      v-for="([nodeId, { x, y, w, h, taskId, visited, label='loading...' }]) in Object.entries(nodes)"
       :key="nodeId"
       :ref="el => trackSize(el, nodes[nodeId])"
       :style="{ position: 'absolute', left: `${Math.round(x - w/2)}px`, top: `${Math.round(y - h/2)}px` }"
-      :draggable="!uneditable"
-      @dragstart="event => event.dataTransfer.setData('text/plain', content)"
+      :draggable="editMode"
+      @dragstart="event => event.dataTransfer.setData('text/plain', taskId)"
       @mousedown.stop
       @click.stop="handleNodeClick(nodeId)"
     >
       <IconAndName class="icon-and-name"
         :label="label"
         :locked="!isAccessible(nodeId)"
-        :correct="taskAtNodeIsCorrect(nodeId)"
+        :correct="editMode ? undefined : taskAtNodeIsCorrect(nodeId)"
         :highlighted="nodeId === newFromNode || nodeId === newToNode || selected === nodeId"
         :activeColor="visited ? 'gainsboro' : 'orange'"
       />
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { v1 as uuid } from 'uuid'
+import { v4 as uuid } from 'uuid'
 import SvgArrow from '@/components/SvgArrowStuff/SvgArrow'
 import SvgArrowDrawer from '@/components/SvgArrowStuff/SvgArrowDrawer'
 import Swal from 'sweetalert2'
@@ -78,19 +78,27 @@ const closest = (set, pos) => {
 }
 
 export default {
-  components: { SvgArrow, SvgArrowDrawer, IconAndName },
-  props: [ 'graph' ],
+  components: {
+    SvgArrow,
+    SvgArrowDrawer,
+    IconAndName
+    },
+  props: [ 'graph', 'editMode' ],
   data() {
     return {
       width: 0,
       height: 0,
       edges: this.graph.edges,
       nodes: this.graph.nodes,
-      uneditable: true,
       selected: null,
-      newFromNode: this.graph.newFromNode,
-      newToNode: this.graph.newToNode,
-      progressivelyUnlock: this.graph.progressivelyUnlock
+      newFromNode: null,
+      newToNode: null,
+    }
+  },
+  watch: {
+    graph(val) {
+      this.edges = val.edges
+      this.nodes = val.nodes
     }
   },
   mounted() {
@@ -102,6 +110,12 @@ export default {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
+    emitChange() {
+      this.$emit('change', {
+        edges: this.edges,
+        nodes: this.nodes,
+      })
+    },
     taskAtNodeIsCorrect(nodeId) {
       const taskId = this.graph.nodes[nodeId].content
       return this.$store.getters.taskIsComplete(taskId)
@@ -111,11 +125,16 @@ export default {
       this.width = window.innerWidth
     },
     handleNodeClick(nodeId) {
-      if (!this.uneditable || this.isAccessible(nodeId)) this.$emit('selectId', nodeId)
-      else this.$emit('selectId', null)
+      
+      if (!this.editMode) { // play mode
+        if (this.isAccessible(nodeId)) this.selected = nodeId
+      }
+      else { // edit mode
+        this.selected = this.selected===nodeId ? null : nodeId
+      }
     },
     handleKeydown(event) {
-      if (this.uneditable) return
+      if (!this.editMode) return
 
       if (['Backspace', 'Delete'].includes(event.key)) {
         delete this.edges[this.selected]
@@ -127,6 +146,7 @@ export default {
           delete this.nodes[this.selected]
         }
       }
+      this.emitChange()
     },
     isFrontierNode(id) {
       // is on 'frontier' iff ( (a) not visited AND (b) all immediate predecessors are visited )
@@ -137,41 +157,43 @@ export default {
           .every(fromId => this.nodes[fromId] && this.nodes[fromId].visited)
     },
     isAccessible(id) {
-      return !this.progressivelyUnlock || this.isFrontierNode(id) || this.nodes[id].visited
+      return this.isFrontierNode(id) || this.nodes[id].visited
     },
     handleDragover(event) {
-      if (this.uneditable) return
+      if (!this.editMode) return
       event.preventDefault()
       event.dataTransfer.dropEffect = 'move'
     },
     async handleDrop({ x, y, currentTarget, dataTransfer }) {
-      const content = dataTransfer.getData("text/plain")
-
-      if (!isUUID(content)) return alert('Unknown drop type.')
-
+      if (!this.editMode) return
+      const taskId = dataTransfer.getData("text/plain")
+      if (!isUUID(taskId)) {
+        console.log('taskId', taskId)
+        console.log(dataTransfer)
+        return alert('Unknown drop type.')
+      }
       const { left, top } = currentTarget.getBoundingClientRect()
-
       x -= left
       y -= top
-
-      //  TODO: if Control/Alt is pressed, allow copy of referenced content into nodes
-
-      const existingReference = Object.values(this.nodes).find(ref => ref.content === content)
+      //  TODO: if Control/Alt is pressed, allow copy of referenced taskId into nodes
+      const existingReference = Object.values(this.nodes).find(ref => ref.taskId === taskId)
       if (existingReference) Object.assign(existingReference, {x,y})
       else {
         this.nodes[uuid()] = {
-          content, x, y,
+          taskId, x, y,
           w: 0, h: 0,
-          state: null,
           visited: false,
+          label: this.$store.getters.task(taskId).name
         }
       }
+      this.emitChange()
     },
     removeNode(id) {
       if (Object.values(this.edges).some(({ to, from }) => to === id || from === id)) {
         Swal.fire('Cannot Delete Task', 'You must remove all connections before removing a task.', 'warning')
       }
       else delete this.nodes[id]
+      this.emitChange()
     },
     setPotentialStartNode(pos) {
       this.newFromNode = closest(this.nodes, pos)
@@ -181,6 +203,7 @@ export default {
     },
     removeEdge(id) {
       delete this.edges[id]
+      this.emitChange()
     },
     edgeExists(f, t) {
       return Object.values(this.edges).some(({ from, to }) => from === f && to === t )
@@ -193,6 +216,7 @@ export default {
       }
       this.newFromNode = null
       this.newToNode = null
+      this.emitChange()
     },
     trackSize(el, item) {
       if (!item || !el) return

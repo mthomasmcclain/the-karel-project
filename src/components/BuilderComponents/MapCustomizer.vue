@@ -1,10 +1,15 @@
 <template>
   <div id="wrapper">
     <ul>
-      <li>Search String</li>
-      <li>Search Favite Filter</li>
-      <li>List that matches search and filter</li>
-      <li>Preview on Hover (cool!)</li>
+      <li
+        v-for="task in $store.getters.tasks()"
+        :key="`task-select-${task}`"
+        draggable="true"
+        @dragstart="event => event.dataTransfer.setData('text/plain', task)"
+      >
+        {{ $store.getters.task(task).name }}
+      </li>
+
     </ul>
     
     <div id="build-area">
@@ -12,7 +17,7 @@
       <div id="build-area-navbar">
         <img id="kl-logo">
         <div class="map-name-wrapper">
-          <span class="rename-map-icon" @click="launchRenameMap">✎</span>
+          <span class="rename-map-icon" @click="launchRenameMapSwal">✎</span>
           <h3 class="title">{{ name || 'Name Your Karel Map' }}</h3>
         </div>
 
@@ -22,30 +27,37 @@
       </div>
       
       <div id="graph-area">
-        
-		<!-- FIX OTHER KARELMAPGRAPH FOR EDITING AGAIN-->
         <MapGraph
-          editMode
+          :editMode="true"
           :graph="graph"
-           @change="graph = $event"
+          @change="graph = $event"
         />
       </div>
+
     </div>
   </div>
 </template>
 
 <script>
 import MapGraph from '@/components/MapPlayer/MapGraph'
-import getDefaultMapCustomizerState from './getDefaultMapCustomizerState'
 import { renameMapSwal } from '@/helpers/projectSwallows'
 
 export default {
   components: { MapGraph },
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
   data() {
-    return getDefaultMapCustomizerState()
+    const mapData = this.$store.getters.map(this.id)
+    return {
+      graph: mapData.graph || null,
+      name: mapData.name || 'Default Map Name'
+    }
   },
   methods: {
-
     async launchRenameMapSwal() {
       const res = await renameMapSwal(this.name)
       if (res.value) this.name = res.value

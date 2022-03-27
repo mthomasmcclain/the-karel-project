@@ -24,7 +24,6 @@
         </button>
           <button class="mdc-button mdc-button--outlined"
             @click="deleteContent"
-            :disabled="!userOwnsEditContent"
           >
             <span class="mdc-button__ripple"></span>
             <span class="mdc-button__label">Delete</span>

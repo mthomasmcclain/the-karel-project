@@ -3,7 +3,6 @@
 
     <Modal
       v-if="modalContent"
-      :title="modalTitle"
       :editing="modalEditing"
       @close="closeModal"
     >
@@ -32,6 +31,7 @@
 </template>
 
 <script>
+import { v4 as uuid } from 'uuid'
 import Modal from '@/helpers/VueModal'
 import Navbar from '@/components/BuilderComponents/Navbar'
 import ContentCard from '@/components/BuilderComponents/ContentCard'
@@ -63,12 +63,8 @@ export default {
   data() {
     return {
       mode: 'tasks',
-
-      modalTitle: null,
       modalContent: null,
       modalEditing: false,
-      
-      editBaseContent: null
     }
   },
   computed: {
@@ -87,40 +83,27 @@ export default {
     },
   },
   methods: {
-    // async launchCustomizer(id) {
-
-    //   this.editBaseContent = id
-    //   const source  = this.loadedContent[id].source
-    //   const { state } = JSON.parse(source)
-
-    //   this.modalTitle = `Customizing "${ this.loadedContent[id].name }"`
-    //   if (this.mode === 'tasks') {
-    //     this.modalContent = KAREL_TASK_CUSTOMIZER
-    //     this.modalState = generateKarelTaskCustomizerStateFromRunState(state)
-    //   }
-    //   else if (this.mode === 'maps') {
-    //     // generate Map Customizer State from Content Run State and Defaults
-    //     this.modalContent = KAREL_MAP_CUSTOMIZER
-    //     this.modalState = {
-    //       ...getDefaultMapCustomizerState(),
-    //       ...state,
-    //       graph: { ...state.graph, uneditable: false },
-    //       favorites: [ ...this.favorites]
-    //     }
-    //   }
-    // },
+    async launchCustomizer(id) {
+      this.modalEditing = true
+      this.modalContent = id
+// this.modalState = {
+//   ...getDefaultMapCustomizerState(),
+//   ...state,
+//   graph: { ...state.graph, uneditable: false },
+//   favorites: [ ...this.favorites]
+// }
+    },
     launchPreviewModal(id) {
-      this.modalTitle = `Previewing`
       this.modalContent = id
       this.modalEditing = false
     },
 
-    // async customizeNewContent() {
-    //   const taskMode = this.mode === 'tasks'
-    //   this.modalTitle = `Creating a New Karel ${taskMode ? 'Task' : 'Map'}`
-    //   this.modalContent = taskMode ? KAREL_TASK_CUSTOMIZER : KAREL_MAP_CUSTOMIZER
-    //   this.modalState = taskMode ? getDefaultTaskCustomizerState() : { ...getDefaultMapCustomizerState(), favorites: [...this.favorites] }
-    // },
+    async customizeNewContent() {
+      const newMapId = uuid()
+      this.$store.commit('newMap', newMapId)
+      this.modalContent = newMapId
+      this.modalEditing = true
+    },
     // async saveCustomizedContent() {
     //   const { name } = this.modalState
 

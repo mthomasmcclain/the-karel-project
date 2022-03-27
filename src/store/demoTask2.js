@@ -1,5 +1,5 @@
 export default {
-    "name": "Stones in Corners",
+    "name": "Simplify with Functions",
     "hint": "",
     "preWorld": { "nCols": 4, "nRows": 2, "karelRow": 0, "karelCol": 0, "karelDir": "East", "walls": [{ "r": 1, "c": 0, "d": "North" }, { "r": 1, "c": 0, "d": "East" }, { "r": 1, "c": 1, "d": "East" }, { "r": 1, "c": 2, "d": "East" }], "stones": [{ "r": 1, "c": 1, "n": 2 }, { "r": 1, "c": 2, "n": 2 }, { "r": 1, "c": 3, "n": 2 }], "lastClicked": null, "editRow": null, "editCol": null, "editWallR": null, "editWallC": null, "editWallD": null },
     "postWorld": { "nCols": 4, "nRows": 2, "karelRow": 0, "karelCol": 3, "karelDir": "East", "walls": [{ "r": 1, "c": 0, "d": "North" }, { "r": 1, "c": 0, "d": "East" }, { "r": 1, "c": 1, "d": "East" }, { "r": 1, "c": 2, "d": "East" }], "stones": [], "lastClicked": null, "editRow": null, "editCol": null, "editWallR": null, "editWallC": null, "editWallD": null },

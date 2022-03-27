@@ -37,6 +37,7 @@
 
     <MapGraph v-else class="map-body"
         :graph="graph"
+        :editMode="false"
         @selectId="handleNodeSelected"
     />
 

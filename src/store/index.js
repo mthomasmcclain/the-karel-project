@@ -2,7 +2,6 @@ import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import tasks from './tasks'
 import maps from './maps'
-import { v4 as uuid } from 'uuid'
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
@@ -35,14 +34,23 @@ export default createStore({
     taskIsComplete: state => id => state.completed.includes(id),
     mapIsComplete: (_state, getters) => id => {
       const mapData = getters.map(id)
-      const mapTasks = Object.values(mapData.graph.nodes).map(nodeData => nodeData.content)
+      const mapTasks = Object.values(mapData.graph.nodes).map(nodeData => nodeData.taskId)
       return mapTasks.every(taskId => getters.taskIsComplete(taskId))
     }
 
   },
   mutations: {
-    addMap: (state,payload) => state.karelMaps[uuid()] = payload,
-    addTask: (state, payload) => state.karelTasks[uuid()] = payload,
+    newMap: (state, id) => {
+      state.karelMaps[id] = {
+        name: "New Karel Map",
+        graph: { edges: {}, nodes: {} }
+      }
+    },
+    newTask: (state, id) => {
+      state.karelTasks[id] = {
+        // enter default task object
+      }
+    },
     toggleFavorite: (state, id) => {
       const index = state.favorites.indexOf(id)
       if (index === -1) state.favorites.push(id)
