@@ -5,7 +5,7 @@
     <div class="navbar">
       <div v-if="taskIsActive"
         class="back-button"
-        @click="graph.selected = null"
+        @click="selected = null"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="map-icon" viewBox="0 0 576 512">
             <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
@@ -24,21 +24,21 @@
         <div>Back</div><div>Home</div>
       </div>
 
-      <h3>{{ taskIsActive ? graph.nodes[graph.selected].label : name }}</h3>
+      <h3>{{ taskIsActive ? graph.nodes[selected].label : name }}</h3>
       <div></div>
       
     </div>
     
     <TaskPlayer v-if="taskIsActive"
-      :key="`task-player-in-map-${graph.selected}`"
+      :key="`task-player-in-map-${selected}`"
       @taskCorrect="handleTaskCorrect"
       :id="activeTask"
     />
 
     <MapGraph v-else class="map-body"
-        :graph="graph"
-        :editMode="false"
-        @selectId="handleNodeSelected"
+      :graph="graph"
+      :selected="selected"
+      @selectId="handleNodeSelected"
     />
 
   </div>
@@ -48,6 +48,7 @@
 import MapGraph from './MapGraph'
 import TaskPlayer from '@/components/TaskPlayer'
 import { mapCompleteSwal } from '@/helpers/projectSwallows'
+const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
   components: { MapGraph, TaskPlayer },
@@ -59,28 +60,29 @@ export default {
   },
   data() {
     const { graph, name } = this.$store.getters.map(this.id)
-    return { graph, name }
+    return {
+      graph: copy(graph),
+      name,
+      selected: null
+    }
   },
   computed: {
     taskIsActive() {
-      return this.graph.selected && this.graph.nodes[this.graph.selected]
+      return this.selected && this.graph.nodes[this.selected]
     },
     activeTask() {
         if (!this.taskIsActive) return null
-        else return this.graph.nodes[this.graph.selected].content
+        else return this.graph.nodes[this.selected].taskId
     }
   },
   methods: {
-    openContent(id) {
-      if (this.isAccessible(id)) this.graph.selected = id
-    },
     handleNodeSelected(id) {
-      this.graph.selected = id
-      if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
+      this.selected = id
+      this.graph.nodes[id].visited = true
     },
     async handleTaskCorrect() {
       this.$store.commit('taskComplete', this.activeTask)
-      this.graph.selected = null
+      this.selected = null
       if (this.$store.getters.mapIsComplete(this.id)) {
         await mapCompleteSwal()
         this.$emit('exitMap')

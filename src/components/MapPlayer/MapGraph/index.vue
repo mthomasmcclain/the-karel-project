@@ -34,7 +34,7 @@
 
     <div
       class="node-wrapper"
-      v-for="([nodeId, { x, y, w, h, taskId, visited, label='loading...' }]) in Object.entries(nodes)"
+      v-for="([nodeId, { x, y, w, h, taskId, visited, label }]) in Object.entries(nodes)"
       :key="nodeId"
       :ref="el => trackSize(el, nodes[nodeId])"
       :style="{ position: 'absolute', left: `${Math.round(x - w/2)}px`, top: `${Math.round(y - h/2)}px` }"
@@ -80,13 +80,18 @@ const closest = (set, pos) => {
 const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
-  
-  components: {
-    SvgArrow,
-    SvgArrowDrawer,
-    IconAndName
+  components: { SvgArrow, SvgArrowDrawer, IconAndName },
+  props: {
+    graph: {
+      type: Object,
+      required: true,
     },
-  props: [ 'graph', 'editMode' ],
+    editMode: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
+  },
   data() {
     return {
       width: 0,
@@ -120,7 +125,7 @@ export default {
       })
     },
     taskAtNodeIsCorrect(nodeId) {
-      const taskId = this.graph.nodes[nodeId].content
+      const taskId = this.graph.nodes[nodeId].taskId
       return this.$store.getters.taskIsComplete(taskId)
     },
     handleResize() {
@@ -129,11 +134,11 @@ export default {
     },
     handleNodeClick(nodeId) {
       
-      if (!this.editMode) { // play mode
-        if (this.isAccessible(nodeId)) this.selected = nodeId
+      if (this.editMode) {
+        this.$emit('selectId', this.selected === nodeId ? null : nodeId)
       }
-      else { // edit mode
-        this.selected = this.selected===nodeId ? null : nodeId
+      else { // play mode
+        if (this.isAccessible(nodeId)) this.$emit('selectId', nodeId)
       }
     },
     handleKeydown(event) {

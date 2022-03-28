@@ -31,6 +31,8 @@
           :editMode="true"
           :graph="graph"
           @change="graph = $event"
+          :selected="selected"
+          @selectId="selected = $event"
         />
       </div>
 
@@ -54,7 +56,8 @@ export default {
     const mapData = this.$store.getters.map(this.id)
     return {
       graph: mapData.graph || null,
-      name: mapData.name || 'Default Map Name'
+      name: mapData.name || 'Default Map Name',
+      selected: null
     }
   },
   methods: {
