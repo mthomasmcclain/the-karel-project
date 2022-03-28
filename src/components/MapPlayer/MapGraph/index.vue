@@ -46,7 +46,7 @@
       <IconAndName class="icon-and-name"
         :label="label"
         :locked="!isAccessible(nodeId)"
-        :correct="editMode ? undefined : taskAtNodeIsCorrect(nodeId)"
+        :correct="editMode || previewMode ? undefined : taskAtNodeIsCorrect(nodeId)"
         :highlighted="nodeId === newFromNode || nodeId === newToNode || selected === nodeId"
         :activeColor="visited ? 'gainsboro' : 'orange'"
       />
@@ -90,6 +90,11 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    previewMode: {
+      type: Boolean,
+      required: false,
+      default: false,
     }
   },
   data() {
@@ -133,7 +138,6 @@ export default {
       this.width = window.innerWidth
     },
     handleNodeClick(nodeId) {
-      
       if (this.editMode) {
         this.$emit('selectId', this.selected === nodeId ? null : nodeId)
       }

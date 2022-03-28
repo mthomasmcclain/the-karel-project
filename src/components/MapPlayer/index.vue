@@ -39,6 +39,7 @@
       :graph="graph"
       :selected="selected"
       @selectId="handleNodeSelected"
+      :previewMode="previewMode"
     />
 
   </div>
@@ -56,6 +57,11 @@ export default {
     id: {
       type: String,
       required: true
+    },
+    previewMode: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {

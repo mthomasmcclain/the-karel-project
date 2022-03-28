@@ -5,10 +5,16 @@
       v-if="modalContent"
       :editing="modalEditing"
       @close="closeModal"
-      @save="handleSave"
       @delete="$store.commit('delete', modalContent); modalContent = null;"
     >
-      <component :is="componentInModal" :id="modalContent" />
+      <component
+        :is="componentInModal"
+        :id="modalContent"
+        
+        :previewMode="true"
+        @changedSaveData="save"
+        
+      />
     </Modal>
 
     <Navbar
@@ -58,10 +64,6 @@ export default {
     MapCustomizer,
     MapPlayer
   },
-
-  async created() {
-    //  TODO: load content from combo of default and local storage
-  },
   data() {
     return {
       mode: 'tasks',
@@ -85,39 +87,28 @@ export default {
     },
   },
   methods: {
-    save() {
-      // TODO... SAVE OBJECT
+    save(data) {
+      this.$store.commit('save', {
+        id: this.modalContent,
+        type: this.mode,
+        data,
+      })
     },
-    async launchCustomizer(id) {
+    launchCustomizer(id) {
       this.modalEditing = true
       this.modalContent = id
-// this.modalState = {
-//   ...getDefaultMapCustomizerState(),
-//   ...state,
-//   graph: { ...state.graph, uneditable: false },
-//   favorites: [ ...this.favorites]
-// }
     },
     launchPreviewModal(id) {
       this.modalContent = id
       this.modalEditing = false
     },
-
-    async customizeNewContent() {
-      const newMapId = uuid()
-      this.$store.commit('newMap', newMapId)
-      this.modalContent = newMapId
+    customizeNewContent() {
+      const newId = uuid()
+      this.$store.commit(this.mode === 'maps' ? 'newMap' : 'newTask', newId)
+      this.modalContent = newId
       this.modalEditing = true
     },
-    // async saveCustomizedContent() {
-    //   const { name } = this.modalState
-
-    //   if (name === '') {
-    //     noBlankNameSwal()
-    //     return
-    //   }
-
-      // destructure modalContent and set content differently in maps vs tasks
+// destructure modalContent and set content differently in maps vs tasks
 //       let content
 //       if (this.modalContent === KAREL_TASK_CUSTOMIZER) {
 //         const { instructions, hint, tags, preWorld, postWorld, blocklyXml } = this.modalState
@@ -136,22 +127,9 @@ export default {
 //             onceUponATimeWasCorreclyCompleted: false,
 //             playing: false,
 //             stepSpeed: 3,
-//           }
-          
+//           }      
 //         }
-//       } else if (this.modalContent === KAREL_MAP_CUSTOMIZER) {
-//         const { graph, timeLimit, tags } = this.modalState
-//         content = {
-//           name,
-//           state: {
-//             name, timeLimit, tags,
-//             startTime: null,
-//             endTime: null,
-//             graph: { ...graph, uneditable: true, selected: null }
-//           }
-          
-//         }
-//       }
+//       } 
 
     // },
 

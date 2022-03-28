@@ -43,6 +43,7 @@
 <script>
 import MapGraph from '@/components/MapPlayer/MapGraph'
 import { renameMapSwal } from '@/helpers/projectSwallows'
+const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
   components: { MapGraph },
@@ -55,15 +56,30 @@ export default {
   data() {
     const mapData = this.$store.getters.map(this.id)
     return {
-      graph: mapData.graph || null,
-      name: mapData.name || 'Default Map Name',
+      graph: copy(mapData.graph),
+      name: mapData.name,
       selected: null
+    }
+  },
+  watch: {
+    graph: {
+      deep: true,
+      handler() { this.save() }
     }
   },
   methods: {
     async launchRenameMapSwal() {
       const res = await renameMapSwal(this.name)
-      if (res.value) this.name = res.value
+      if (res.value) {
+        this.name = res.value
+        this.save()
+      }
+    },
+    save() {
+      this.$emit('changedSaveData', {
+        graph: copy(this.graph),
+        name: this.name
+      })
     }
   }
 }

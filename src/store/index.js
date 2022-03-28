@@ -37,7 +37,6 @@ export default createStore({
       const mapTasks = Object.values(mapData.graph.nodes).map(nodeData => nodeData.taskId)
       return mapTasks.every(taskId => getters.taskIsComplete(taskId))
     }
-
   },
   mutations: {
     newMap: (state, id) => {
@@ -46,15 +45,15 @@ export default createStore({
         graph: { edges: {}, nodes: {} }
       }
     },
-    delete: (state, id) => {
-      delete state.maps[id]
-      delete state.tasks[id]
-    },
-
     newTask: (state, id) => {
       state.tasks[id] = {
         // enter default task object
       }
+    },
+    save:  (state, { id, type, data } ) => state[type][id] = data,
+    delete: (state, id) => {
+      delete state.maps[id]
+      delete state.tasks[id]
     },
     toggleFavorite: (state, id) => {
       const index = state.favorites.indexOf(id)

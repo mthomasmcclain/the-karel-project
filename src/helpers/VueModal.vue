@@ -6,35 +6,21 @@
         <h3>{{ title }}</h3>
       </div>
 
-
       <div class="modal-main">
         <slot />
       </div>
 
-
-      <!-- If Editing, Show Cance, Save, and Delete Buttons -->
-      <div v-if="editing" class="modal-buttons">     
-          <button class="mdc-button mdc-button--outlined" @click="$emit('close')">
-            <span class="mdc-button__ripple"></span>
-            <span class="mdc-button__label">Cancel</span>
+      <div class="modal-buttons">     
+        <button class="mdc-button mdc-button--outlined" @click="$emit('close')">
+          <span class="mdc-button__ripple"></span>
+          <span class="mdc-button__label">Cancel</span>
         </button>
-          <button class="mdc-button mdc-button--outlined" @click="$emit('save')">
-            <span class="mdc-button__ripple"></span>
-            <span class="mdc-button__label">Save</span>
-        </button>
-          <button class="mdc-button mdc-button--outlined"
-            @click="$emit('delete')"
-          >
-            <span class="mdc-button__ripple"></span>
-            <span class="mdc-button__label">Delete</span>
-        </button>
-      </div>
-
-      <!-- If Previewing, only Show Close Button -->
-      <div v-else class="modal-buttons" style="margin-top: 6px;">
-          <button class="mdc-button mdc-button--outlined" @click="$emit('close')">
-            <span class="mdc-button__ripple"></span>
-            <span class="mdc-button__label">Close</span>
+        <button class="mdc-button mdc-button--outlined"
+          v-if="editing"
+          @click="$emit('delete')"
+        >
+          <span class="mdc-button__ripple"></span>
+          <span class="mdc-button__label">Delete</span>
         </button>
       </div>
     </div>
@@ -47,8 +33,6 @@ export default {
     props: ['title', 'editing']
 }
 </script>
-
-
 
 <style scoped>
 .modal-background {
