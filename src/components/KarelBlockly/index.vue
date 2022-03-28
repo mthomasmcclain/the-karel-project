@@ -137,7 +137,7 @@ export default {
       }
     },
     blocksUsedByType() {
-  const blocksUsedByType = {}
+      const blocksUsedByType = {}
       Object.entries(settingNameToTypeName).forEach(([settingName, blockType]) => {
         var count = (this.workspace.match(new RegExp(blockType, 'g')) || []).length
         blocksUsedByType[settingName] = count
