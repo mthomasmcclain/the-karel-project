@@ -22,7 +22,6 @@ export default createStore({
   getters: {
     tasks: state => () => Object.keys(state.tasks),
     maps: state => () => Object.keys(state.maps),
-
     task: state => id => state.tasks[id],
     map: state => id => state.maps[id],
     type: ( _state , {task, map} ) => id => {
@@ -50,7 +49,9 @@ export default createStore({
         // enter default task object
       }
     },
-    save:  (state, { id, type, data } ) => state[type][id] = data,
+    saveMap:  (state, { id, data } ) => state.maps[id] = data,
+    saveTask: (state, { id, data }) => state.tasks[id] = data,
+
     delete: (state, id) => {
       delete state.maps[id]
       delete state.tasks[id]
@@ -66,8 +67,14 @@ export default createStore({
     }
   },
   actions: {
-  },
-  modules: {
+    newMap:  ({ commit }, id) => commit('newMap',  id),
+    newTask: ({ commit }, id) => commit('newTask', id),
+    saveMap: ({ commit }, data)  => commit('saveMap',  data),
+    saveTask: ({ commit }, data) => commit('saveTask', data),
+    delete: ({ commit }, id) => commit('delete', id),
+    toggleFavorite: ({ commit }, id) => commit('toggleFavorite', id),
+    taskComplete: ({ commit }, id) => commit('taskComplete', id)
+
   },
   plugins: [vuexLocal.plugin]
 })

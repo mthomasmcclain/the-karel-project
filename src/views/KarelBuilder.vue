@@ -5,15 +5,13 @@
       v-if="modalContent"
       :editing="modalEditing"
       @close="closeModal"
-      @delete="$store.commit('delete', modalContent); modalContent = null;"
+      @delete="$store.dispatch('delete', modalContent); modalContent = null;"
     >
       <component
         :is="componentInModal"
         :id="modalContent"
-        
+
         :previewMode="true"
-        @changedSaveData="save"
-        
       />
     </Modal>
 
@@ -85,13 +83,6 @@ export default {
     },
   },
   methods: {
-    save(data) {
-      this.$store.commit('save', {
-        id: this.modalContent,
-        type: this.mode,
-        data,
-      })
-    },
     launchCustomizer(id) {
       this.modalEditing = true
       this.modalContent = id
@@ -102,7 +93,7 @@ export default {
     },
     customizeNewContent() {
       const newId = uuid()
-      this.$store.commit(this.mode === 'maps' ? 'newMap' : 'newTask', newId)
+      this.$store.dispatch(this.mode === 'maps' ? 'newMap' : 'newTask', newId)
       this.modalContent = newId
       this.modalEditing = true
     },

@@ -76,10 +76,11 @@ export default {
       }
     },
     save() {
-      this.$emit('changedSaveData', {
+      const data = {
         graph: copy(this.graph),
         name: this.name
-      })
+      }
+      this.$store.dispatch('saveMap', { data, id: this.id })
     }
   }
 }

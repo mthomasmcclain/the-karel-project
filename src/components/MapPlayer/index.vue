@@ -87,7 +87,7 @@ export default {
       this.graph.nodes[id].visited = true
     },
     async handleTaskCorrect() {
-      this.$store.commit('taskComplete', this.activeTask)
+      this.$store.dispatch('taskComplete', this.activeTask)
       this.selected = null
       if (this.$store.getters.mapIsComplete(this.id)) {
         await mapCompleteSwal()
