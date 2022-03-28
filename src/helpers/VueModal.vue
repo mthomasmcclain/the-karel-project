@@ -30,7 +30,12 @@
 <script>
 export default {
     name: 'modal',
-    props: ['title', 'editing']
+    props: ['id', 'editing'],
+    computed: {
+      title() {
+        return this.$store.getters.name(this.id)
+      }
+    }
 }
 </script>
 

@@ -1,9 +1,10 @@
 <template>
-  <div class="karel-galler">
+  <div class="karel-gallery">
 
     <Modal
       v-if="modalContent"
       :editing="modalEditing"
+      :id="modalContent"
       @close="closeModal"
       @delete="$store.dispatch('delete', modalContent); modalContent = null;"
     >
@@ -21,7 +22,7 @@
       @newContent="customizeNewContent"
     />
 
-    <div class="karel-galler-body">
+    <div class="karel-gallery-body">
       <div class="card-wrapper">
         <ContentCard
           v-for="id in content" class="content-card"

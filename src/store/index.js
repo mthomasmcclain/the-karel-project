@@ -24,6 +24,9 @@ export default createStore({
     maps: state => () => Object.keys(state.maps),
     task: state => id => state.tasks[id],
     map: state => id => state.maps[id],
+    name: ( _state, getters) => id => {
+      return getters.type(id) === 'map' ? getters.map(id).name : getters.task(id).name
+    },
     type: ( _state , {task, map} ) => id => {
       if (task(id)) return 'task'
       else if (map(id)) return 'map'
