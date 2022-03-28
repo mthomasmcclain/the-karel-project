@@ -91,6 +91,11 @@ export default {
       required: false,
       default: false
     },
+    selected: {
+      type: String || null,
+      required: false,
+      default: null
+    },
     previewMode: {
       type: Boolean,
       required: false,
@@ -103,7 +108,6 @@ export default {
       height: 0,
       edges: copy(this.graph.edges),
       nodes: copy(this.graph.nodes),
-      selected: null,
       newFromNode: null,
       newToNode: null,
     }
@@ -112,7 +116,8 @@ export default {
     graph(val) {
       this.edges = copy(val.edges)
       this.nodes = copy(val.nodes)
-    }
+    },
+
   },
   mounted() {
     window.addEventListener('keydown', this.handleKeydown)
@@ -140,8 +145,7 @@ export default {
     handleNodeClick(nodeId) {
       if (this.editMode) {
         this.$emit('selectId', this.selected === nodeId ? null : nodeId)
-      }
-      else { // play mode
+      } else { // play mode
         if (this.isAccessible(nodeId)) this.$emit('selectId', nodeId)
       }
     },

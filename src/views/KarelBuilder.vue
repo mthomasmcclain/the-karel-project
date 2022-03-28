@@ -45,8 +45,6 @@ import Navbar from '@/components/BuilderComponents/Navbar'
 import ContentCard from '@/components/BuilderComponents/ContentCard'
 // import generateKarelTaskCustomizerStateFromRunState from '@/components/BuilderComponents/generateKarelTaskCustomizerStateFromRunState'
 // import getDefaultTaskCustomizerState from '@/components/BuilderComponents/getDefaultTaskCustomizerState'
-// import getDefaultMapCustomizerState from '@/components/BuilderComponents/getDefaultMapCustomizerState'
-
 // import { noBlankNameSwal, confirmCloseWithoutSaveSwal } from '@/helpers/projectSwallows'
 import TaskCustomizer from '@/components/BuilderComponents/TaskCustomizer'
 import TaskPlayer from '@/components/TaskPlayer'
