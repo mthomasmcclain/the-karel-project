@@ -202,93 +202,116 @@ import RotationIconBox from './RotationIconVueSvg'
 import StoneAndNumber from './StoneAndNumberVueSvg'
 import KarelVueSvg from '@/assets/KarelVueSvg'
 export default {
-    components: {
-      SvgPositioner,
-      PlusMinusBox,
-      RotationIconBox,
-      StoneAndNumber,
-      KarelVueSvg,
+  components: {
+    SvgPositioner,
+    PlusMinusBox,
+    RotationIconBox,
+    StoneAndNumber,
+    KarelVueSvg,
+  },
+  props: {
+    borderWidth: {
+      type: Number,
+      required: false,
+      default: 0.35,
     },
-    props: {
-        borderWidth: {
-            type: Number,
-            required: false,
-            default: 0.35,
-        }
+    world: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    const { nCols, nRows, karelRow, karelCol, karelDir, walls, stones } = this.world
+    return {
+      nCols, nRows, karelRow, karelCol, karelDir, walls, stones,
+      editRow: null,
+      editCol: null,
+      editWallR: null,
+      editWallC: null,
+      editWallD: null,
+    }
+  },
+  watch: {
+    world: { // when world prop changes, re-align inner states
+      deep: true,
+      handler(val) {
+        const { nCols, nRows, karelRow, karelCol, karelDir, walls, stones } = val
+        this.nCols = nCols
+        this.nRows = nRows
+        this.karelRow = karelRow
+        this.karelCol = karelCol
+        this.karelDir = karelDir
+        this.walls = walls
+        this.stones = stones
+      }
+    }
+  },
+  methods: {
+    emitChange() {
+      const { nCols, nRows, karelRow, karelCol, karelDir, walls, stones } = this
+      this.$emit('change', { nCols, nRows, karelRow, karelCol, karelDir, walls, stones })
     },
-    data() { return {
-        nCols: 3,
-        nRows: 3,
-        karelRow: 0,
-        karelCol: 0,
-        karelDir: 'North',
-        walls: [],
-        stones: [],
-        lastClicked: null,
-        editRow: null,
-        editCol: null,
-        editWallR: null,
-        editWallC: null,
-        editWallD: null,
+    resetEditModes() {
+      this.editRow = null
+      this.editCol = null
+      this.editWallR = null
+      this.editWallC = null
+      this.editWallD = null
+    },
+    numStones(r, c) {
+      const index = this.stones.findIndex(stone => stone.r === r && stone.c === c)
+      if (index > -1) return this.stones[index].n
+      else return 0
+    },
+    decrementStones(r, c) {
+      const index = this.stones.findIndex(stone => stone.r === r && stone.c === c)
+      if (index > -1) {
+        this.stones[index].n -= 1
+        if (this.stones[index].n === 0) this.stones.splice(index, 1)
+        this.emitChange()
       }
     },
-    methods: {
-        resetEditModes() {
-            this.editRow = null
-            this.editCol = null
-            this.editWallR = null
-            this.editWallC = null
-            this.editWallD = null
-        },
-        numStones(r, c) {
-          const index = this.stones.findIndex(stone => stone.r === r && stone.c === c)
-          if (index > -1) return this.stones[index].n
-          else return 0
-        },
-        decrementStones(r, c) {
-            const index = this.stones.findIndex(stone => stone.r === r && stone.c === c)
-            if (index > -1) {
-              this.stones[index].n -= 1
-              if (this.stones[index].n === 0) this.stones.splice(index, 1)
-            }
-        },
-        incrementStones(r, c) {
-          const index = this.stones.findIndex(stone => stone.r === r && stone.c === c)
-          if (index > -1) this.stones[index].n += 1
-          else this.stones.push({ r, c, n: 1 })
-        },
-        toggleKarel(r, c) {
-          const nextDirectionMap = { North: 'East', East: 'South', South: 'West', West: 'North' }
-          if (this.karelRow === r && this.karelCol === c) this.karelDir = nextDirectionMap[this.karelDir]
-          else {
-            this.karelRow = r
-            this.karelCol = c
-          }
-        },
-        toggleWall(r, c, d) {
-          const index = this.walls.findIndex(wall => wall.r === r && wall.c === c && wall.d === d)
-          if (index > -1) {
-            this.walls.splice(index, 1)
-            this.walls = [ ...this.walls ]
-          } else {
-            this.walls.push({ r, c, d })
-          }
-        }
+    incrementStones(r, c) {
+      const index = this.stones.findIndex(stone => stone.r === r && stone.c === c)
+      if (index > -1) this.stones[index].n += 1
+      else this.stones.push({ r, c, n: 1 })
+      this.emitChange()
     },
-    computed: {
-        viewBoxW() { return this.nCols * 10 },
-        viewBoxH() { return this.nRows * 10 },
-        eastWalls()  { return this.walls.filter(wall => wall.d.toLowerCase() === 'east' )},
-        northWalls() { return this.walls.filter(wall => wall.d.toLowerCase() === 'north')},
-        rotation() {
-            if (!this.karelDir) return 0
-            const dir = this.karelDir.toLowerCase();
-            if (dir === 'south') return 0
-            else if (dir === 'west') return 90
-            else if (dir === 'north') return 180
-            else if (dir === 'east') return 270
-            else return 0
-        },
-    }, // end computed
+    toggleKarel(r, c) {
+      const nextDirectionMap = { North: 'East', East: 'South', South: 'West', West: 'North' }
+      if (this.karelRow === r && this.karelCol === c) {
+        this.karelDir = nextDirectionMap[this.karelDir]
+      } else {
+        this.karelRow = r
+        this.karelCol = c
+      }
+      this.emitChange()
+    },
+    toggleWall(r, c, d) {
+      const index = this.walls.findIndex(wall => wall.r === r && wall.c === c && wall.d === d)
+      if (index > -1) {
+        this.walls.splice(index, 1)
+        this.walls = [ ...this.walls ]
+      } else {
+        this.walls.push({ r, c, d })
+      }
+      this.emitChange()
+    }
+  },
+  computed: {
+      viewBoxW() { return this.nCols * 10 },
+      viewBoxH() { return this.nRows * 10 },
+      eastWalls()  { return this.walls.filter(wall => wall.d.toLowerCase() === 'east' )},
+      northWalls() { return this.walls.filter(wall => wall.d.toLowerCase() === 'north')},
+      rotation() {
+          if (!this.karelDir) return 0
+          const dir = this.karelDir.toLowerCase();
+          if (dir === 'south') return 0
+          else if (dir === 'west') return 90
+          else if (dir === 'north') return 180
+          else if (dir === 'east') return 270
+          else return 0
+      },
+  }, // end computed
 };
 </script>

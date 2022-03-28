@@ -13,7 +13,6 @@ import Blockly from 'blockly'
 import * as en from 'blockly/msg/en'
 import enTranslations from '@/helpers/karelTranslationsEN'
 import initializeKarelBlocks from '@/helpers/initializeKarelBlocks'
-import _ from 'lodash'
   
 Object.assign(en, enTranslations)
 Blockly.setLocale(en)
@@ -106,12 +105,12 @@ export default {
       else this.workspaceInstance.updateToolbox(this.injectedToolbox)
       this.updateChips()
     },
-    settings(n, o) {
-      if (n.maxBlocks !== o.maxBlocks || !_.isEqual(n.blocks, o.blocks)) {
+    settings: {
+      deep: true,
+      handler() {
         this.$emit('update:toolbox', generateToolbox(this.activeBlocks))
         this.instantiateBlockly()
       }
-      else this.updateToolbox()
     },
     'settings.customizerMode'() {
       this.instantiateBlockly()
@@ -120,9 +119,7 @@ export default {
       o && o.forEach(id => this.workspaceInstance.highlightBlock(id, false))
       n && n.forEach(id => this.workspaceInstance.highlightBlock(id, true))
     },
-    blocksUsedByType() {
-  this.updateChips()
-    },
+    blocksUsedByType() { this.updateChips() },
   },
   computed: {
     injectedToolbox() {
@@ -132,12 +129,12 @@ export default {
       if (this.settings.maxBlocks === -1 ) return -1
       else {
         // look at workspace and count and return maxBlocks minus number of used blocks
-        var count = (this.workspace.match(/<block /g) || []).length
+        const count = (this.workspace.match(/<block /g) || []).length
         return this.settings.maxBlocks - count
       }
     },
     blocksUsedByType() {
-      const blocksUsedByType = {}
+    const blocksUsedByType = {}
       Object.entries(settingNameToTypeName).forEach(([settingName, blockType]) => {
         var count = (this.workspace.match(new RegExp(blockType, 'g')) || []).length
         blocksUsedByType[settingName] = count

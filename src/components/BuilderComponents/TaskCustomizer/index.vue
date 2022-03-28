@@ -4,12 +4,12 @@
       
       <div class="start-world-area">
         <h4>Start World:</h4>
-        <KarelWorldRendererAndEditor :world="preWorld" />
+        <KarelWorldRendererAndEditor :world="preWorld" @change="preWorld = $event" />
       </div>
       
       <div class="end-world-area">
         <h4>Goal World:</h4>
-        <KarelWorldRendererAndEditor :world="postWorld" />
+        <KarelWorldRendererAndEditor :world="postWorld" @change="postWorld= $event" />
       </div>
       
       <div class="karel-blockly-wrapper">
@@ -124,28 +124,23 @@ export default {
     KarelBlocklySettingsEditor
   },
   data() {
-    const {
-      name,
-      hint,
-      preWorld,
-      postWorld,
-      instructions,
-      karelBlockly,
-      tags
-    } = this.$store.getters.task(this.id)
-    console.log(name, hint, preWorld, postWorld, instructions, karelBlockly, tags)
+    const { name, instructions, hint, preWorld, postWorld,  karelBlockly, tags } = this.$store.getters.task(this.id)
     return  {
       activeTab: 'Basic',
       name,
-      hint,
-      preWorld,
-      postWorld,
       instructions,
-      karelBlockly,
-      tags
+      hint,
+      preWorld: copy(preWorld),
+      postWorld: copy(postWorld),
+      karelBlockly: copy(karelBlockly),
+      tags: copy(tags)
     }
   },
   watch: {
+    '$data': {
+      deep: true,
+      handler() { this.save() }
+    },
     'preWorld.walls': {
       handler( curr ) {
         if (!_.isEqual(this.postWorld.walls, curr)) {
@@ -170,6 +165,17 @@ export default {
     },
   },
   methods: {
+    save() {
+      const { name, instructions, hint, preWorld, postWorld, karelBlockly, tags, id } = this
+      const data = {
+        name, instructions, hint,
+        preWorld: copy(preWorld),
+        postWorld: copy(postWorld),
+        karelBlockly: copy(karelBlockly),
+        tags: copy(tags)
+      }
+      this.$store.dispatch('saveTask', { data, id })
+    },
     getSystemTags(settings) {
       if (!settings) return []
       let systemTags = []
@@ -233,8 +239,8 @@ export default {
       const block = this.karelBlockly.settings.blocks[blockName]
       block.active = !block.active
     },
-    setBlockLimit(blockName, n) {
-      this.karelBlockly.settings.blocks[blockName].limit = n
+    setBlockLimit(blockName, limit) {
+      this.karelBlockly.settings.blocks[blockName].limit = limit
     },
     updateBlocklySetting(param, val) {
       this.karelBlockly.settings[param] = val
