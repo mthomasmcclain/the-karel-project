@@ -14,16 +14,16 @@
 
       <!-- If Editing, Show Cance, Save, and Delete Buttons -->
       <div v-if="editing" class="modal-buttons">     
-          <button class="mdc-button mdc-button--outlined" @click="confirmCloseModal">
+          <button class="mdc-button mdc-button--outlined" @click="$emit('close')">
             <span class="mdc-button__ripple"></span>
             <span class="mdc-button__label">Cancel</span>
-        </button>    
-          <button class="mdc-button mdc-button--outlined" @click="saveCustomizedContent">
+        </button>
+          <button class="mdc-button mdc-button--outlined" @click="$emit('save')">
             <span class="mdc-button__ripple"></span>
             <span class="mdc-button__label">Save</span>
         </button>
           <button class="mdc-button mdc-button--outlined"
-            @click="deleteContent"
+            @click="$emit('delete')"
           >
             <span class="mdc-button__ripple"></span>
             <span class="mdc-button__label">Delete</span>

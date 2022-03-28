@@ -6,25 +6,25 @@ import maps from './maps'
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   key: 'the-karel-project',
-  reducer: state => ({
-    favorites: state.favorites,
-    completed: state.completed
-  }),
+  // reducer: state => ({
+  //   favorites: state.favorites,
+  //   completed: state.completed
+  // }),
 })
 
 export default createStore({
   state: {
-    karelTasks: { ...tasks },
-    karelMaps: { ...maps },
+    tasks: { ...tasks },
+    maps: { ...maps },
     favorites: [ ],
     completed: [ ]
   },
   getters: {
-    tasks: state => () => Object.keys(state.karelTasks),
-    maps: state => () => Object.keys(state.karelMaps),
+    tasks: state => () => Object.keys(state.tasks),
+    maps: state => () => Object.keys(state.maps),
 
-    task: state => id => state.karelTasks[id],
-    map: state => id => state.karelMaps[id],
+    task: state => id => state.tasks[id],
+    map: state => id => state.maps[id],
     type: ( _state , {task, map} ) => id => {
       if (task(id)) return 'task'
       else if (map(id)) return 'map'
@@ -41,13 +41,18 @@ export default createStore({
   },
   mutations: {
     newMap: (state, id) => {
-      state.karelMaps[id] = {
+      state.maps[id] = {
         name: "New Karel Map",
         graph: { edges: {}, nodes: {} }
       }
     },
+    delete: (state, id) => {
+      delete state.maps[id]
+      delete state.tasks[id]
+    },
+
     newTask: (state, id) => {
-      state.karelTasks[id] = {
+      state.tasks[id] = {
         // enter default task object
       }
     },

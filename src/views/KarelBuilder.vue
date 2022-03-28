@@ -5,6 +5,8 @@
       v-if="modalContent"
       :editing="modalEditing"
       @close="closeModal"
+      @save="handleSave"
+      @delete="$store.commit('delete', modalContent); modalContent = null;"
     >
       <component :is="componentInModal" :id="modalContent" />
     </Modal>
@@ -83,6 +85,9 @@ export default {
     },
   },
   methods: {
+    save() {
+      // TODO... SAVE OBJECT
+    },
     async launchCustomizer(id) {
       this.modalEditing = true
       this.modalContent = id
@@ -151,7 +156,6 @@ export default {
     // },
 
     closeModal() {
-      this.modalTitle = null
       this.modalContent = null
       this.modalEditing = null
     }

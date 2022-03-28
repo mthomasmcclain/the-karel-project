@@ -77,7 +77,10 @@ const closest = (set, pos) => {
   return cid
 }
 
+const copy = x => JSON.parse(JSON.stringify(x))
+
 export default {
+  
   components: {
     SvgArrow,
     SvgArrowDrawer,
@@ -88,8 +91,8 @@ export default {
     return {
       width: 0,
       height: 0,
-      edges: this.graph.edges,
-      nodes: this.graph.nodes,
+      edges: copy(this.graph.edges),
+      nodes: copy(this.graph.nodes),
       selected: null,
       newFromNode: null,
       newToNode: null,
@@ -97,8 +100,8 @@ export default {
   },
   watch: {
     graph(val) {
-      this.edges = val.edges
-      this.nodes = val.nodes
+      this.edges = copy(val.edges)
+      this.nodes = copy(val.nodes)
     }
   },
   mounted() {
@@ -167,11 +170,8 @@ export default {
     async handleDrop({ x, y, currentTarget, dataTransfer }) {
       if (!this.editMode) return
       const taskId = dataTransfer.getData("text/plain")
-      if (!isUUID(taskId)) {
-        console.log('taskId', taskId)
-        console.log(dataTransfer)
-        return alert('Unknown drop type.')
-      }
+      if (!isUUID(taskId)) return alert('Unknown drop type.')
+      
       const { left, top } = currentTarget.getBoundingClientRect()
       x -= left
       y -= top
