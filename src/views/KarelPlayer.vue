@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="karel-player" style="width: 100%; height: 100%;">
 
     <div v-if="!activeMap">
       <h3>Select Map Here</h3>

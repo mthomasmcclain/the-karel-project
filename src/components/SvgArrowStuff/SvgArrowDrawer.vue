@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     drag(event) {
-      const {x, y} = event.Svg
+      const {x, y} = event.svg
       if (this.from === null) {
         this.from = {x,y}
         this.$emit('start', {x,y})

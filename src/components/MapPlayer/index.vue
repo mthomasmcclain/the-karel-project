@@ -148,7 +148,8 @@ export default {
 }
 
 .map-body {
-    flex-grow: 1;
+  position: relative;
+  flex-grow: 1;
 }
 .node,
 .edge {
