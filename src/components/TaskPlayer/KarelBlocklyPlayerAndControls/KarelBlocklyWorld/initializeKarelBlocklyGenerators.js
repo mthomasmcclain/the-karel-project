@@ -64,7 +64,7 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
     Blockly.JavaScript['karel_if_dropdown'] = function (block) {
         var dropdown_condition = CONDITIONS_TO_KAREL_JS[block.getFieldValue('CONDITION')];
         var statements_then = Blockly.JavaScript.statementToCode(block, 'THEN');
-        var code = 'if (' + dropdown_condition + ') {\n';
+        var code = 'if (' + dropdown_condition + ') { await step();\n';
         code += statements_then
         code += '}\n'
         return code;
@@ -73,7 +73,7 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
     Blockly.JavaScript['karel_while_dropdown'] = function (block) {
         var dropdown_condition = CONDITIONS_TO_KAREL_JS[block.getFieldValue('CONDITION')];
         var statements_loop = Blockly.JavaScript.statementToCode(block, 'LOOP');
-        var code = 'while (' + dropdown_condition + ') {\n';
+        var code = 'while (' + dropdown_condition + ') { await step();\n';
         code += statements_loop + '\n'
         code += '}\n'
         return code;

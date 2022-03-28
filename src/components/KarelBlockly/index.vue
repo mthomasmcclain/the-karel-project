@@ -1,10 +1,12 @@
 <template>
-  <div class="container" ref="container"
-    :style="{ 'pointer-events': settings.disabled ? 'none' : 'auto' }"
-  />
-  <div v-if="settings.maxBlocks !== -1" class="blocks-remaining">Blocks Left:
-    <span>{{ totalBlocksLeft }}</span>
-  </div>  
+  <div class="wrapper">
+    <div class="container" ref="container"
+      :style="{ 'pointer-events': settings.disabled ? 'none' : 'auto' }"
+    />
+    <div v-if="settings.maxBlocks !== -1" class="blocks-remaining">Blocks Left:
+      <span>{{ totalBlocksLeft }}</span>
+    </div>
+  </div>
 </template>
 
 
@@ -91,7 +93,7 @@ const lockProcedureBlock = (block, isLocked) => {
 
 export default {
   name: 'karel-blockly',
-  props: [ 'settings', 'toolbox', 'workspace', 'highlighted' ],
+  props: [ 'settings', 'toolbox', 'workspace', 'highlight' ],
   mounted() {
     this.$emit('update:toolbox', generateToolbox(this.activeBlocks))
     this.instantiateBlockly()
@@ -303,8 +305,12 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.wrapper { 
   position: relative;
+  width: 100%;
+  height: 100%;  
+}
+.container {
   width: 100%;
   height: 100%;
 }
