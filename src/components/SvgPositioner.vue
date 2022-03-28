@@ -1,12 +1,6 @@
 <template>
-  <g :ref="el => el && setSvg(el)">
-    <slot>
-      <!-- DEFAULT SLOT CONTENT (For Testing This Component) --> 
-      <svg viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="49" fill="pink" />
-          <text x="10" y="50">Default Slot</text>
-      </svg>
-    </slot>
+  <g ref="outerSvg">
+    <slot />
   </g> 
 </template>
 
@@ -56,6 +50,13 @@ export default {
       validator: validateAnchor
     },
   },
+  mounted() { this.setSvg() },
+  watch: {
+    '$props': {
+        deep: true,
+        handler() { this.setSvg() }
+      }
+  },
   computed: {
     finalWidth() {
       // if no w or h passed, set to 100
@@ -86,9 +87,11 @@ export default {
     }
   },
   methods: {
-    setSvg(el) {
+    setSvg() {
+      const el = this.$refs.outerSvg
       const innerSvg = el.querySelector('svg')
-      
+      if (!innerSvg) throw new Error('svg element must be put into svg-positioner slot')
+
       const vb = innerSvg.getAttribute('viewBox')
       const [ x, y, w, h ] = vb.split(/\s+/).map(el => parseInt(el))
       this.viewBox = { x, y, w, h }
