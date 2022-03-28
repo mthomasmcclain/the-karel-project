@@ -4,20 +4,20 @@
       
       <div class="start-world-area">
         <h4>Start World:</h4>
-        <KarelWorldRenderer :world="preWorld" />
+        <KarelWorldRendererAndEditor :world="preWorld" />
       </div>
       
       <div class="end-world-area">
         <h4>Goal World:</h4>
-        <KarelWorldRenderer :world="postWorld" />
+        <KarelWorldRendererAndEditor :world="postWorld" />
       </div>
       
       <div class="karel-blockly-wrapper">
         <KarelBlockly
-            v-model:toolbox="blocklyXml.toolbox"
-            v-model:workspace="blocklyXml.workspace"
-            v-model:settings="blocklyXml.settings"
-            v-model:highlight="blocklyXml.highlight"
+            v-model:toolbox="karelBlockly.toolbox"
+            v-model:workspace="karelBlockly.workspace"
+            v-model:settings="karelBlockly.settings"
+            v-model:highlight="karelBlockly.highlight"
         />
       </div>
     </div>
@@ -37,13 +37,11 @@
         <div id="tab-body-scroller">
           <div v-show="activeTab === 'Toolbox'">
             <KarelBlocklySettingsEditor
-              v-if="blocklyXml"
-              :settings="blocklyXml.settings"
+              :settings="karelBlockly.settings"
               @toggleBlock="toggleBlock"
               @setBlockLimit="({ name, amount }) => setBlockLimit(name, amount)"
               @updateSetting="({ name, value }) => updateBlocklySetting(name, value)"
             />
-            <div v-else>Loading...</div>
           </div>
           
           <div id='basic-settings' v-show="activeTab === 'Basic'">
@@ -102,7 +100,7 @@
 <script>
 
 import _ from 'lodash'
-import KarelWorldRenderer from '@/components/KarelWorldRenderer'
+import KarelWorldRendererAndEditor from './KarelWorldRendererAndEditor'
 import KarelBlockly from '@/components/KarelBlockly'
 import KarelTagSelector from './KarelTagSelector'
 import KarelBlocklySettingsEditor from './KarelBlocklySettingsEditor' 
@@ -114,8 +112,14 @@ const copy = (val)  => JSON.parse(JSON.stringify(val))
 
 export default {
   name: 'task-customizer',
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
   components: {
-    KarelWorldRenderer,
+    KarelWorldRendererAndEditor,
     KarelBlockly,
     KarelTagSelector,
     KarelBlocklySettingsEditor
@@ -140,7 +144,7 @@ export default {
       },
       deep: true,
     },
-    'blocklyXml.settings': {
+    'karelBlockly.settings': {
       handler(settings) {
         this.tags.systemTags = this.getSystemTags(settings)
       },
@@ -208,14 +212,14 @@ export default {
       }
     },
     toggleBlock(blockName) {
-      const block = this.blocklyXml.settings.blocks[blockName]
+      const block = this.karelBlockly.settings.blocks[blockName]
       block.active = !block.active
     },
     setBlockLimit(blockName, n) {
-      this.blocklyXml.settings.blocks[blockName].limit = n
+      this.karelBlockly.settings.blocks[blockName].limit = n
     },
     updateBlocklySetting(param, val) {
-      this.blocklyXml.settings[param] = val
+      this.karelBlockly.settings[param] = val
     }
   }
 }
@@ -245,7 +249,7 @@ export default {
   }
   .start-world-area,
   .end-world-area {
-	width: 30%;
+    width: 30%;
     height: 100%;
     margin: 10px;
     display: flex;

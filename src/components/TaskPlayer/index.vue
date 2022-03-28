@@ -3,7 +3,7 @@
     
     <div class="left-col">
       <div class="instructions-box">
-        <b>Challenge:</b> {{ instructions }}
+        <b>Challenge:</b> {{ task.instructions }}
       </div>
       <div class="worlds-wrapper">
         <div class="world-col left">
@@ -12,7 +12,7 @@
         </div>
         <div class="world-col right">
           <h2>Goal:</h2>
-          <KarelWorldRenderer :world="postWorld" key="goal-world"/>
+          <KarelWorldRenderer :world="task.postWorld" key="goal-world"/>
         </div>
       </div>
       <div class="controls-wrapper">
@@ -21,7 +21,7 @@
           :toolbox="karelBlockly.toolbox"
           :workspace="karelBlockly.workspace"
           :stepSpeed="stepSpeed"
-          :preWorld="preWorld"
+          :preWorld="task.preWorld"
           :playing="playing"
           @play="playing = true"
           @pause="playing = false"
@@ -29,7 +29,7 @@
           @setStepSpeed="stepSpeed = $event"
         />
       </div>
-      <button class="hint-button" v-if="hint" @click="showHint">hint</button>
+      <button class="hint-button" v-if="task.hint" @click="showHint">hint</button>
     </div>
 
     <div class="right-col">
@@ -87,19 +87,9 @@ export default {
   },
   computed: {
     task() { return this.$store.getters.task(this.id) },
-    name() { return this.task.name },
-    preWorld() { return this.task.preWorld },
-    postWorld() { return this.task.postWorld },
-    instructions() { return this.task.instructions },
-    hint() { return this.task.hint },
-    hideToolbox() { return this.task.hideToolbox },
-    maxBlocks() { return this.task.maxBlocks },
-    initialWorkspace() { return this.task.initialWorkspace },
-    initialToolbox() { return this.task.initialToolbox },
-    initialSettings() { return this.task.initialSettings },
 
     world() {
-      return this.currentStepData ? this.currentStepData.world : this.preWorld
+      return this.currentStepData ? this.currentStepData.world : this.task.preWorld
     },
     codeCompletelyRun() {
       if (this.currentStepData) {
@@ -114,11 +104,11 @@ export default {
     codeCorrect() {
         if (!this.codeCompletelyRun) return null
         else if (this.error) return false
-        else return worldsMatch(this.currentStepData.world, this.postWorld)
+        else return worldsMatch(this.currentStepData.world, this.task.postWorld)
     }
   },
   methods: {
-    showHint() { taskHintSwal(this.hint) }
+    showHint() { taskHintSwal(this.task.hint) }
   },
 }
 </script>

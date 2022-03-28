@@ -100,15 +100,15 @@ export default {
 // destructure modalContent and set content differently in maps vs tasks
 //       let content
 //       if (this.modalContent === KAREL_TASK_CUSTOMIZER) {
-//         const { instructions, hint, tags, preWorld, postWorld, blocklyXml } = this.modalState
+//         const { instructions, hint, tags, preWorld, postWorld, karelBlockly } = this.modalState
 //         content = {
 //           name,  
 //           state: {
 //             name, instructions, hint, tags, preWorld, postWorld,
 //             karelBlockly: JSON.parse(JSON.stringify({
-//               ...blocklyXml,
+//               ...karelBlockly,
 //               settings: {
-//                 ...blocklyXml.settings,
+//                 ...karelBlockly.settings,
 //                 customizerMode: false,
 //               }
 //             })),

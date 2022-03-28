@@ -1,7 +1,7 @@
 export default function generateKarelTaskCustomizerStateFromRunState(runState) {
     return {
         activeTab: 'Basic',
-        blocklyXml: runState.karelBlockly,
+        karelBlockly: runState.karelBlockly,
         instructions: runState.instructions,
         hint: runState.hint,
         name: runState.name,

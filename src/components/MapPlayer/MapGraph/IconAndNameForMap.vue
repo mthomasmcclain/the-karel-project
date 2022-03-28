@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import SvgPositioner from '@/assets/SvgPositioner'
+import SvgPositioner from '@/components/SvgPositioner'
 import Karel from '@/assets/KarelVueSvg'
 
 export default {

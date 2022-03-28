@@ -4,8 +4,6 @@ export default {
     "preWorld": { "nCols": 4, "nRows": 2, "karelRow": 0, "karelCol": 0, "karelDir": "East", "walls": [{ "r": 1, "c": 0, "d": "North" }, { "r": 1, "c": 0, "d": "East" }, { "r": 1, "c": 1, "d": "East" }, { "r": 1, "c": 2, "d": "East" }], "stones": [{ "r": 1, "c": 1, "n": 2 }, { "r": 1, "c": 2, "n": 2 }, { "r": 1, "c": 3, "n": 2 }], "lastClicked": null, "editRow": null, "editCol": null, "editWallR": null, "editWallC": null, "editWallD": null },
     "postWorld": { "nCols": 4, "nRows": 2, "karelRow": 0, "karelCol": 3, "karelDir": "East", "walls": [{ "r": 1, "c": 0, "d": "North" }, { "r": 1, "c": 0, "d": "East" }, { "r": 1, "c": 1, "d": "East" }, { "r": 1, "c": 2, "d": "East" }], "stones": [], "lastClicked": null, "editRow": null, "editCol": null, "editWallR": null, "editWallC": null, "editWallD": null },
     "instructions": "Use functions to group blocks from the starter code in a way that makes the code simpler and easier to understand. Try to get the fewest possible number of blocks, and at least 10 blocks fewer than the starter code. Click the 'Reset Code' button to reset all of the blocks to the starting state.",
-    "hideToolbox": false,
-    "maxBlocks": null,
     "karelBlockly": {
         "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    <Block type=\"karel_turn_left\" id=\"karel_turn\" />\n    <Block type=\"karel_place_stone\" id=\"karel_place\" />\n    <Block type=\"karel_pickup_stone\" id=\"karel_pickup\" />\n    \n    \n    \n    <Block type=\"procedures_defnoreturn\" id=\"karel_define\" />\n  </xml>\n",
         "settings": {
