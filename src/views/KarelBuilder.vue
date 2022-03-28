@@ -50,7 +50,7 @@ import MapCustomizer from '@/components/BuilderComponents/MapCustomizer'
 import MapPlayer from '@/components/MapPlayer'
 
 export default {
-  name: 'task-and-map-browers-and-editor',
+  name: 'karel-builder',
   components: {
     Navbar,
     Modal,

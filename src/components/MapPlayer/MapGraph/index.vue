@@ -209,11 +209,9 @@ export default {
       this.emitChange()
     },
     setPotentialStartNode(pos) {
-      console.log('hitting start node handler')
       this.newFromNode = closest(this.nodes, pos)
     },
     setPotentialEndNode(pos) {
-      console.log('hitting end node handler')
       this.newToNode = closest(this.nodes, pos)
     },
     removeEdge(id) {
@@ -224,7 +222,6 @@ export default {
       return Object.values(this.edges).some(({ from, to }) => from === f && to === t )
     },
     addDrawnEdge() {
-      console.log('hitting end')
       const from = this.newFromNode
       const to = this.newToNode
       if ( from && to && from !== to && !this.edgeExists(from, to)) {
