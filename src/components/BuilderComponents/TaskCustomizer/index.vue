@@ -104,7 +104,6 @@ import KarelWorldRendererAndEditor from './KarelWorldRendererAndEditor'
 import KarelBlockly from '@/components/KarelBlockly'
 import KarelTagSelector from './KarelTagSelector'
 import KarelBlocklySettingsEditor from './KarelBlocklySettingsEditor' 
-import getDefaultCustomizerState from './getDefaultTaskCustomizerState'
 import { invalidResizeWallsSwal, invalidResizeKarelSwal, invalidResizeStonesSwal } from '@/helpers/projectSwallows'
 
 
@@ -125,7 +124,26 @@ export default {
     KarelBlocklySettingsEditor
   },
   data() {
-    return  copy(getDefaultCustomizerState())
+    const {
+      name,
+      hint,
+      preWorld,
+      postWorld,
+      instructions,
+      karelBlockly,
+      tags
+    } = this.$store.getters.task(this.id)
+    console.log(name, hint, preWorld, postWorld, instructions, karelBlockly, tags)
+    return  {
+      activeTab: 'Basic',
+      name,
+      hint,
+      preWorld,
+      postWorld,
+      instructions,
+      karelBlockly,
+      tags
+    }
   },
   watch: {
     'preWorld.walls': {
