@@ -49,7 +49,38 @@ export default createStore({
     },
     newTask: (state, id) => {
       state.tasks[id] = {
-        // enter default task object
+        name: "New Karel Task",
+        instructions: '',
+        hint: '',
+        preWorld: {
+          nCols: 3,
+          nRows: 3,
+          karelRow: 0,
+          karelCol: 0,
+          karelDir: 'North',
+          walls: [],
+          stones: [],
+          lastClicked: null,
+        },
+        postWorld: {
+          nCols: 3,
+          nRows: 3,
+          karelRow: 2,
+          karelCol: 2,
+          karelDir: 'East',
+          walls: [],
+          stones: [],
+          lastClicked: null,
+        },
+        karelBlockly: {
+          toolbox:
+          highlight:
+          
+        },
+        tags: {
+          'customTags': [],
+          'systemTags': [],
+        }
       }
     },
     saveMap:  (state, { id, data } ) => state.maps[id] = data,

@@ -42,7 +42,6 @@ import { v4 as uuid } from 'uuid'
 import Modal from '@/helpers/VueModal'
 import Navbar from '@/components/BuilderComponents/Navbar'
 import ContentCard from '@/components/BuilderComponents/ContentCard'
-// import generateKarelTaskCustomizerStateFromRunState from '@/components/BuilderComponents/generateKarelTaskCustomizerStateFromRunState'
 // import { noBlankNameSwal, confirmCloseWithoutSaveSwal } from '@/helpers/projectSwallows'
 import TaskCustomizer from '@/components/BuilderComponents/TaskCustomizer'
 import TaskPlayer from '@/components/TaskPlayer'
@@ -97,31 +96,6 @@ export default {
       this.modalContent = newId
       this.modalEditing = true
     },
-// destructure modalContent and set content differently in maps vs tasks
-//       let content
-//       if (this.modalContent === KAREL_TASK_CUSTOMIZER) {
-//         const { instructions, hint, tags, preWorld, postWorld, karelBlockly } = this.modalState
-//         content = {
-//           name,  
-//           state: {
-//             name, instructions, hint, tags, preWorld, postWorld,
-//             karelBlockly: JSON.parse(JSON.stringify({
-//               ...karelBlockly,
-//               settings: {
-//                 ...karelBlockly.settings,
-//                 customizerMode: false,
-//               }
-//             })),
-//             currentStepData: null,
-//             onceUponATimeWasCorreclyCompleted: false,
-//             playing: false,
-//             stepSpeed: 3,
-//           }      
-//         }
-//       } 
-
-    // },
-
     closeModal() {
       this.modalContent = null
       this.modalEditing = null
