@@ -23,6 +23,12 @@ export default createStore({
   getters: {
     tasks: state => () => Object.keys(state.tasks),
     maps: state => () => Object.keys(state.maps),
+    filteredTasks: (state, getters) => ({ subStr, favorites }) => {
+      return Object.entries(state.tasks)
+        .filter(([ , task]) => task.name.toLowerCase().includes(subStr.toLowerCase()))
+        .filter(([id]) => favorites ? getters.isFavorite(id) : true)
+        .map(([id]) => id)
+    },
     task: state => id => state.tasks[id],
     map: state => id => state.maps[id],
     name: ( _state, getters) => id => {

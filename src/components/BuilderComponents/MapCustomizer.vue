@@ -1,16 +1,19 @@
 <template>
   <div id="wrapper">
-    <ul>
-      <li
-        v-for="task in $store.getters.tasks()"
+    <div>
+      <input v-model="nameFilter" />
+      <input type="checkbox" v-model="favoritesFilter" />
+      <button @click="removeFilters">Remove Filters</button>
+      <div
+        v-for="task in $store.getters.filteredTasks({ subStr: nameFilter, favorites: favoritesFilter })"
         :key="`task-select-${task}`"
         draggable="true"
         @dragstart="event => event.dataTransfer.setData('text/plain', task)"
       >
         {{ $store.getters.task(task).name }}
-      </li>
+      </div>
 
-    </ul>
+    </div>
     
     <div id="build-area">
       
@@ -58,6 +61,8 @@ export default {
     return {
       graph: copy(mapData.graph),
       name: mapData.name,
+      nameFilter: '',
+      favoritesFilter: false,
       selected: null
     }
   },
@@ -81,7 +86,11 @@ export default {
         name: this.name
       }
       this.$store.dispatch('saveMap', { data, id: this.id })
-    }
+    },
+    removeFilters() {
+        this.nameFilter = ''
+        this.favoritesFilter = false
+      },
   }
 }
 
