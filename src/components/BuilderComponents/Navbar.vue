@@ -18,15 +18,6 @@
       </svg>
       <div>Karel</div><div>Maps</div>
     </div>
-    <div
-      class="new-task"
-      @click="$emit('newContent')"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-      </svg>
-      <span>New {{ mode === 'tasks' ? 'Task' : 'Map' }}</span>
-    </div>
   </div>
 </template>
 
@@ -61,14 +52,5 @@ export default {
 .selector.selected {
   color: green;
   fill: green;
-}
-.new-task {
-  margin-right: 20px;
-  margin-left: auto;
-  display: flex;
-  justify-content: space-between;
-  height: 20px;
-  width: 95px;
-  cursor: pointer;
 }
 </style>
