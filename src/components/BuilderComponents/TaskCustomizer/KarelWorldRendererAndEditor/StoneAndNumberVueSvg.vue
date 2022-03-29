@@ -33,7 +33,7 @@ export default {
     color: {
       type: String,
       required: false,
-      default: 'lightblue',
+      default: 'blue',
     }
   },
   computed: {

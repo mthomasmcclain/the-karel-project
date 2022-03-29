@@ -71,7 +71,7 @@
         <SvgPositioner
           :xPos="5 + 10*world.karelCol"
           :yPos="5 + 10*world.karelRow"
-          :w="7"
+          :w="5"
           anchor="center center"
           :rotation="rotation"
         >
