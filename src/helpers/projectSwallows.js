@@ -73,9 +73,9 @@ export function taskIncorrectSwal(errorMessage) {
 }
 
 export function mapCompleteSwal() {
-    const bodyOptions = ['Good job!', 'Nice Work.', 'You did it!', 'Well Done!', 'Awesome']
+    const bodyOptions = ['Good job!', 'Nice Work!', 'You did it!', 'Well Done!', 'Awesome!']
     const bodyStart = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
-    const body = bodyStart + '  You have completed every task in this map.'
+    const body = bodyStart + '  All tasks correctly completed.'
     const header = 'Map Complete'
     return Swal.fire(header, body, 'success')
 }

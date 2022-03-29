@@ -9,14 +9,12 @@ o - Update Save Version Pattern
 o - Include "Expert" Tasks and Related Behaviour
 o - Put New Task / New Map Behaviour in Card
 o - Add Reset Button to Task Player
-o - Delay Before Map Complete
+x - Delay Before Map Complete
 o - "How To" on Map Editer
 o - Layout the Task List / Filters on Map Editor
 o - Layout the Student Maps Page
 o - Turtle Icon on Browser Tab
 o - Get Project Domain and Deploy To
-
-
 
 MAYBE FEATURES
 o - CustmizerMode on MapCustomizer, Karel Graph

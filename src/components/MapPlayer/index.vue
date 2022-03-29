@@ -90,6 +90,7 @@ export default {
       this.$store.dispatch('taskComplete', this.activeTask)
       this.selected = null
       if (this.$store.getters.mapIsComplete(this.id)) {
+        await new Promise( res => setTimeout(res, 1000))
         await mapCompleteSwal()
         this.$emit('exitMap')
       }
