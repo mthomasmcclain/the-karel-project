@@ -3,7 +3,7 @@
     <div @click.stop class="modal-content">
 
       <div class="modal-header">
-        <h3>{{ title }}</h3>
+        <h3>{{ modalHeader }}</h3>
       </div>
 
       <div class="modal-main">
@@ -32,8 +32,10 @@ export default {
     name: 'modal',
     props: ['id', 'editing'],
     computed: {
-      title() {
-        return this.$store.getters.name(this.id)
+      modalHeader() {
+        let name = this.$store.getters.name(this.id)
+        if (!name) name = 'unnamed'
+        return this.editing ? `Customizing: ${name}` : `Preview of: ${name}`
       }
     }
 }
@@ -62,6 +64,9 @@ export default {
   background: white;
   border-radius: 10px;
   padding: 10px;
+}
+.modal-header {
+  text-align: center;
 }
 .modal-main {
   flex-grow: 1;

@@ -1,6 +1,6 @@
 BUG FIXES
 o - Arroow Misposition after "Task Correct" modal
-o - Modal Header
+x - Modal Header
 o - Fix Content Overflowing Out of Modal (Scrollbar)
 
 

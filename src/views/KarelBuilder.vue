@@ -160,10 +160,6 @@ export default {
   width: 100%;
   height: 100%;
 }
-.modal-header h3 {
-  margin: 0 0 6px 0;
-  color: #5d5d5d;
-}
 .modal-main {
   flex-grow: 1;
   position: relative;
