@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import tasks from './tasks'
 import maps from './maps'
+import defaultNewTaskState from './defaultNewTaskState'
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
@@ -48,40 +49,7 @@ export default createStore({
       }
     },
     newTask: (state, id) => {
-      state.tasks[id] = {
-        name: "New Karel Task",
-        instructions: '',
-        hint: '',
-        preWorld: {
-          nCols: 3,
-          nRows: 3,
-          karelRow: 0,
-          karelCol: 0,
-          karelDir: 'North',
-          walls: [],
-          stones: [],
-          lastClicked: null,
-        },
-        postWorld: {
-          nCols: 3,
-          nRows: 3,
-          karelRow: 2,
-          karelCol: 2,
-          karelDir: 'East',
-          walls: [],
-          stones: [],
-          lastClicked: null,
-        },
-        karelBlockly: {
-          toolbox:
-          highlight:
-          
-        },
-        tags: {
-          'customTags': [],
-          'systemTags': [],
-        }
-      }
+      state.tasks[id] = JSON.parse(JSON.stringify(defaultNewTaskState))
     },
     saveMap:  (state, { id, data } ) => state.maps[id] = data,
     saveTask: (state, { id, data }) => state.tasks[id] = data,
