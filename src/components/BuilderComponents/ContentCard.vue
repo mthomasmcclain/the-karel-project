@@ -110,8 +110,6 @@ export default {
 
 <style>
 .task-card {
-  font-family: 'Nunito', sans-serif;
-
   width: 300px;
   height: 220px;
   padding: 8px;

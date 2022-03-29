@@ -116,8 +116,6 @@ export default {
 <style scoped>
 .container {
   display: flex;
-  color: #5d5d5d;
-  font-family: Nunito, Helvetica, sans-serif;
   width: 100%;
   height: 100%;
 }

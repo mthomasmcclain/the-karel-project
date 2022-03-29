@@ -55,8 +55,6 @@ export default {
 #karel-tag-selector {
   display: flex;
   user-select: none;
-  font-family: 'Nunito', sans-serif;
-  color: #5d5d5d;
 }
 .user-select-tag-section,
 .auto-populated-tags-section{

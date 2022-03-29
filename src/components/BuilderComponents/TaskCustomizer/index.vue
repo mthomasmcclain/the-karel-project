@@ -262,9 +262,6 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
-
-    font-family: 'Nunito', sans-serif;
-    color: #5d5d5d;
   }
   textarea, input {
     font-family: inherit;

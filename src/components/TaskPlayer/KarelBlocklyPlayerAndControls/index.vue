@@ -91,7 +91,6 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  font-family: Nunito, Heletica, sans-serif;
 }
 button {
   background: green;

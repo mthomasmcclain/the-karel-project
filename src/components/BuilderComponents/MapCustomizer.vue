@@ -122,13 +122,7 @@ export default {
 #wrapper {
   width: 100%;
   height: 100%;
-  min-width: 900px;
   display: flex;
-  align-items: stretch;
-
-  font-family: 'Nunito', sans-serif;
-  color: #5d5d5d;
-  fill: #5d5d5d;
 }
 #sidebar {
   overflow-y: scroll;

@@ -113,11 +113,8 @@ export default {
 /* TODO: clean out edit based styles */
 
 .karel-map-wrapper {
-  width: 100%; height: 100%;
-  font-family: 'Nunito', sans-serif;
-  color: #5d5d5d;
-  fill: #5d5d5d;
-
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
