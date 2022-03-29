@@ -51,10 +51,10 @@ export default {
 }
 .modal-content {
   position: absolute;
-  top: 32px;
-  left:32px;
-  right: 32px;
-  bottom: 32px;
+  top: 42px;
+  left:42px;
+  right: 42px;
+  bottom: 42px;
 
   display: flex;
   flex-direction: column;
