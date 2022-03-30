@@ -2,10 +2,11 @@ BUG FIXES
 o - Arroow Misposition after "Task Correct" modal
 x - Modal Header
 o - Fix Content Overflowing Out of Modal (Scrollbar)
+o - Fix "New Content" saving even after we cancel out of it wo/saving.
 
 NEEDED FEATURES
 x - Update Save Version Pattern
-o - Include "Expert" Tasks and Related Behaviour
+x - Include "Expert" Tasks and Related Behaviour
 o - Put New Task / New Map Behaviour in Card
 o - Add Reset Button to Task Player
 x - Delay Before Map Complete
@@ -17,3 +18,4 @@ o - Get Project Domain and Deploy To
 
 MAYBE FEATURES
 o - CustmizerMode on MapCustomizer, Karel Graph
+o - Allow Fork, or "Save As" of Expert Content or User Content
