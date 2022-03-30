@@ -46,6 +46,7 @@
 <script>
 import MapGraph from '@/components/MapPlayer/MapGraph'
 import { renameMapSwal } from '@/helpers/projectSwallows'
+import defaultNewMapState from '@/store/defaultNewMapState'
 const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
@@ -57,8 +58,10 @@ export default {
     }
   },
   data() {
-    const mapData = this.$store.getters.map(this.id)
-    const { graph, name } = copy(mapData)
+    const mapAtId = this.$store.getters.map(this.id)
+    const mapToStartCustomizingFrom = mapAtId ? copy(mapAtId) : copy(defaultNewMapState)
+
+    const { graph, name } = mapToStartCustomizingFrom
     return {
       graph,
       name,

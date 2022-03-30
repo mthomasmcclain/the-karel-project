@@ -2,11 +2,12 @@ BUG FIXES
 o - Arroow Misposition after "Task Correct" modal
 x - Modal Header
 o - Fix Content Overflowing Out of Modal (Scrollbar)
-o - Fix "New Content" saving even after we cancel out of it wo/saving.
+x - Fix "New Content" saving even after we cancel out of it wo/saving.
 
 NEEDED FEATURES
 x - Update Save Version Pattern
 x - Include "Expert" Tasks and Related Behaviour
+o - Confirm on Deletion && Leave Unsaved Customization Behind
 o - Put New Task / New Map Behaviour in Card
 o - Add Reset Button to Task Player
 x - Delay Before Map Complete

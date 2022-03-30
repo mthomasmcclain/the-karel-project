@@ -2,7 +2,7 @@
   <div class="karel-builder">
     <Modal
       v-if="modalContent"
-      :editing="modalEditing"
+      :editing="editing"
       :id="modalContent"
       @save="save"
       @close="closeModal"
@@ -45,7 +45,6 @@
 </template>
 
 <script>
-import { v4 as uuid } from 'uuid'
 import Modal from '@/helpers/VueModal'
 import Navbar from '@/components/BuilderComponents/Navbar'
 import ContentCard from '@/components/BuilderComponents/ContentCard'
@@ -70,18 +69,23 @@ export default {
     return {
       mode: 'tasks',
       modalContent: null,
-      modalEditing: false,
+      editing: false,
     }
   },
   computed: {
     componentInModal() {
-      const modalContentType = this.modalContent ? this.$store.getters.type(this.modalContent): null
-      if (this.modalEditing) {
-        if (modalContentType === 'task') return TaskCustomizer
-        else return MapCustomizer
+      const foundTaskType = this.$store.getters.type(this.modalContent)
+      if (this.editing && (foundTaskType === 'map' || this.modalContent === 'newMap')) {
+        return MapCustomizer
+      } else if (this.editing && (foundTaskType ==='task' || this.modalContent === 'newTask')) {
+        return TaskCustomizer
+      } else if (foundTaskType === 'map') {
+        return MapPlayer
+      } else if (foundTaskType === 'task') {
+        return TaskPlayer
       } else {
-        if (modalContentType === 'task') return TaskPlayer
-        else return MapPlayer
+        console.warn('cannot compute component for modal from modalContent:', this.modalContent)
+        return undefined
       }
     },
     content() {
@@ -96,23 +100,22 @@ export default {
 
     },
     launchCustomizer(id) {
-      this.modalEditing = true
+      this.editing = true
       this.modalContent = id
     },
     launchPreviewModal(id) {
       this.modalContent = id
-      this.modalEditing = false
+      this.editing = false
     },
     customizeNewContent() {
-      const newId = uuid()
-      this.$store.dispatch(this.mode === 'maps' ? 'newMap' : 'newTask', newId)
-      this.modalContent = newId
-      this.modalEditing = true
+      // instead of a uuid (as we do as an edit base to eventuall save over), simply pass 'newMap' or 'newTask'
+      this.modalContent = this.mode === 'maps' ? 'newMap' : 'newTask'
+      this.editing = true
     },
     closeModal() {
       this.modalContent = null
       this.$store.dispatch('updateCustomizerState', null)
-      this.modalEditing = false
+      this.editing = false
     }
   }
 }

@@ -1,11 +1,6 @@
 <template>
   <div class="modal-background" @click="$emit('close')" >
     <div @click.stop class="modal-content">
-
-      <div class="modal-header">
-        <h3>{{ modalHeader }}</h3>
-      </div>
-
       <div class="modal-main">
         <slot />
       </div>
@@ -16,7 +11,7 @@
           <span class="mdc-button__label">Cancel</span>
         </button>
         <button class="mdc-button mdc-button--outlined"
-          v-if="editing"
+          v-if="editing && id !== 'newTask' && id !== 'newMap'"
           @click="$emit('delete')"
         >
           <span class="mdc-button__ripple"></span>
@@ -38,13 +33,6 @@
 export default {
     name: 'modal',
     props: ['id', 'editing'],
-    computed: {
-      modalHeader() {
-        let name = this.$store.getters.name(this.id)
-        if (!name) name = 'unnamed'
-        return this.editing ? `Customizing: ${name}` : `Preview of: ${name}`
-      }
-    }
 }
 </script>
 

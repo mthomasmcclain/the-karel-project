@@ -3,8 +3,6 @@ import VuexPersistence from 'vuex-persist'
 import { v4 as uuid } from 'uuid'
 import tasks from './tasks'
 import maps from './maps'
-import defaultNewTaskState from './defaultNewTaskState'
-import defaultNewMapState from './defaultNewMapState'
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
@@ -37,7 +35,8 @@ export default createStore({
     task: state => id => state.tasks[id],
     map: state => id => state.maps[id],
     name: ( _state, getters) => id => {
-      return getters.type(id) === 'map' ? getters.map(id).name : getters.task(id).name
+      if (getters.type(id) === 'map') return getters.map(id).name
+      else if (getters.type(id) === 'task') return getters.task(id).name
     },
     type: ( _state , {task, map} ) => id => {
       if (task(id)) return 'task'
@@ -54,8 +53,6 @@ export default createStore({
     }
   },
   mutations: {
-    newMap: (state, id) => state.maps[id] = defaultNewMapState,
-    newTask: (state, id) => state.tasks[id] = defaultNewTaskState,
     updateCustomizerState: (state, data) => state.customizerState = data,
     saveMap:  (state, { id, data } ) => state.maps[id] = data,
     saveTask: (state, { id, data }) => state.tasks[id] = data,
@@ -81,20 +78,23 @@ export default createStore({
     }
   },
   actions: {
-    newMap:  ({ commit }, id) => commit('newMap',  id),
-
-    newTask: ({ commit }, id) => commit('newTask', id),
 
     save: ({ commit,getters }, swapId)  => {
       const savePayload = {
         id: uuid(),
         data: getters.customizerState()
       }
-      const type = getters.type(swapId) // id of the type we are replacing
-      if (type === 'map') commit('saveMap', savePayload)
-      else commit('saveTask', savePayload)
-
-      commit('delete', swapId)
+      if (swapId === 'newTask') {
+        commit('saveTask', savePayload)
+      } else if (swapId === 'newMap') {
+        commit('saveMap', savePayload)
+      } else if (getters.type(swapId) === 'task') {
+        commit('saveTask', savePayload)
+        commit('delete', swapId)
+      } else if (getters.type(swapId) === 'map') {
+        commit('saveMap', savePayload)
+        commit('delete', swapId)
+      }
     },
 
     updateCustomizerState: ({ commit }, data) => commit('updateCustomizerState', data),
