@@ -9,7 +9,7 @@
 
     <div class="author">
       <PILALogo
-        v-if="content.isExpert"
+        v-if="$store.getters.isExpert(id)"
         class="pila-svg"
       />
       <UserIcon v-else class="user-svg" color="salmon" />
@@ -145,6 +145,8 @@ export default {
   grid-area: title;
   font-size: 1.25em;
   font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .author {

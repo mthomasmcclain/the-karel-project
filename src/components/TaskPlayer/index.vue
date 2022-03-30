@@ -50,6 +50,7 @@ import KarelWorldRenderer from '@/components/KarelWorldRenderer'
 import KarelBlockly from '@/components/KarelBlockly'
 import worldsMatch from './karelWorldsMatch'
 import { taskSuccessSwal, taskIncorrectSwal, taskHintSwal } from '@/helpers/projectSwallows'
+const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
   components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls },
@@ -62,7 +63,7 @@ export default {
   data() {
     const { karelBlockly } = this.$store.getters.task(this.id)
     return {
-      karelBlockly,
+      karelBlockly: copy(karelBlockly),
       currentStepData: null,
       playing: false,
       stepSpeed: 5,

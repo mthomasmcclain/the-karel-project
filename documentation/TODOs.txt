@@ -3,9 +3,8 @@ o - Arroow Misposition after "Task Correct" modal
 x - Modal Header
 o - Fix Content Overflowing Out of Modal (Scrollbar)
 
-
 NEEDED FEATURES
-o - Update Save Version Pattern
+x - Update Save Version Pattern
 o - Include "Expert" Tasks and Related Behaviour
 o - Put New Task / New Map Behaviour in Card
 o - Add Reset Button to Task Player

@@ -22,6 +22,13 @@
           <span class="mdc-button__ripple"></span>
           <span class="mdc-button__label">Delete</span>
         </button>
+        <button class="mdc-button mdc-button--outlined"
+          v-if="editing"
+          @click="$emit('save')"
+        >
+          <span class="mdc-button__ripple"></span>
+          <span class="mdc-button__label">Save</span>
+        </button>
       </div>
     </div>
   </div>

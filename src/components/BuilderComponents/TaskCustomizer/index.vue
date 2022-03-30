@@ -124,22 +124,24 @@ export default {
     KarelBlocklySettingsEditor
   },
   data() {
-    const { name, instructions, hint, preWorld, postWorld,  karelBlockly, tags } = this.$store.getters.task(this.id)
-    return  {
-      activeTab: 'Basic',
+    const {
       name,
       instructions,
       hint,
-      preWorld: copy(preWorld),
-      postWorld: copy(postWorld),
-      karelBlockly: copy(karelBlockly),
-      tags: copy(tags)
+      preWorld,
+      postWorld,
+      karelBlockly,
+      tags
+    } = copy(this.$store.getters.task(this.id))
+    return  {
+      activeTab: 'Basic',
+      name, instructions, hint, preWorld, postWorld, karelBlockly, tags
     }
   },
   watch: {
     '$data': {
       deep: true,
-      handler() { this.save() }
+      handler() { this.update() }
     },
     'preWorld.walls': {
       handler( curr ) {
@@ -165,16 +167,10 @@ export default {
     },
   },
   methods: {
-    save() {
-      const { name, instructions, hint, preWorld, postWorld, karelBlockly, tags, id } = this
-      const data = {
-        name, instructions, hint,
-        preWorld: copy(preWorld),
-        postWorld: copy(postWorld),
-        karelBlockly: copy(karelBlockly),
-        tags: copy(tags)
-      }
-      this.$store.dispatch('saveTask', { data, id })
+    update() {
+      const { name, instructions, hint, preWorld, postWorld, karelBlockly, tags } = this
+      const customizerStateData = copy({ name, instructions, hint, preWorld, postWorld, karelBlockly, tags })
+      this.$store.dispatch('updateCustomizerState', customizerStateData )
     },
     getSystemTags(settings) {
       if (!settings) return []

@@ -1,10 +1,10 @@
 <template>
   <div class="karel-builder">
-
     <Modal
       v-if="modalContent"
       :editing="modalEditing"
       :id="modalContent"
+      @save="save"
       @close="closeModal"
       @delete="$store.dispatch('delete', modalContent); modalContent = null;"
     >
@@ -89,6 +89,12 @@ export default {
     },
   },
   methods: {
+    save() {
+      const idToSaveOver = this.modalContent
+      this.$store.dispatch('save', idToSaveOver )
+      this.closeModal()
+
+    },
     launchCustomizer(id) {
       this.modalEditing = true
       this.modalContent = id
@@ -105,7 +111,8 @@ export default {
     },
     closeModal() {
       this.modalContent = null
-      this.modalEditing = null
+      this.$store.dispatch('updateCustomizerState', null)
+      this.modalEditing = false
     }
   }
 }

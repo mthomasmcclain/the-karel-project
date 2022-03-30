@@ -58,9 +58,10 @@ export default {
   },
   data() {
     const mapData = this.$store.getters.map(this.id)
+    const { graph, name } = copy(mapData)
     return {
-      graph: copy(mapData.graph),
-      name: mapData.name,
+      graph,
+      name,
       nameFilter: '',
       favoritesFilter: false,
       selected: null
@@ -69,7 +70,7 @@ export default {
   watch: {
     graph: {
       deep: true,
-      handler() { this.save() }
+      handler() { this.edit() }
     }
   },
   methods: {
@@ -77,15 +78,15 @@ export default {
       const res = await renameMapSwal(this.name)
       if (res.value) {
         this.name = res.value
-        this.save()
+        this.edit()
       }
     },
-    save() {
+    edit() {
       const data = {
-        graph: copy(this.graph),
+        graph: this.graph,
         name: this.name
       }
-      this.$store.dispatch('saveMap', { data, id: this.id })
+      this.$store.dispatch('updateCustomizerState', copy(data) )
     },
     removeFilters() {
         this.nameFilter = ''
