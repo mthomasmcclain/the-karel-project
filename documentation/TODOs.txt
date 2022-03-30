@@ -7,7 +7,8 @@ x - Fix "New Content" saving even after we cancel out of it wo/saving.
 NEEDED FEATURES
 x - Update Save Version Pattern
 x - Include "Expert" Tasks and Related Behaviour
-o - Confirm on Deletion && Leave Unsaved Customization Behind
+x - Confirm on Deletion
+x - Confirm Close with Unsaved Changes
 o - Put New Task / New Map Behaviour in Card
 o - Add Reset Button to Task Player
 x - Delay Before Map Complete

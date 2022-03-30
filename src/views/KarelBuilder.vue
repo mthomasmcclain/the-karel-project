@@ -5,8 +5,8 @@
       :editing="editing"
       :id="modalContent"
       @save="save"
-      @close="closeModal"
-      @delete="$store.dispatch('delete', modalContent); modalContent = null;"
+      @close="confirmCloseModal"
+      @delete="confirmDeleteContent"
     >
       <component
         :is="componentInModal"
@@ -48,7 +48,7 @@
 import Modal from '@/helpers/VueModal'
 import Navbar from '@/components/BuilderComponents/Navbar'
 import ContentCard from '@/components/BuilderComponents/ContentCard'
-// import { noBlankNameSwal, confirmCloseWithoutSaveSwal } from '@/helpers/projectSwallows'
+import { confirmDeleteSwal, confirmCloseWithoutSaveSwal } from '@/helpers/projectSwallows'
 import TaskCustomizer from '@/components/BuilderComponents/TaskCustomizer'
 import TaskPlayer from '@/components/TaskPlayer'
 import MapCustomizer from '@/components/BuilderComponents/MapCustomizer'
@@ -111,6 +111,20 @@ export default {
       // instead of a uuid (as we do as an edit base to eventuall save over), simply pass 'newMap' or 'newTask'
       this.modalContent = this.mode === 'maps' ? 'newMap' : 'newTask'
       this.editing = true
+    },
+    async confirmDeleteContent() {
+      const { isConfirmed } = await confirmDeleteSwal()
+      if (isConfirmed) {
+        this.$store.dispatch('delete', this.modalContent)
+        this.closeModal()
+      }
+    },
+    async confirmCloseModal() {
+      if (!this.editing) this.closeModal()
+      else {
+        const { isConfirmed } = await confirmCloseWithoutSaveSwal()
+        if (isConfirmed) this.closeModal()
+      }
     },
     closeModal() {
       this.modalContent = null

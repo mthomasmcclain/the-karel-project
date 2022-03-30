@@ -5,6 +5,8 @@ export function confirmCloseWithoutSaveSwal() {
         title: 'Confirm Close',
         text: 'Are you sure you want to close without saving? Unsaved changes will be lost.',
         icon: 'question',
+        confirmButtonText:'Close without Saving',
+        cancelButtonText: 'Continue Editing',
         showCancelButton: true,
     })
 }
@@ -45,7 +47,7 @@ export function invalidResizeKarelSwal() { return invalidResizeSwal('Can\'t chan
 export function confirmDeleteSwal(name) {
     return Swal.fire({
         title: 'Are you sure?',
-        text: `Confirm deletion ${name ? `of '${name}'` : ''}.  You cannot undo this.`,
+        text: `Confirm deletion${name ? ` of '${name}'` : ''}. You cannot undo this.`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Delete'

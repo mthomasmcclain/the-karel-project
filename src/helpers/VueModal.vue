@@ -8,7 +8,7 @@
       <div class="modal-buttons">     
         <button class="mdc-button mdc-button--outlined" @click="$emit('close')">
           <span class="mdc-button__ripple"></span>
-          <span class="mdc-button__label">Cancel</span>
+          <span class="mdc-button__label">{{ editing ? 'Cancel' : 'Close'}}</span>
         </button>
         <button class="mdc-button mdc-button--outlined"
           v-if="editing && id !== 'newTask' && id !== 'newMap'"
