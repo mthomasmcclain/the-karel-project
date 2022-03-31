@@ -114,12 +114,6 @@ export default {
 
 <style>
 .task-card {
-  width: 300px;
-  height: 220px;
-  padding: 8px;
-  border-radius: 16px;
-  box-shadow: 0 0 4px 2px rgba(0,0,0,0.3);
-
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: 27px 122px 61px;
@@ -128,15 +122,6 @@ export default {
     "title   title   title   title   title   title   title   title   title   author  author  author"
     "preview preview preview preview preview preview preview preview preview preview preview preview"
     "tags    tags    tags    tags    tags    tags    tags    tags    icons   icons   icons   icons";
-
-  /* prevent any text selection */
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
-
 }
 
 .task-card > div {

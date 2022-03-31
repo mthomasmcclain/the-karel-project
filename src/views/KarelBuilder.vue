@@ -21,24 +21,22 @@
       @setMode="mode = $event"
     />
 
-    <div class="new-task-or-map-button" @click="customizeNewContent">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-      </svg>
-      <span>New {{ mode === 'tasks' ? 'Task' : 'Map' }}</span>
-    </div>
-
     <div class="karel-builder-body">
-      <div class="card-wrapper">
-        <ContentCard
-          v-for="id in content" class="content-card"
-          :key="`card-for-${id}`"
-          :id="id"
-          @previewAction="launchPreviewModal(id)"
-          @editAction="launchCustomizer(id)"
-        />
-
+      <div class="add-card content-card" @click="customizeNewContent">
+        <div class="add-card-inner">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+          </svg>
+          <span>New {{ mode === 'tasks' ? 'Task' : 'Map' }}</span>
+        </div>
       </div>
+      <ContentCard
+        v-for="id in content" class="content-card"
+        :key="`card-for-${id}`"
+        :id="id"
+        @previewAction="launchPreviewModal(id)"
+        @editAction="launchCustomizer(id)"
+      />
     </div>
   </div>
   
@@ -144,16 +142,10 @@ export default {
   width: 100%;
   height: 100%;
 }
-.karel-builder .new-task-or-map-button {
-  margin: 14px 0 0 14px;
-  padding: 4px 10px 4px 6px;
-  border-radius: 16px;
-  width: 110px;
-  background: rgb(228, 228, 228);
+.add-card {
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  cursor: pointer;
+  justify-content: center;
 }
 .karel-builder .new-task-or-map-button svg {
   width: 20px;
@@ -165,18 +157,14 @@ export default {
 .karel-builder-body {
   flex-grow: 1;  
   display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
 }
 .sidebar {
   border-right: 2px solid #ddd;
   background: #f5f5f5;
   padding: 20px;
 }
-
-.card-wrapper .content-card {
-  display: inline-grid;
-  margin: 14px;
-}
-
 #modal-wrapper
 {
   display: flex;
