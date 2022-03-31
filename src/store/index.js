@@ -6,7 +6,7 @@ import maps from './maps'
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  key: 'the-karel-project',
+  key: 'the-karel-project-1.4',
   // reducer: state => ({
   //   favorites: state.favorites,
   //   completed: state.completed
