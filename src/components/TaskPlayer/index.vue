@@ -73,6 +73,10 @@ export default {
     async codeCorrect(isCorrect) {
       if (isCorrect) {
         await taskSuccessSwal()
+        // TODO: Think about how to get rid of this delay haaaack
+        // which is needed because of sweetaltert using
+        // a body style !important to get its transition to work
+        await new Promise( res => setTimeout(res, 150))
         this.$emit('taskCorrect')
       }
       else if (this.error) await taskIncorrectSwal(this.error)

@@ -29,19 +29,20 @@
       
     </div>
     
-    <TaskPlayer v-if="taskIsActive"
-      :key="`task-player-in-map-${selected}`"
-      @taskCorrect="handleTaskCorrect"
-      :id="activeTask"
-    />
+    <div class="content-wrapper" style="flex-grow: 1;">
+      <TaskPlayer v-if="taskIsActive"
+        :key="`task-player-in-map-${selected}`"
+        @taskCorrect="handleTaskCorrect"
+        :id="activeTask"
+      />
 
-    <MapGraph v-else class="map-body"
-      :graph="graph"
-      :selected="selected"
-      @selectId="handleNodeSelected"
-      :previewMode="previewMode"
-    />
-
+      <MapGraph v-else class="map-body"
+        :graph="graph"
+        :selected="selected"
+        @selectId="handleNodeSelected"
+        :previewMode="previewMode"
+      />
+    </div>
   </div>
 </template>
 
@@ -203,9 +204,5 @@ export default {
 .node-wrapper.selected {
   border: 1px solid green;
 }
-.underlay {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
+
 </style>

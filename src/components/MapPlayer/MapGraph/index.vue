@@ -1,11 +1,7 @@
 <template>
 
   <div class="karel-map-wrapper"
-    :ref="el => {
-      if (!el) return
-      width = el.clientWidth
-      height = el.clientHeight
-    }"
+    ref="wrapper"
     @dragover="handleDragover"
     @drop="handleDrop"
     @click="$emit('selectId', null)"
@@ -112,20 +108,20 @@ export default {
       newToNode: null,
     }
   },
-  watch: {
-    graph(val) {
-      this.edges = copy(val.edges)
-      this.nodes = copy(val.nodes)
-    },
-
-  },
   mounted() {
+    this.handleResize()
     window.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('resize', this.handleResize)
   },
   unmounted() {
     window.removeEventListener('keydown', this.handleKeydown)
     window.removeEventListener('resize', this.handleResize)
+  },
+  watch: {
+    graph(val) {
+      this.edges = copy(val.edges)
+      this.nodes = copy(val.nodes)
+    }
   },
   methods: {
     emitChange() {
@@ -139,8 +135,8 @@ export default {
       return this.$store.getters.taskIsComplete(taskId)
     },
     handleResize() {
-      this.height = window.innerHeight
-      this.width = window.innerWidth
+      this.height = this.$refs.wrapper.clientHeight
+      this.width = this.$refs.wrapper.clientWidth
     },
     handleNodeClick(nodeId) {
       if (this.editMode) {

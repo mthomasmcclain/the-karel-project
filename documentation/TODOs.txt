@@ -1,7 +1,7 @@
 BUG FIXES
-o - Aroow Misposition after "Task Correct" modal
 o - Fix Content Overflowing Out of Modal (Scrollbar)
 
+x - Aroow Misposition after "Task Correct" modal
 x - Modal Header
 x - Fix "New Content" saving even after we cancel out of it wo/saving.
 
