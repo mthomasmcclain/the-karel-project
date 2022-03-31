@@ -8,15 +8,19 @@
       </div>
 
       <div class="student-task-area">
-        <h3>Your Karel Maps:</h3>
+        <h3>Your Karel Maps</h3>
         <div v-for="id in $store.getters.maps()" :key="id"
-          :class="{
-            'map-display-line': true,
-            'isComplete': $store.getters.taskIsComplete(id)
-          }"
+          class="map-display-line"
         >
           <div class="map-selector" @click="activeMap = id">
-            <KarelVueSvg />
+            <svg class="play-button"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              style="height: 24px;"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4v16m14-8L6 20m14-8L6 4"/>
+            </svg>
+            <MapCorrectSvgIcon class="correct-svg" :correct="$store.getters.mapIsComplete(id)" />
             <span class="map-name">{{ getName(id) }}</span>
           </div>
           <svg v-if="!$store.getters.isExpert(id)"
@@ -50,13 +54,13 @@
 
 <script>
 import MapPlayer from '@/components/MapPlayer'
-import KarelVueSvg from '@/assets/KarelVueSvg'
 import PilaLogoVueSvg from '@/assets/PilaLogoVueSvg'
+import MapCorrectSvgIcon from "@/components/MapCorrectSvgIcon"
 import { confirmDeleteSwal } from '@/helpers/projectSwallows'
 
 export default {
   name: 'KarelPlayer',
-  components: { MapPlayer, KarelVueSvg, PilaLogoVueSvg },
+  components: { MapPlayer, MapCorrectSvgIcon, PilaLogoVueSvg },
   data() {
     return {
       activeMap: null
@@ -100,10 +104,13 @@ export default {
   margin: 18px 10px;
 }
 .student-task-area {
-  margin-left: 20px;
+  margin: 20px auto;
 }
 .student-task-area h3 {
   margin: 12px 0;
+  border-bottom: 2px dotted;
+  text-align: center;
+  padding-bottom: 4px;
 }
 .student-task-area .map-display-line {
   display: flex;
@@ -119,10 +126,10 @@ export default {
 .student-task-area .map-display-line .map-selector:hover {
   background: whitesmoke;
   border-radius: 12px;
+  stroke: green;
 }
-.student-task-area .map-display-line .map-selector svg {
-  width: 20px;
-  margin-right: 10px;
+.student-task-area .map-display-line .map-selector .correct-svg {
+  height: 60px;
 }
 
 .student-task-area .map-display-line .trash-icon {
@@ -133,12 +140,13 @@ export default {
 }
 .student-task-area .map-display-line .pila-logo {
   height: 16px;
+  margin-left: 6px;
 }
 .student-task-area .map-display-line .trash-icon:hover {
   fill: red;
 }
 .add-map-button {
-  margin: 14px 0 0 24px;
+  margin: auto;
   padding: 4px 10px 4px 6px;
   border-radius: 16px;
   width: 110px;

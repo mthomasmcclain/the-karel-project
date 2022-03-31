@@ -6,14 +6,14 @@ x - Modal Header
 x - Fix "New Content" saving even after we cancel out of it wo/saving.
 
 NEEDED FEATURES
-o - Put New Task / New Map Behaviour in Card
 o - Add Reset Button to Task Player
 o - "How To" on Map Editor
 o - Layout the Task List / Filters on Map Editor
-o - Layout the Student Maps Page
 o - Turtle Icon on Browser Tab
 o - Get Project Domain and Deploy To
 
+x - Put New Task / New Map Behaviour in Card
+x - Layout the Student Maps Page
 x - Update Save Version Pattern
 x - Include "Expert" Tasks and Related Behaviour
 x - Confirm on Deletion
