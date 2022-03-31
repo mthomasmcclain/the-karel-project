@@ -11,6 +11,8 @@ o - "How To" on Map Editor
 o - Layout the Task List / Filters on Map Editor
 o - Turtle Icon on Browser Tab
 o - Get Project Domain and Deploy To
+o - Allow Fork, or "Save As" of Expert Content or User Content
+
 
 x - Put New Task / New Map Behaviour in Card
 x - Layout the Student Maps Page
@@ -23,4 +25,3 @@ x - Delay Before Map Complete
 
 MAYBE FEATURES
 o - CustmizerMode on MapCustomizer, Karel Graph
-o - Allow Fork, or "Save As" of Expert Content or User Content
