@@ -84,7 +84,7 @@ export default {
   methods: {
     handleNodeSelected(id) {
       this.selected = id
-      this.graph.nodes[id].visited = true
+      if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
     },
     async handleTaskCorrect() {
       this.$store.dispatch('taskComplete', this.activeTask)
