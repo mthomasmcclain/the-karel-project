@@ -2,9 +2,14 @@
   <div class="container">
     
     <div class="left-col">
-      <div class="instructions-box">
-        <b>Challenge:</b> {{ task.instructions }}
+      <div class="instructions-and-reset-wrapper">
+        <div class="instructions-box">
+          <b>Challenge:</b> {{ task.instructions }}
+
+        </div>
+        <button class="reset-button" @click="resetTask">Reset Code</button>
       </div>
+
       <div class="worlds-wrapper">
         <div class="world-col left">
           <h2>Start:</h2>
@@ -113,7 +118,13 @@ export default {
     }
   },
   methods: {
-    showHint() { taskHintSwal(this.task.hint) }
+    showHint() { taskHintSwal(this.task.hint) },
+    resetTask() {
+      const { karelBlockly } = this.$store.getters.task(this.id)
+      this.karelBlockly = copy(karelBlockly)
+      this.playing = false
+      this.currentStepData = null
+    }
   },
 }
 </script>
@@ -133,6 +144,26 @@ export default {
 }
 .right-col {
   flex: 1 0 400px;
+}
+.left-col .instructions-and-reset-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.reset-button {
+  background: darkred;
+  display: block;
+  position: relative;
+  z-index: 10;
+  right: 1%;
+  color: white;
+  width: 100px;
+  height: 30px;
+  margin: 6px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.9em;
+  float: right;
 }
 
 .left-col .instructions-box {
