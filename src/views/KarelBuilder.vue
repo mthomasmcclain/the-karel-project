@@ -150,6 +150,8 @@ export default {
 }
 .add-card:hover {
   fill: green;
+  transition: fill 200ms;
+  cursor: pointer;
 }
 .karel-builder .new-task-or-map-button svg {
   width: 20px;
