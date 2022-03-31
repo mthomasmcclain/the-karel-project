@@ -500,5 +500,1049 @@ export default {
                 "Parson's Problem"
             ]
         }
+    },
+    "73809f71-d14a-4ebd-8f62-3b7bfc40817c": {
+        "name": "The Spiral",
+        "instructions": "Can you get Karel to the center with only 3 blocks?  Think of how many blocks we would have to use without \"repeat\" and \"while\" to help us out!",
+        "hint": "For each side, Karel will move forward to the a wall, and then turn left.  But how many times?",
+        "preWorld": {
+            "nCols": 5,
+            "nRows": 5,
+            "karelRow": 4,
+            "karelCol": 0,
+            "karelDir": "East",
+            "walls": [
+                {
+                    "r": 3,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 3,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 4,
+                    "c": 0,
+                    "d": "North"
+                },
+                {
+                    "r": 4,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 4,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 4,
+                    "c": 3,
+                    "d": "North"
+                },
+                {
+                    "r": 3,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "North"
+                }
+            ],
+            "stones": []
+        },
+        "postWorld": {
+            "nCols": 5,
+            "nRows": 5,
+            "karelRow": 2,
+            "karelCol": 2,
+            "karelDir": "North",
+            "walls": [
+                {
+                    "r": 3,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 3,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 4,
+                    "c": 0,
+                    "d": "North"
+                },
+                {
+                    "r": 4,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 4,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 4,
+                    "c": 3,
+                    "d": "North"
+                },
+                {
+                    "r": 3,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "North"
+                }
+            ],
+            "stones": []
+        },
+        "karelBlockly": {
+            "highlight": [],
+            "settings": {
+                "blocks": {
+                    "karel_move": {
+                        "active": true,
+                        "limit": 1
+                    },
+                    "karel_turn": {
+                        "active": true,
+                        "limit": 1
+                    },
+                    "karel_place": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_pickup": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_if": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_repeat": {
+                        "active": true,
+                        "limit": 1
+                    },
+                    "karel_while": {
+                        "active": true,
+                        "limit": 1
+                    },
+                    "karel_define": {
+                        "active": false,
+                        "limit": -1
+                    }
+                },
+                "showToolbox": true,
+                "disabled": false,
+                "maxBlocks": -1,
+                "customizerMode": false
+            },
+            "workspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"karel_main\" id=\"main\" deletable=\"false\" x=\"44\" y=\"0\"></block></xml>",
+            "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    <Block type=\"karel_turn_left\" id=\"karel_turn\" />\n    \n    \n    \n    \n        <Block type=\"controls_repeat_ext\" id=\"karel_repeat\">\n          <Value name=\"TIMES\">\n              <Shadow type=\"math_number\">\n              <Field name=\"NUM\">10</Field>\n              </Shadow>\n            </Value>\n          </Block>\n        \n    <Block type=\"karel_while_dropdown\" id=\"karel_while\" />\n    \n  </xml>\n"
+        },
+        "tags": {
+            "customTags": [],
+            "systemTags": [
+                "Has 'Repeat'",
+                "Has 'While'",
+                "Limit Blocks"
+            ]
+        }
+    },
+    "e266aa31-4f85-44a2-970d-c2de547c8443": {
+        "name": "Learn Repeat",
+        "instructions": "With 'repeat\" blocks, you can do the same thing again and again with less code.",
+        "hint": "",
+        "preWorld": {
+            "nCols": 3,
+            "nRows": 3,
+            "karelRow": 1,
+            "karelCol": 0,
+            "karelDir": "East",
+            "walls": [],
+            "stones": [
+                {
+                    "r": 1,
+                    "c": 1,
+                    "n": 10
+                }
+            ]
+        },
+        "postWorld": {
+            "nCols": 3,
+            "nRows": 3,
+            "karelRow": 1,
+            "karelCol": 2,
+            "karelDir": "East",
+            "walls": [],
+            "stones": []
+        },
+        "karelBlockly": {
+            "highlight": [],
+            "settings": {
+                "blocks": {
+                    "karel_move": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_turn": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_place": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_pickup": {
+                        "active": true,
+                        "limit": 1
+                    },
+                    "karel_if": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_repeat": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_while": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_define": {
+                        "active": false,
+                        "limit": -1
+                    }
+                },
+                "showToolbox": true,
+                "disabled": false,
+                "maxBlocks": -1,
+                "customizerMode": false
+            },
+            "workspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"karel_main\" id=\"main\" deletable=\"false\" x=\"44\" y=\"0\"></block></xml>",
+            "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    <Block type=\"karel_turn_left\" id=\"karel_turn\" />\n    <Block type=\"karel_place_stone\" id=\"karel_place\" />\n    <Block type=\"karel_pickup_stone\" id=\"karel_pickup\" />\n    \n    \n        <Block type=\"controls_repeat_ext\" id=\"karel_repeat\">\n          <Value name=\"TIMES\">\n              <Shadow type=\"math_number\">\n              <Field name=\"NUM\">10</Field>\n              </Shadow>\n            </Value>\n          </Block>\n        \n    \n    \n  </xml>\n"
+        },
+        "tags": {
+            "customTags": [],
+            "systemTags": [
+                "Has 'Repeat'",
+                "Limit Blocks"
+            ]
+        }
+    },
+    "602f358b-6a1c-4028-aedc-132edb1f8f1d": {
+        "name": "Repeat Challenge 1",
+        "instructions": "Use 'repeats' to solve this challenge.  If you can, try using one",
+        "hint": "Think about how to do one \"side\" of the square.  Then have Karel do that four times!",
+        "preWorld": {
+            "nCols": 3,
+            "nRows": 3,
+            "karelRow": 2,
+            "karelCol": 0,
+            "karelDir": "East",
+            "walls": [],
+            "stones": [
+                {
+                    "r": 2,
+                    "c": 1,
+                    "n": 1
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "n": 1
+                },
+                {
+                    "r": 0,
+                    "c": 1,
+                    "n": 1
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "n": 1
+                }
+            ]
+        },
+        "postWorld": {
+            "nCols": 3,
+            "nRows": 3,
+            "karelRow": 2,
+            "karelCol": 0,
+            "karelDir": "East",
+            "walls": [],
+            "stones": []
+        },
+        "karelBlockly": {
+            "highlight": [],
+            "settings": {
+                "blocks": {
+                    "karel_move": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_turn": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_place": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_pickup": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_if": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_repeat": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_while": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_define": {
+                        "active": false,
+                        "limit": -1
+                    }
+                },
+                "showToolbox": true,
+                "disabled": false,
+                "maxBlocks": -1,
+                "customizerMode": false
+            },
+            "workspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"karel_main\" id=\"main\" deletable=\"false\" x=\"44\" y=\"0\"></block></xml>",
+            "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    <Block type=\"karel_turn_left\" id=\"karel_turn\" />\n    <Block type=\"karel_place_stone\" id=\"karel_place\" />\n    <Block type=\"karel_pickup_stone\" id=\"karel_pickup\" />\n    \n    \n        <Block type=\"controls_repeat_ext\" id=\"karel_repeat\">\n          <Value name=\"TIMES\">\n              <Shadow type=\"math_number\">\n              <Field name=\"NUM\">10</Field>\n              </Shadow>\n            </Value>\n          </Block>\n        \n    \n    \n  </xml>\n"
+        },
+        "tags": {
+            "customTags": [],
+            "systemTags": [
+                "Has 'Repeat'"
+            ]
+        }
+    },
+    "c756c6db-d4da-48a9-a70e-a2d4018249e6": {
+        "name": "Repeat Challenge 2",
+        "instructions": "Use 'repeat' blocks to place all the blocks.",
+        "hint": "If you're having trouble, test going down, placing the first stone, going back, and moving one spot to the left.  Once you get that working, repeat that code multiple times.",
+        "preWorld": {
+            "nCols": 6,
+            "nRows": 3,
+            "karelRow": 0,
+            "karelCol": 5,
+            "karelDir": "West",
+            "walls": [
+                {
+                    "r": 2,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 4,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 4,
+                    "d": "East"
+                }
+            ],
+            "stones": []
+        },
+        "postWorld": {
+            "nCols": 6,
+            "nRows": 3,
+            "karelRow": 0,
+            "karelCol": 0,
+            "karelDir": "West",
+            "walls": [
+                {
+                    "r": 2,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 4,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 4,
+                    "d": "East"
+                }
+            ],
+            "stones": [
+                {
+                    "r": 2,
+                    "c": 1,
+                    "n": 1
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "n": 1
+                },
+                {
+                    "r": 2,
+                    "c": 3,
+                    "n": 1
+                },
+                {
+                    "r": 2,
+                    "c": 4,
+                    "n": 1
+                },
+                {
+                    "r": 2,
+                    "c": 5,
+                    "n": 1
+                }
+            ]
+        },
+        "karelBlockly": {
+            "highlight": [],
+            "settings": {
+                "blocks": {
+                    "karel_move": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_turn": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_place": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_pickup": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_if": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_repeat": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_while": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_define": {
+                        "active": false,
+                        "limit": -1
+                    }
+                },
+                "showToolbox": true,
+                "disabled": false,
+                "maxBlocks": -1,
+                "customizerMode": false
+            },
+            "workspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"karel_main\" id=\"main\" deletable=\"false\" x=\"44\" y=\"0\"></block></xml>",
+            "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    <Block type=\"karel_turn_left\" id=\"karel_turn\" />\n    <Block type=\"karel_place_stone\" id=\"karel_place\" />\n    <Block type=\"karel_pickup_stone\" id=\"karel_pickup\" />\n    \n    \n        <Block type=\"controls_repeat_ext\" id=\"karel_repeat\">\n          <Value name=\"TIMES\">\n              <Shadow type=\"math_number\">\n              <Field name=\"NUM\">10</Field>\n              </Shadow>\n            </Value>\n          </Block>\n        \n    \n    \n  </xml>\n"
+        },
+        "tags": {
+            "customTags": [],
+            "systemTags": [
+                "Has 'Repeat'"
+            ]
+        }
+    },
+    "7c881004-5661-4bef-be36-a4bb662822b2": {
+        "name": "Learn While",
+        "instructions": "The 'while' block will repeat the enclosed code over and over as long as the condition is true.  In this case, Karel will keep step forward as long as the path in front is clear.",
+        "hint": "",
+        "preWorld": {
+            "nCols": 7,
+            "nRows": 3,
+            "karelRow": 2,
+            "karelCol": 0,
+            "karelDir": "East",
+            "walls": [
+                {
+                    "r": 2,
+                    "c": 0,
+                    "d": "North"
+                },
+                {
+                    "r": 2,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 2,
+                    "c": 4,
+                    "d": "East"
+                }
+            ],
+            "stones": [
+                {
+                    "r": 2,
+                    "c": 6,
+                    "n": 1
+                },
+                {
+                    "r": 0,
+                    "c": 1,
+                    "n": 1
+                }
+            ]
+        },
+        "postWorld": {
+            "nCols": 7,
+            "nRows": 3,
+            "karelRow": 2,
+            "karelCol": 4,
+            "karelDir": "East",
+            "walls": [
+                {
+                    "r": 2,
+                    "c": 0,
+                    "d": "North"
+                },
+                {
+                    "r": 2,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 2,
+                    "c": 4,
+                    "d": "East"
+                }
+            ],
+            "stones": [
+                {
+                    "r": 2,
+                    "c": 6,
+                    "n": 1
+                },
+                {
+                    "r": 0,
+                    "c": 1,
+                    "n": 1
+                }
+            ]
+        },
+        "karelBlockly": {
+            "highlight": [],
+            "settings": {
+                "blocks": {
+                    "karel_move": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_turn": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_place": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_pickup": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_if": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_repeat": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_while": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_define": {
+                        "active": false,
+                        "limit": -1
+                    }
+                },
+                "showToolbox": false,
+                "disabled": true,
+                "maxBlocks": -1,
+                "customizerMode": false
+            },
+            "workspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"karel_main\" id=\"main\" deletable=\"false\" x=\"44\" y=\"0\"><statement name=\"program\"><block type=\"karel_while_dropdown\" id=\"r|8E4ETA|_iTs%%ruqSu\" deletable=\"false\"><field name=\"CONDITION\">FRONT_CLEAR</field><statement name=\"LOOP\"><block type=\"karel_move\" id=\"I9W4AdpSR}2rt}Ife[:p\" deletable=\"false\"></block></statement></block></statement></block></xml>",
+            "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    \n    \n    \n    \n    \n    <Block type=\"karel_while_dropdown\" id=\"karel_while\" />\n    \n  </xml>\n"
+        },
+        "tags": {
+            "customTags": [],
+            "systemTags": [
+                "Has 'While'",
+                "Parson's Problem"
+            ]
+        }
+    },
+    "230b25c5-d49f-435b-9dfb-3c7eb9f86ba1": {
+        "name": "While Challenge 1",
+        "instructions": "Use the 'while' block to solve this challenge, with only a few blocks available to use!",
+        "hint": "",
+        "preWorld": {
+            "nCols": 6,
+            "nRows": 2,
+            "karelRow": 0,
+            "karelCol": 5,
+            "karelDir": "West",
+            "walls": [],
+            "stones": []
+        },
+        "postWorld": {
+            "nCols": 6,
+            "nRows": 2,
+            "karelRow": 0,
+            "karelCol": 0,
+            "karelDir": "West",
+            "walls": [],
+            "stones": [
+                {
+                    "r": 0,
+                    "c": 3,
+                    "n": 1
+                },
+                {
+                    "r": 0,
+                    "c": 1,
+                    "n": 1
+                },
+                {
+                    "r": 0,
+                    "c": 0,
+                    "n": 1
+                },
+                {
+                    "r": 0,
+                    "c": 2,
+                    "n": 1
+                },
+                {
+                    "r": 0,
+                    "c": 4,
+                    "n": 1
+                }
+            ]
+        },
+        "karelBlockly": {
+            "highlight": [],
+            "settings": {
+                "blocks": {
+                    "karel_move": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_turn": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_place": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_pickup": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_if": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_repeat": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_while": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_define": {
+                        "active": false,
+                        "limit": -1
+                    }
+                },
+                "showToolbox": true,
+                "disabled": false,
+                "maxBlocks": 4,
+                "customizerMode": false
+            },
+            "workspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"karel_main\" id=\"main\" deletable=\"false\" x=\"44\" y=\"0\"></block></xml>",
+            "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    <Block type=\"karel_turn_left\" id=\"karel_turn\" />\n    <Block type=\"karel_place_stone\" id=\"karel_place\" />\n    <Block type=\"karel_pickup_stone\" id=\"karel_pickup\" />\n    \n    \n    <Block type=\"karel_while_dropdown\" id=\"karel_while\" />\n    \n  </xml>\n"
+        },
+        "tags": {
+            "customTags": [],
+            "systemTags": [
+                "Has 'While'",
+                "Limit Blocks"
+            ]
+        }
+    },
+    "ac5c0453-5cdc-4e59-92d1-c5c7f1a585df": {
+        "name": "While Challenge 2",
+        "instructions": "Quite a challenge!  Use your helper blocks ('while' and/or 'repeat') to get Karel to the goal!",
+        "hint": "Notice that Karel starts facing left.  First, see if you can move forward, place the stone, go down to place six, come BACK up, and then end up facing left again.  If you can do that first one, you'll be in good shape for \"while\" or \"repeat\" to help you again.",
+        "preWorld": {
+            "nCols": 6,
+            "nRows": 2,
+            "karelRow": 0,
+            "karelCol": 5,
+            "karelDir": "West",
+            "walls": [
+                {
+                    "r": 1,
+                    "c": 4,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 5,
+                    "d": "North"
+                }
+            ],
+            "stones": []
+        },
+        "postWorld": {
+            "nCols": 6,
+            "nRows": 2,
+            "karelRow": 0,
+            "karelCol": 0,
+            "karelDir": "West",
+            "walls": [
+                {
+                    "r": 1,
+                    "c": 4,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 5,
+                    "d": "North"
+                }
+            ],
+            "stones": [
+                {
+                    "r": 1,
+                    "c": 0,
+                    "n": 6
+                },
+                {
+                    "r": 0,
+                    "c": 0,
+                    "n": 1
+                },
+                {
+                    "r": 0,
+                    "c": 1,
+                    "n": 1
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "n": 6
+                },
+                {
+                    "r": 0,
+                    "c": 2,
+                    "n": 1
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "n": 6
+                },
+                {
+                    "r": 0,
+                    "c": 3,
+                    "n": 1
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "n": 6
+                },
+                {
+                    "r": 0,
+                    "c": 4,
+                    "n": 1
+                },
+                {
+                    "r": 1,
+                    "c": 4,
+                    "n": 6
+                }
+            ]
+        },
+        "karelBlockly": {
+            "highlight": [],
+            "settings": {
+                "blocks": {
+                    "karel_move": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_turn": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_place": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_pickup": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_if": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_repeat": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_while": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_define": {
+                        "active": false,
+                        "limit": -1
+                    }
+                },
+                "showToolbox": true,
+                "disabled": false,
+                "maxBlocks": -1,
+                "customizerMode": false
+            },
+            "workspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"karel_main\" id=\"main\" deletable=\"false\" x=\"44\" y=\"0\"></block></xml>",
+            "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    <Block type=\"karel_turn_left\" id=\"karel_turn\" />\n    <Block type=\"karel_place_stone\" id=\"karel_place\" />\n    <Block type=\"karel_pickup_stone\" id=\"karel_pickup\" />\n    \n    \n        <Block type=\"controls_repeat_ext\" id=\"karel_repeat\">\n          <Value name=\"TIMES\">\n              <Shadow type=\"math_number\">\n              <Field name=\"NUM\">10</Field>\n              </Shadow>\n            </Value>\n          </Block>\n        \n    <Block type=\"karel_while_dropdown\" id=\"karel_while\" />\n    \n  </xml>\n"
+        },
+        "tags": {
+            "customTags": [],
+            "systemTags": [
+                "Has 'Repeat'",
+                "Has 'While'"
+            ]
+        }
     }
 }
