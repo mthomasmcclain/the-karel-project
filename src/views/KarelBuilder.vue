@@ -24,7 +24,7 @@
     <div class="karel-builder-body">
       <div class="add-card content-card" @click="customizeNewContent">
         <div class="add-card-inner">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
           </svg>
           <span>New {{ mode === 'tasks' ? 'Task' : 'Map' }}</span>
@@ -146,6 +146,10 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  fill: lightgrey;
+}
+.add-card:hover {
+  fill: green;
 }
 .karel-builder .new-task-or-map-button svg {
   width: 20px;
