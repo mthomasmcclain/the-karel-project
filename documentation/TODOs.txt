@@ -6,12 +6,12 @@ x - Modal Header
 x - Fix "New Content" saving even after we cancel out of it wo/saving.
 
 NEEDED FEATURES
-o - Allow Fork, or "Save As" of Expert Content or User Content
 o - "How To" on Map Editor
 o - Layout the Task List / Filters on Map Editor
 o - Turtle Icon on Browser Tab
 o - Get Project Domain and Deploy To
 
+x - Allow Fork of Expert Content
 x - Add Reset Button to Task Player
 x - Put New Task / New Map Behaviour in Card
 x - Layout the Student Maps Page

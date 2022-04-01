@@ -34,8 +34,8 @@
         v-for="id in content" class="content-card"
         :key="`card-for-${id}`"
         :id="id"
-        @previewAction="launchPreviewModal(id)"
-        @editAction="launchCustomizer(id)"
+        @previewAction="launchPreviewModal($event)"
+        @editAction="launchCustomizer($event)"
       />
     </div>
   </div>

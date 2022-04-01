@@ -4,6 +4,8 @@ import { v4 as uuid } from 'uuid'
 import tasks from './tasks'
 import maps from './maps'
 
+const copy = x => JSON.parse(JSON.stringify(x))
+
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   key: 'the-karel-project-1.5',
@@ -80,8 +82,9 @@ export default createStore({
   actions: {
 
     save: ({ commit,getters }, swapId)  => {
+      const newId = uuid()
       const savePayload = {
-        id: uuid(),
+        id: newId,
         data: getters.customizerState()
       }
       if (swapId === 'newTask') {
@@ -95,9 +98,31 @@ export default createStore({
         commit('saveMap', savePayload)
         commit('delete', swapId)
       }
+      return newId
+    },
+
+    copy: ({ commit, getters }, id) => {
+      const type = getters.type(id)
+      let data, mutation
+      if (type === 'task') {
+        data = getters.task(id)
+        mutation = 'saveTask'
+      } else if (type === 'map') {
+        data = getters.map(id)
+        mutation = 'saveMap'
+      } else {
+        console.warn('copy failed, unknown type of id: ', id)
+      }
+      data.name = "Copy of " + data.name
+      data = copy(data)
+      const newId = uuid()
+      const savePayload = { data, id: newId }
+      commit(mutation, savePayload)
+      return newId
     },
 
     updateCustomizerState: ({ commit }, data) => commit('updateCustomizerState', data),
+
     delete: ({ commit }, id) => commit('delete', id),
 
     toggleFavorite: ({ commit }, id) => commit('toggleFavorite', id),

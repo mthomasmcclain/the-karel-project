@@ -27,13 +27,22 @@ export function noBlankNameSwal() {
     )
 }
 
-export function forkContentSwal() {
+export function copyContentSwal() {
     return Swal.fire({
-        title: 'Copy Other User\'s Content?',
-        text: `You are not the owner of this content. Create new using it as a template?`,
+        title: 'Copy Expert Content?',
+        text: `You are cannot edit pre-loaded, expert content. Would you like to create a copy?`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Copy Task'
+    })
+}
+
+export function copyConfirmSwal() {
+    return Swal.fire({
+        title: 'Copy Complete',
+        text: `Your can now edit your copy of this content.`,
+        icon: 'success',
+        confirmButtonText: 'OK'
     })
 }
 
