@@ -3,8 +3,8 @@
 
     <div class="student-display" v-if="!activeMap">
       <div class="student-header">
-        <img src="../assets/karelSide.png" />
-        <h2>The Karel Project</h2>
+        <img src="@/assets/karelSide.png" />
+        <h2>Your Learner Dashboard</h2>
       </div>
 
       <div class="student-task-area">
@@ -99,9 +99,7 @@ export default {
 }
 .student-header img {
   width: 70px;
-}
-.student-header * {
-  margin: 18px 10px;
+  margin: 18px 32px;
 }
 .student-task-area {
   margin: 20px auto;

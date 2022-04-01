@@ -11,6 +11,7 @@ NEEDED FEATURES
 o - Layout the Map Editor -- Task List / Filters on Map Editor / How To Button
 o - Turtle Icon on Browser Tab
 
+x - Layout Homepage
 x - "How To" on Map Editor
 x - Allow Fork of Expert Content
 x - Add Reset Button to Task Player
