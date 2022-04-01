@@ -1,5 +1,29 @@
 import Swal from 'sweetalert2'
 
+export function howToUseMapCustomizerSwal() {
+    return Swal.fire({
+        icon: 'info',
+        html:
+            '<div style="display:flex; flex-direction: column; align-items: flex-start;">' +
+                '<h3 style="margin-bottom: -10px;">To Add a Task to Your Map</h3>' +
+                '<p>Drag the map name from the sidebar onto the map area.</p>' +
+                
+                '<h3 style="margin-bottom: -10px;">To Remove a Task from Your Map</h3>' +
+                '<p>Select a task (click on it) and press the \'delete\' key.</p>' +
+
+                '<h3 style="margin-bottom: -10px;">To Add a Dependency (Arrow)</h3>' +
+                '<p>Click <em>next to</em>, but not on, a task and start dragging. Try it!</p>' +
+
+                '<h3 style="margin-bottom: -10px;">To Remove a Dependency (Arrow)</h3>' +
+                '<p>Select the arrow (click on it) and press the \'delete\' key.</p>' +
+
+            '</div>',
+
+        confirmButtonText: 'Got It!'
+    })
+}
+
+
 export function confirmCloseWithoutSaveSwal() {
     return Swal.fire({
         title: 'Confirm Close',

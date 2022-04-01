@@ -12,6 +12,7 @@
       >
         {{ $store.getters.task(task).name }}
       </div>
+      <button @click="launchHowTo">How To</button>
 
     </div>
     
@@ -45,7 +46,7 @@
 
 <script>
 import MapGraph from '@/components/MapPlayer/MapGraph'
-import { renameMapSwal } from '@/helpers/projectSwallows'
+import { renameMapSwal, howToUseMapCustomizerSwal } from '@/helpers/projectSwallows'
 import defaultNewMapState from '@/store/defaultNewMapState'
 const copy = x => JSON.parse(JSON.stringify(x))
 
@@ -77,6 +78,9 @@ export default {
     }
   },
   methods: {
+    launchHowTo() {
+      howToUseMapCustomizerSwal()
+    },
     async launchRenameMapSwal() {
       const res = await renameMapSwal(this.name)
       if (res.value) {
