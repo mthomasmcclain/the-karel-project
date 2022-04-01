@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './main.css'
+import 'material-components-web/dist/material-components-web.min.css'
 
 import './helpers/vue3DragEvents'
 

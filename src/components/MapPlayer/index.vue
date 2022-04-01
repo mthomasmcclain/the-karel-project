@@ -123,7 +123,7 @@ export default {
 .navbar {
   height: 52px;
   padding: 6px;
-  background: #e5e5e5;
+  background: whitesmoke;
 
   display: flex;
   justify-content: space-between;

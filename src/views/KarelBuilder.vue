@@ -134,8 +134,6 @@ export default {
 </script>
 
 <style>
-@import url("https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css");
-
 .karel-builder {
   display: flex;
   flex-direction: column;

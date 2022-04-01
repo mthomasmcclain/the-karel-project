@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 .navbar {
-  background: #e5e5e5;
+  background: whitesmoke;
   width: 100%;
   display: flex;
   align-items: center;

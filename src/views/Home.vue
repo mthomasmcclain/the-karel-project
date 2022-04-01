@@ -114,7 +114,7 @@ export default {
 }
 .text-area span {
   font-size: 1.5rem;
-  margin-left: -30px;
+  margin-left: -15px;
 }
 
 

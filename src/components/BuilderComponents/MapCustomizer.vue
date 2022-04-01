@@ -1,20 +1,53 @@
 <template>
   <div id="wrapper">
-    <div>
-      <input v-model="nameFilter" />
-      <input type="checkbox" v-model="favoritesFilter" />
-      <button @click="removeFilters">Remove Filters</button>
-      <div
-        v-for="task in $store.getters.filteredTasks({ subStr: nameFilter, favorites: favoritesFilter })"
-        :key="`task-select-${task}`"
-        draggable="true"
-        @dragstart="event => event.dataTransfer.setData('text/plain', task)"
-      >
-        {{ $store.getters.task(task).name }}
+    <div id="sidebar">
+      <button class="how-to-button mdc-button  mdc-button--raised" @click="launchHowTo">
+        <span class="mdc-button__ripple"></span>
+        <span class="mdc-button__label">How to Use</span>
+      </button>
+
+      <div class="filter-search-wrapper">
+          <h3>Filters</h3>
+          <input placeholder="Search" v-model="nameFilter">
+
+          <div>
+            <input class="search" id="fav" type="checkbox" v-model="favoritesFilter">
+            <label class="fav-label" for="fav">
+              <span>Favorite</span>
+              <svg fill="red" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z" />
+              </svg>
+            </label>
+          </div>
+
+          <div>
+            <input id="pila" type="checkbox">
+            <label for="pila">PILA Experts</label>
+          </div>
+
+          <div>
+            <input id="user" type="checkbox">
+            <label for="user">Your Creations</label>
+          </div>
+        
       </div>
-      <button @click="launchHowTo">How To</button>
+      <!-- End Filters Section of SideBar -->
+
+      <div class="task-choices-wrapper">
+        <h3>Task List</h3>
+        <div
+          v-for="task in $store.getters.filteredTasks({ subStr: nameFilter, favorites: favoritesFilter })"
+          :key="`task-select-${task}`"
+          class="task-choice"
+          draggable="true"
+          @dragstart="event => event.dataTransfer.setData('text/plain', task)"
+        >
+          {{ $store.getters.task(task).name }}
+        </div>
+      </div>
 
     </div>
+    <!-- End Sidebar -->
     
     <div id="build-area">
       
@@ -105,41 +138,55 @@ export default {
 </script>
 
 <style scoped>
-/* STYLES FOR SHOW-HIDE SEARCH SECTION */
-.search-section-to-hide-show,
-.show-button,
-.hide-button:target
-{
-  display: none;
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  background: whitesmoke;
+}
+.filter-search-wrapper {
+  padding: 6px 0;
+  margin: 6px 0;
+  border-bottom: 1px solid lightgrey;
+}
+.filter-search-wrapper h3 {
+  margin: 2px 0;
+}
+.task-choices-wrapper h3 {
+  margin: 0 0 8px 0;
+}
+.task-choices-wrapper .task-choice {
+  background: white;
+  border: 1px solid darkgray;
+  margin: 4px 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.task-choices-wrapper .task-choice:hover {
+  background: rgb(246, 246, 246);
+
+}
+.fav-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+}
+.fav-label svg {
+  height: 20px;
+  margin-left: 6px;
 }
 
-.hide-button:target + .show-button,
-.hide-button:target ~ .search-section-to-hide-show
-{
-  display: block;
+.how-to-button {
+  margin: 12px 0 0 0;
+  align-self: center;
 }
-.search-toggle-wrapper
-{
-  padding: 6px;
-  margin: 6px;
-  border-top:    2px solid darkgrey;
-  border-bottom: 2px solid darkgrey;
-}
-/* END STYLES FOR SHOW-HIDE SEARCH SECTION */
 
 #wrapper {
   width: 100%;
   height: 100%;
   display: flex;
 }
-#sidebar {
-  overflow-y: scroll;
-  flex: 0 0 347px;
-}
-.active-task-sidebar h4 { margin: 12px 0; }
-.active-task-sidebar p { margin: 0; font-size: 0.8rem; }
-.active-task-sidebar input { margin: 4px 0 16px 0; }
-.active-task-sidebar .wrap-card { padding: 6px; }
 #build-area {
   flex-grow: 1;
   display: flex;
@@ -149,7 +196,7 @@ export default {
   display: flex;
   height: 52px;
   padding: 6px;
-  background: #e5e5e5;
+  background: whitesmoke;
   justify-content: space-between;
   align-items: center;
 }

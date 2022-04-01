@@ -151,6 +151,7 @@ export default {
 }
 
 .reset-button {
+  cursor: pointer;
   background: darkred;
   display: block;
   position: relative;
