@@ -142,6 +142,7 @@ export default {
   display: flex;
   flex-direction: column;
   background: whitesmoke;
+  overflow: hidden;
 }
 .filter-search-wrapper {
   padding: 6px 0;
@@ -150,6 +151,9 @@ export default {
 }
 .filter-search-wrapper h3 {
   margin: 2px 0;
+}
+.task-choices-wrapper {
+    overflow: auto;
 }
 .task-choices-wrapper h3 {
   margin: 0 0 8px 0;
