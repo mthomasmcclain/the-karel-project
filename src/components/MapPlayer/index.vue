@@ -15,7 +15,7 @@
       </div>
       <div v-else
         class="back-button"
-        @click="$emit('exitMap')"
+        @click="$emit('exit')"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="map-icon" viewBox="0 0 576 512">
             <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
@@ -93,7 +93,7 @@ export default {
       if (this.$store.getters.mapIsComplete(this.id)) {
         await new Promise( res => setTimeout(res, 1000))
         await mapCompleteSwal()
-        this.$emit('exitMap')
+        this.$emit('exit')
       }
     },
     isFrontierNode(id) {

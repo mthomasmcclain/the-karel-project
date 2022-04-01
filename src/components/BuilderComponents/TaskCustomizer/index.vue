@@ -287,7 +287,8 @@ export default {
   {
     flex-shrink: 0;
     padding: 10px;
-	height: 32%;
+    height: 32%;
+    min-height: 240px;
     display: flex;
     flex-direction: column;
   }

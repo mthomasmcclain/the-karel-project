@@ -180,6 +180,7 @@ export default {
 .how-to-button {
   margin: 12px 0 0 0;
   align-self: center;
+  flex-shrink: 0;
 }
 
 #wrapper {

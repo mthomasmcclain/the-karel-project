@@ -11,7 +11,8 @@
       <component
         :is="componentInModal"
         :id="modalContent"
-
+        
+        @exit="closeModal"
         :previewMode="true"
       />
     </Modal>
@@ -168,23 +169,5 @@ export default {
   border-right: 2px solid #ddd;
   background: #f5f5f5;
   padding: 20px;
-}
-#modal-wrapper
-{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-}
-.modal-main {
-  flex-grow: 1;
-  position: relative;
-}
-.modal-buttons
-{
-  text-align: right;
-}
-.modal-buttons button {
-  margin: 0 8px;
 }
 </style>

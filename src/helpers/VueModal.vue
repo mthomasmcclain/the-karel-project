@@ -37,6 +37,20 @@ export default {
 </script>
 
 <style scoped>
+#modal-wrapper
+{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.modal-buttons
+{
+  text-align: right;
+}
+.modal-buttons button {
+  margin: 0 8px;
+}
 .modal-background {
   position: fixed;
   top: 0;
@@ -63,7 +77,10 @@ export default {
 .modal-header {
   text-align: center;
 }
+
 .modal-main {
   flex-grow: 1;
+  position: relative;
+  overflow: auto;
 }
 </style>

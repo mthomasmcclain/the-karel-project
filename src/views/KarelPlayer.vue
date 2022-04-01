@@ -45,7 +45,7 @@
     </div>
     
     <MapPlayer v-else
-      @exitMap="activeMap = null"
+      @exit="activeMap = null"
       :id="activeMap"
     />
 
