@@ -1,14 +1,15 @@
 BUG FIXES
+o - Show Stopper on Content Save or Fork
 o - Fix Content Overflowing Out of Modal (Scrollbar)
 
-x - Aroow Misposition after "Task Correct" modal
+
+x - Arrow Misposition after "Task Correct" modal
 x - Modal Header
 x - Fix "New Content" saving even after we cancel out of it wo/saving.
 
 NEEDED FEATURES
 o - Layout the Map Editor -- Task List / Filters on Map Editor / How To Button
 o - Turtle Icon on Browser Tab
-o - Get Project Domain and Deploy To
 
 x - "How To" on Map Editor
 x - Allow Fork of Expert Content
