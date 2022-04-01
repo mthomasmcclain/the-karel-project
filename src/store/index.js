@@ -113,8 +113,8 @@ export default createStore({
       } else {
         console.warn('copy failed, unknown type of id: ', id)
       }
-      data.name = "Copy of " + data.name
       data = copy(data)
+      data.name = "Copy of " + data.name
       const newId = uuid()
       const savePayload = { data, id: newId }
       commit(mutation, savePayload)
