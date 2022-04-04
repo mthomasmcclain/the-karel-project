@@ -1,27 +1,85 @@
 import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import { v4 as uuid } from 'uuid'
-import tasks from './tasks'
-import maps from './maps'
+import taskIds from './taskIds'
+import mapIds from './mapIds'
+
+
+// TEEEESTING
+// import { db } from '@/firebase/config'
+// import { doc, setDoc } from "firebase/firestore"
+
+// const writeMapsToFirestore = async () => {
+//   try {
+//     Object.entries(maps).forEach( async entry => {
+//       // each entry looks like this [ id, mapObject ] ...
+//       const id = entry[0]
+//       const mapData = JSON.stringify(entry[1])
+//       const documentLocationAndId = doc(db, "maps", id)
+//       await setDoc(documentLocationAndId, { src: mapData })
+//     })
+//   } catch (e) {
+//     console.log('Error in writeAll', e)
+//   }
+// }
+// writeMapsToFirestore()
+
+// import { db } from '@/firebase/config'
+// import { collection, getDocs } from 'firebase/firestore'
+
+// const getCollection = async (colName) => {
+//   try {
+//     const colRef = collection(db, colName)
+//     const docs = await getDocs(colRef, colName)
+//     docs.forEach(doc => {
+//       const parsedData = JSON.parse(doc.data().src)
+//       console.log(doc.id, parsedData)
+//     })
+//   } catch (e) {
+//     console.error("Error getting colRef", e);
+//   }
+// // }
+// getCollection('tasks')
+
+import { db } from '@/firebase/config'
+import { doc, getDoc } from 'firebase/firestore'
+
+const getItems = async (docIds, colName, callback) => {
+  try {
+    const docsObj = {}
+    const docRefs = docIds.map(id => doc(db, colName, id) )
+    const docPromises = docRefs.map(ref => getDoc(ref))
+    const docs = await Promise.all(docPromises)
+    docs.forEach(doc => docsObj[doc.id] = doc.data() )
+    callback( docsObj )
+  } catch (e) {
+    console.warn('Error in getItems', e)
+  }
+}
+
+getItems(taskIds, 'tasks', r => { console.log(r) } )
+
+// ENDNNNND TESSTING
+
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   key: 'the-karel-project-1.5',
-  // reducer: state => ({
-  //   favorites: state.favorites,
-  //   completed: state.completed
-  // }),
+  reducer: state => ({
+    favorites: state.favorites,
+    completed: state.completed,
+  }),
 })
 
 export default createStore({
   state: {
-    tasks: { ...tasks },
-    maps: { ...maps },
+    taskIds: [ ...taskIds ],
+    mapIds: [ ...mapIds ],
     favorites: [ ],
     completed: [ ],
-    expertIds: [ ...Object.keys(tasks), ...Object.keys(maps) ],
+    loadedContent: {},
     customizerState: null
   },
   getters: {
