@@ -5,24 +5,18 @@
         <slot />
       </div>
 
-      <div class="modal-buttons">     
-        <button class="mdc-button mdc-button--outlined" @click="$emit('close')">
-          <span class="mdc-button__ripple"></span>
-          <span class="mdc-button__label">{{ editing ? 'Cancel' : 'Close'}}</span>
+      <div class="modal-buttons-wrapper">     
+        <button class="karel-button modal-button" @click="$emit('close')">
+          {{ editing ? 'Cancel' : 'Close'}}
         </button>
-        <button class="mdc-button mdc-button--outlined"
+        <button class="karel-button modal-button"
           v-if="editing && id !== 'newTask' && id !== 'newMap'"
           @click="$emit('delete')"
         >
-          <span class="mdc-button__ripple"></span>
-          <span class="mdc-button__label">Delete</span>
+          Delete
         </button>
-        <button class="mdc-button mdc-button--outlined"
-          v-if="editing"
-          @click="$emit('save')"
-        >
-          <span class="mdc-button__ripple"></span>
-          <span class="mdc-button__label">Save</span>
+        <button class="karel-button modal-button" v-if="editing" @click="$emit('save')">
+          Save
         </button>
       </div>
     </div>
@@ -44,12 +38,14 @@ export default {
   width: 100%;
   height: 100%;
 }
-.modal-buttons
-{
-  text-align: right;
+.modal-buttons-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
 }
-.modal-buttons button {
+.karel-button.modal-button {
   margin: 0 8px;
+  background: #7066e0;
 }
 .modal-background {
   position: fixed;
