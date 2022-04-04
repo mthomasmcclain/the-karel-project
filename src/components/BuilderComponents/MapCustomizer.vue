@@ -1,13 +1,10 @@
 <template>
   <div id="wrapper">
     <div id="sidebar">
-      <button class="how-to-button mdc-button  mdc-button--raised" @click="launchHowTo">
-        <span class="mdc-button__ripple"></span>
-        <span class="mdc-button__label">How to Use</span>
-      </button>
+      <button class="karel-button how-to-button" @click="launchHowTo">How to Use</button>
 
       <div class="filter-search-wrapper">
-          <h3>Filters</h3>
+          <h3>Task Filters</h3>
           <input placeholder="Search" v-model="nameFilter">
 
           <div>
@@ -141,6 +138,7 @@ export default {
 #sidebar {
   display: flex;
   flex-direction: column;
+  width: 220px;
   background: whitesmoke;
   overflow: hidden;
 }
@@ -182,9 +180,7 @@ export default {
 }
 
 .how-to-button {
-  margin: 12px 0 0 0;
-  align-self: center;
-  flex-shrink: 0;
+  background: #7066e0;
 }
 
 #wrapper {
