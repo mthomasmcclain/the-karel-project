@@ -73,7 +73,6 @@ export default {
   },
   computed: {
     componentInModal() {
-      console.log('computing component, modal content is: ', this.modalContent)
       const taskType = this.$store.getters.type(this.modalContent)
       if (this.editing && (taskType === 'map' || this.modalContent === 'newMap')) {
         return MapCustomizer
@@ -96,7 +95,6 @@ export default {
     save() {
       const swapId = this.modalContent
       const type = (this.mode === 'tasks') ? 'task' : 'map'
-      console.log("type at save method...")
       this.$store.dispatch('save', { swapId, type })
       this.closeModal()
     },
