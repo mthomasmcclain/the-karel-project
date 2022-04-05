@@ -93,8 +93,7 @@ export default {
       return this.$store.getters.type(this.id)
     },
     content() {
-      if (this.contentType === 'map') return this.$store.getters.map(this.id)
-      else return this.$store.getters.task(this.id)
+      return this.$store.getters.content(this.id)
     },
     preWorld() { return this.content.preWorld },
     postWorld() { return this.content.postWorld },
@@ -114,9 +113,9 @@ export default {
         const { isConfirmed } = await copyContentSwal()
         if (!isConfirmed) return
 
-        const newId = await this.$store.dispatch('copy', id)
         await copyConfirmSwal()
-        this.$emit('editAction', newId)
+        const idSub = this.contentType === 'map' ? 'newMap' : 'newTask'
+        this.$emit('editAction', idSub)
       } 
     }
   }

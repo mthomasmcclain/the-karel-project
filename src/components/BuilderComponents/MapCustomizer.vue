@@ -42,7 +42,7 @@
           draggable="true"
           @dragstart="event => event.dataTransfer.setData('text/plain', task)"
         >
-          {{ $store.getters.task(task).name }}
+          {{ $store.getters.name(task) }}
         </div>
       </div>
 
@@ -92,7 +92,7 @@ export default {
     }
   },
   data() {
-    const mapAtId = this.$store.getters.map(this.id)
+    const mapAtId = this.$store.getters.content(this.id)
     const mapToStartCustomizingFrom = mapAtId ? copy(mapAtId) : copy(defaultNewMapState)
 
     const { graph, name } = mapToStartCustomizingFrom

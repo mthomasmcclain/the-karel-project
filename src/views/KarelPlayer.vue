@@ -9,7 +9,7 @@
 
       <div class="student-task-area">
         <h3>Your Karel Maps</h3>
-        <div v-for="id in $store.getters.maps()" :key="id"
+        <div v-for="id in $store.getters.mapIds()" :key="id"
           class="map-display-line"
         >
           <div class="map-selector" @click="activeMap = id">
@@ -21,7 +21,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4v16m14-8L6 20m14-8L6 4"/>
             </svg>
             <MapCorrectSvgIcon class="correct-svg" :correct="$store.getters.mapIsComplete(id)" />
-            <span class="map-name">{{ getName(id) }}</span>
+            <span class="map-name">{{ $store.getters.name(id) }}</span>
           </div>
           <svg v-if="!$store.getters.isExpert(id)"
             class="trash-icon"
@@ -67,14 +67,12 @@ export default {
     }
   },
   methods: {
-    addNew() {
-      prompt('placeholder for validate and add new map id')
-    },
-    getName(id) {
-      return this.$store.getters.map(id).name
+    addMap() {
+      const mapId = prompt('placeholder for validate and add new map id')
+      this.$store.dispatch('addMapById', mapId)
     },
     async confirmDelete(id) {
-      const { isConfirmed } = await confirmDeleteSwal(this.getName(id))
+      const { isConfirmed } = await confirmDeleteSwal(this.$store.getters.name(id))
       if (isConfirmed) this.$store.dispatch('delete', id)
     }
   }

@@ -66,7 +66,7 @@ export default {
     }
   },
   data() {
-    const { graph, name } = this.$store.getters.map(this.id)
+    const { graph, name } = this.$store.getters.content(this.id)
     return {
       graph: copy(graph),
       name,

@@ -73,14 +73,15 @@ export default {
   },
   computed: {
     componentInModal() {
-      const foundTaskType = this.$store.getters.type(this.modalContent)
-      if (this.editing && (foundTaskType === 'map' || this.modalContent === 'newMap')) {
+      console.log('computing component, modal content is: ', this.modalContent)
+      const taskType = this.$store.getters.type(this.modalContent)
+      if (this.editing && (taskType === 'map' || this.modalContent === 'newMap')) {
         return MapCustomizer
-      } else if (this.editing && (foundTaskType ==='task' || this.modalContent === 'newTask')) {
+      } else if (this.editing && (taskType ==='task' || this.modalContent === 'newTask')) {
         return TaskCustomizer
-      } else if (foundTaskType === 'map') {
+      } else if (taskType === 'map') {
         return MapPlayer
-      } else if (foundTaskType === 'task') {
+      } else if (taskType === 'task') {
         return TaskPlayer
       } else {
         console.warn('cannot compute component for modal from modalContent:', this.modalContent)
@@ -88,15 +89,16 @@ export default {
       }
     },
     content() {
-      return this.mode === 'maps' ? this.$store.getters.maps() : this.$store.getters.tasks()
+      return this.mode === 'maps' ? this.$store.getters.mapIds() : this.$store.getters.taskIds()
     },
   },
   methods: {
     save() {
-      const idToSaveOver = this.modalContent
-      this.$store.dispatch('save', idToSaveOver )
+      const swapId = this.modalContent
+      const type = (this.mode === 'tasks') ? 'task' : 'map'
+      console.log("type at save method...")
+      this.$store.dispatch('save', { swapId, type })
       this.closeModal()
-
     },
     launchCustomizer(id) {
       this.editing = true

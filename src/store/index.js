@@ -1,67 +1,6 @@
 import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import { v4 as uuid } from 'uuid'
-import taskIds from './taskIds'
-import mapIds from './mapIds'
-
-
-// TEEEESTING
-// import { db } from '@/firebase/config'
-// import { doc, setDoc } from "firebase/firestore"
-
-// const writeMapsToFirestore = async () => {
-//   try {
-//     Object.entries(maps).forEach( async entry => {
-//       // each entry looks like this [ id, mapObject ] ...
-//       const id = entry[0]
-//       const mapData = JSON.stringify(entry[1])
-//       const documentLocationAndId = doc(db, "maps", id)
-//       await setDoc(documentLocationAndId, { src: mapData })
-//     })
-//   } catch (e) {
-//     console.log('Error in writeAll', e)
-//   }
-// }
-// writeMapsToFirestore()
-
-// import { db } from '@/firebase/config'
-// import { collection, getDocs } from 'firebase/firestore'
-
-// const getCollection = async (colName) => {
-//   try {
-//     const colRef = collection(db, colName)
-//     const docs = await getDocs(colRef, colName)
-//     docs.forEach(doc => {
-//       const parsedData = JSON.parse(doc.data().src)
-//       console.log(doc.id, parsedData)
-//     })
-//   } catch (e) {
-//     console.error("Error getting colRef", e);
-//   }
-// // }
-// getCollection('tasks')
-
-import { db } from '@/firebase/config'
-import { doc, getDoc } from 'firebase/firestore'
-
-const getItems = async (docIds, colName, callback) => {
-  try {
-    const docsObj = {}
-    const docRefs = docIds.map(id => doc(db, colName, id) )
-    const docPromises = docRefs.map(ref => getDoc(ref))
-    const docs = await Promise.all(docPromises)
-    docs.forEach(doc => docsObj[doc.id] = doc.data() )
-    callback( docsObj )
-  } catch (e) {
-    console.warn('Error in getItems', e)
-  }
-}
-
-getItems(taskIds, 'tasks', r => { console.log(r) } )
-
-// ENDNNNND TESSTING
-
-
 const copy = x => JSON.parse(JSON.stringify(x))
 
 const vuexLocal = new VuexPersistence({
@@ -70,62 +9,82 @@ const vuexLocal = new VuexPersistence({
   reducer: state => ({
     favorites: state.favorites,
     completed: state.completed,
+    loadedContent: state.loadedContent,
+    mapIds: state.mapIds,
+    taskIds: state.taskIds
   }),
 })
 
 export default createStore({
   state: {
-    taskIds: [ ...taskIds ],
-    mapIds: [ ...mapIds ],
+    loading: true,
+    loadedContent: {},
+    mapIds: [ ],
+    taskIds: ['490ea6f4-7805-4303-b164-c77cc937c267' ],
     favorites: [ ],
     completed: [ ],
-    loadedContent: {},
+    expertIds: [ ],
     customizerState: null
   },
   getters: {
-    tasks: state => () => Object.keys(state.tasks),
-    maps: state => () => Object.keys(state.maps),
+    loading: state => () => state.loading,
+    loadedContent: state => () => state.loadedContent,
+    mapIds: state => () => state.mapIds,
+    taskIds: state => () => state.taskIds,
+    embeddedTaskIds: state => () => {
+      if (state.loading) return []
+      let output = []
+      state.mapIds.forEach(mapId => {
+        const mapContent = state.loadedContent[mapId]
+        const nodes = mapContent.graph.nodes
+        const taskIds = Object.values(nodes).map(nodeVal => nodeVal.taskId)
+        output = [ ...output, ...taskIds ]
+      })
+      return output
+    },
     customizerState: state => () => state.customizerState,
     filteredTasks: (state, getters) => ({ subStr, favorites }) => {
-      return Object.entries(state.tasks)
-        .filter(([ , task]) => task.name.toLowerCase().includes(subStr.toLowerCase()))
-        .filter(([id]) => favorites ? getters.isFavorite(id) : true)
-        .map(([id]) => id)
+      return state.taskIds
+        .filter(id => state.loadedContent[id].name.toLowerCase().includes(subStr.toLowerCase()))
+        .filter(id => favorites ? getters.isFavorite(id) : true)
     },
-    task: state => id => state.tasks[id],
-    map: state => id => state.maps[id],
+    content: state => id => state.loadedContent[id],
     name: ( _state, getters) => id => {
-      if (getters.type(id) === 'map') return getters.map(id).name
-      else if (getters.type(id) === 'task') return getters.task(id).name
+      return getters.content(id).name
     },
-    type: ( _state , {task, map} ) => id => {
-      if (task(id)) return 'task'
-      else if (map(id)) return 'map'
+    type: state => id => {
+      if (state.taskIds.includes(id)) return 'task'
+      else if (state.mapIds.includes(id)) return 'map'
       else return null
     },
     isExpert: state => id => state.expertIds.includes(id),
     isFavorite: state => id => state.favorites.includes(id),
     taskIsComplete: state => id => state.completed.includes(id),
     mapIsComplete: (_state, getters) => id => {
-      const mapData = getters.map(id)
+      const mapData = getters.content(id)
       const mapTasks = Object.values(mapData.graph.nodes).map(nodeData => nodeData.taskId)
       return mapTasks.every(taskId => getters.taskIsComplete(taskId))
     }
   },
   mutations: {
+    loading: (state, bool) => state.loading = bool,
+    addMapById: (state, id) => state.mapIds.push(id), 
+    addToLocalContent: (state, { data, id, type }) => {
+      // action has already pushed optimistic save to firestore
+      state.loadedContent[id] = data
+      state.loadedContent = { ...state.loadedContent }
+      if (type === 'map' && !state.mapIds.includes(id)) state.mapIds.push(id)
+      if (type === 'task' && !state.taskIds.includes(id)) state.taskIds.push(id)
+    },
     updateCustomizerState: (state, data) => state.customizerState = data,
-    saveMap:  (state, { id, data } ) => state.maps[id] = data,
-    saveTask: (state, { id, data }) => state.tasks[id] = data,
+    addToExpertIds: (state, id) => {
+      if (!state.expertIds.includes(id)) state.expertIds.push(id)
+    },
     delete: (state, id) => {
-      if (state.maps[id]) {
-        delete state.maps[id]
-        state.maps = { ...state.maps }
-      } else if (state.tasks[id]) {
-        delete state.tasks[id]
-        state.tasks = { ...state.tasks }
-      } else {
-        console.warn(`attempting to delete id not found in maps or tasks, ${id}`)
-      }
+      state.mapIds  = state.mapIds.filter(mapId => mapId !== id)
+      state.taskIds = state.taskIds.filter(taskId => taskId !== id)
+      delete state.loadedContent[id]
+      state.loadedContent = { ...state.loadedContent }
     },
     toggleFavorite: (state, id) => {
       const index = state.favorites.indexOf(id)
@@ -138,45 +97,70 @@ export default createStore({
     }
   },
   actions: {
+    setLoading: ({ commit }, bool) => commit('loading', bool),
 
-    save: ({ commit,getters }, swapId)  => {
+    loadContent: async ({ getters, commit, dispatch }) => {
+      const allMapIds = getters.mapIds()
+      let allTaskIds = [ ...getters.taskIds() ]
+      getters.embeddedTaskIds().forEach(id => {
+        if (!allTaskIds.includes(id)) allTaskIds.push(id)
+      })
+    
+      const allIds = [ ...allMapIds, ...allTaskIds]
+      const neededIds = allIds.filter(id => !Object.keys(getters.loadedContent()).includes(id))
+      if (!neededIds.length) {
+        commit('loading', false)
+        return
+      }
+
+      commit('loading', true)
+      try {
+        const docRefs = neededIds.map(id => doc(db, 'content', id) )
+        const docPromises = docRefs.map(ref => getDoc(ref))
+        const docs = await Promise.all(docPromises)
+        docs.forEach(doc => {
+          const id = doc.id
+          const contentData = JSON.parse(doc.data().src)
+          if (doc.data().isExpert) dispatch('addToExpertIds', id)
+          dispatch('addToLocalContent', { id, data: contentData })
+        })
+      } catch (e) {
+        console.warn('Error in getItems', e)
+      }
+      commit('loading', false)
+    },
+    
+    addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
+    save: async ({ commit, dispatch, getters }, { swapId, type })  => {
       const newId = uuid()
-      const savePayload = {
-        id: newId,
-        data: getters.customizerState()
-      }
-      if (swapId === 'newTask') {
-        commit('saveTask', savePayload)
-      } else if (swapId === 'newMap') {
-        commit('saveMap', savePayload)
-      } else if (getters.type(swapId) === 'task') {
-        commit('saveTask', savePayload)
-        commit('delete', swapId)
-      } else if (getters.type(swapId) === 'map') {
-        commit('saveMap', savePayload)
-        commit('delete', swapId)
-      }
+      const payload = { type, id: newId, data: copy(getters.customizerState()) }
+      commit('addToLocalContent', payload)
+      dispatch('saveToFirestore', payload)
+      if (swapId) commit('delete', swapId)
       return newId
     },
-
-    copy: ({ commit, getters }, id) => {
-      const type = getters.type(id)
-      let data, mutation
-      if (type === 'task') {
-        data = getters.task(id)
-        mutation = 'saveTask'
-      } else if (type === 'map') {
-        data = getters.map(id)
-        mutation = 'saveMap'
-      } else {
-        console.warn('copy failed, unknown type of id: ', id)
+    addToLocalContent: ({ commit }, payload) => commit('addToLocalContent', payload),
+    saveToFirestore: async (_context, {id, data}) => {
+      try {
+        const jsonData = JSON.stringify(data)
+        const docRef = doc(db, "content", id)
+        await setDoc(docRef, { src: jsonData })
+        
+      } catch (e) {
+        console.warn('Error in writeAll', e)
       }
-      data = copy(data)
+    },
+    copy: ({ dispatch, getters }, id) => {
+      const data = copy(getters.content(id))
       data.name = "Copy of " + data.name
-      const newId = uuid()
-      const savePayload = { data, id: newId }
-      commit(mutation, savePayload)
-      return newId
+      const savePayload = { data, id }
+      return dispatch('save', savePayload) // returns the new id passed by back commit
+    },
+    addMapById: async ({ dispatch, commit }, id) => {
+      commit('loading', true)
+      commit('addMapById', id)
+      await dispatch('loadContent')
+      await dispatch('loadContent')
     },
 
     updateCustomizerState: ({ commit }, data) => commit('updateCustomizerState', data),

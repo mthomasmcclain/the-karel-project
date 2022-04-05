@@ -7,3 +7,4 @@ import './main.css'
 import './helpers/vue3DragEvents'
 
 createApp(App).use(store).use(router).mount('#app')
+store.dispatch('loadContent')

@@ -192,7 +192,7 @@ export default {
           taskId, x, y,
           w: 0, h: 0,
           visited: false,
-          label: this.$store.getters.task(taskId).name
+          label: this.$store.getters.name(taskId)
         }
       }
       this.emitChange()
