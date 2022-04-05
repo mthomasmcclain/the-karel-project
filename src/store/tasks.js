@@ -1,4 +1,392 @@
 export default {
+    "6bdad242-7805-4fa3-81fd-30fbca5726f3": {
+        "name": "Subtle, Tricky, Challenge!",
+        "instructions": "Use functions to decompose and solve this problem with limited blocks.",
+        "hint": "We recommend decomposing the process into sub-routines.\n\nFor example, you will for sure want a function that picks up all stones at any location.  How about a function that picks up all blocks on the perimeter?  ... or maybe a function that cleans up one of the interior columns?",
+        "preWorld": {
+            "nCols": 5,
+            "nRows": 5,
+            "karelRow": 4,
+            "karelCol": 0,
+            "karelDir": "East",
+            "walls": [
+                {
+                    "r": 3,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 3,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 3,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 3,
+                    "c": 3,
+                    "d": "East"
+                }
+            ],
+            "stones": [
+                {
+                    "r": 1,
+                    "c": 1,
+                    "n": 6
+                },
+                {
+                    "r": 3,
+                    "c": 1,
+                    "n": 1
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "n": 2
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "n": 3
+                },
+                {
+                    "r": 2,
+                    "c": 3,
+                    "n": 5
+                },
+                {
+                    "r": 3,
+                    "c": 3,
+                    "n": 1
+                },
+                {
+                    "r": 4,
+                    "c": 4,
+                    "n": 1
+                },
+                {
+                    "r": 3,
+                    "c": 0,
+                    "n": 4
+                },
+                {
+                    "r": 0,
+                    "c": 0,
+                    "n": 1
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "n": 1
+                },
+                {
+                    "r": 0,
+                    "c": 2,
+                    "n": 2
+                },
+                {
+                    "r": 0,
+                    "c": 3,
+                    "n": 3
+                },
+                {
+                    "r": 4,
+                    "c": 2,
+                    "n": 2
+                },
+                {
+                    "r": 2,
+                    "c": 4,
+                    "n": 9
+                }
+            ]
+        },
+        "postWorld": {
+            "nCols": 5,
+            "nRows": 5,
+            "karelRow": 4,
+            "karelCol": 0,
+            "karelDir": "East",
+            "walls": [
+                {
+                    "r": 3,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 0,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 3,
+                    "c": 1,
+                    "d": "East"
+                },
+                {
+                    "r": 3,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "East"
+                },
+                {
+                    "r": 1,
+                    "c": 2,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "North"
+                },
+                {
+                    "r": 1,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 2,
+                    "c": 3,
+                    "d": "East"
+                },
+                {
+                    "r": 3,
+                    "c": 3,
+                    "d": "East"
+                }
+            ],
+            "stones": []
+        },
+        "karelBlockly": {
+            "highlight": [],
+            "settings": {
+                "blocks": {
+                    "karel_move": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_turn": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_place": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_pickup": {
+                        "active": true,
+                        "limit": 1
+                    },
+                    "karel_if": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_repeat": {
+                        "active": false,
+                        "limit": -1
+                    },
+                    "karel_while": {
+                        "active": true,
+                        "limit": -1
+                    },
+                    "karel_define": {
+                        "active": true,
+                        "limit": -1
+                    }
+                },
+                "showToolbox": true,
+                "disabled": false,
+                "maxBlocks": 51,
+                "customizerMode": false
+            },
+            "workspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"karel_main\" id=\"main\" deletable=\"false\" x=\"44\" y=\"0\"></block></xml>",
+            "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    <Block type=\"karel_turn_left\" id=\"karel_turn\" />\n    <Block type=\"karel_place_stone\" id=\"karel_place\" />\n    <Block type=\"karel_pickup_stone\" id=\"karel_pickup\" />\n    <Block type=\"karel_if_dropdown\" id=\"karel_if\" />\n    \n    <Block type=\"karel_while_dropdown\" id=\"karel_while\" />\n    <Block type=\"procedures_defnoreturn\" id=\"karel_define\" />\n  </xml>\n"
+        },
+        "tags": {
+            "systemTags": [
+                "Has 'If'",
+                "Has 'While'",
+                "Has Function",
+                "Limit Blocks"
+            ],
+            "customTags": [
+                "Challenge"
+            ]
+        }
+    },
+    "a7048927-671d-4da8-90fc-05691f45548a": {
+        "name": "Simple Task",
+            "instructions": "Can you help Karel navigate around the corner?",
+                "hint": "",
+                    "preWorld": {
+            "nCols": 2,
+                "nRows": 2,
+                    "karelRow": 1,
+                        "karelCol": 0,
+                            "karelDir": "East",
+                                "walls": [
+                                    {
+                                        "r": 1,
+                                        "c": 0,
+                                        "d": "North"
+                                    }
+                                ],
+                                    "stones": []
+        },
+        "postWorld": {
+            "nCols": 2,
+                "nRows": 2,
+                    "karelRow": 0,
+                        "karelCol": 0,
+                            "karelDir": "West",
+                                "walls": [
+                                    {
+                                        "r": 1,
+                                        "c": 0,
+                                        "d": "North"
+                                    }
+                                ],
+                                    "stones": []
+        },
+        "karelBlockly": {
+            "highlight": [],
+                "settings": {
+                "blocks": {
+                    "karel_move": {
+                        "active": true,
+                            "limit": -1
+                    },
+                    "karel_turn": {
+                        "active": true,
+                            "limit": -1
+                    },
+                    "karel_place": {
+                        "active": false,
+                            "limit": -1
+                    },
+                    "karel_pickup": {
+                        "active": false,
+                            "limit": -1
+                    },
+                    "karel_if": {
+                        "active": false,
+                            "limit": -1
+                    },
+                    "karel_repeat": {
+                        "active": false,
+                            "limit": -1
+                    },
+                    "karel_while": {
+                        "active": false,
+                            "limit": -1
+                    },
+                    "karel_define": {
+                        "active": false,
+                            "limit": -1
+                    }
+                },
+                "showToolbox": true,
+                    "disabled": false,
+                        "maxBlocks": -1,
+                            "customizerMode": false
+            },
+            "workspace": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"karel_main\" id=\"main\" deletable=\"false\" x=\"44\" y=\"0\"></block></xml>",
+                "toolbox": "\n  <xml>\n    \n    <Block type=\"karel_move\" id=\"karel_move\" />\n    <Block type=\"karel_turn_left\" id=\"karel_turn\" />\n    \n    \n    \n    \n    \n    \n  </xml>\n"
+        },
+        "tags": {
+            "systemTags": [],
+                "customTags": [
+                    "Beginner"
+                ]
+        }
+    },
     "3da7a961-a0e7-46e7-aa2d-f2cc2994a275": {
         "name": "Karel the Turtle",
         "instructions": "Karel is a turtle.  Press the \"play\" button and watch Karel spin around",
