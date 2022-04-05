@@ -822,7 +822,7 @@ export default {
     },
     "602f358b-6a1c-4028-aedc-132edb1f8f1d": {
         "name": "Repeat Challenge 1",
-        "instructions": "Use 'repeats' to solve this challenge.  If you can, try using one",
+        "instructions": "Use 'repeats' to solve this challenge.",
         "hint": "Think about how to do one \"side\" of the square.  Then have Karel do that four times!",
         "preWorld": {
             "nCols": 3,

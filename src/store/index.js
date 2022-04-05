@@ -28,8 +28,10 @@ export default createStore({
     tasks: state => () => Object.keys(state.tasks),
     maps: state => () => Object.keys(state.maps),
     customizerState: state => () => state.customizerState,
-    filteredTasks: (state, getters) => ({ subStr, favorites }) => {
+    filteredTasks: (state, getters) => ({ subStr, favorites, userTasksOnly }) => {
+      // TODO -- user's taks are not simply complement of isExpert once we have sharing!
       return Object.entries(state.tasks)
+        .filter(([id]) => userTasksOnly ? !getters.isExpert(id) : true)
         .filter(([ , task]) => task.name.toLowerCase().includes(subStr.toLowerCase()))
         .filter(([id]) => favorites ? getters.isFavorite(id) : true)
         .map(([id]) => id)

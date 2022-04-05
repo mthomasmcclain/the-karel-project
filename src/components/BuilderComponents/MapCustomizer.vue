@@ -18,13 +18,8 @@
           </div>
 
           <div>
-            <input id="pila" type="checkbox">
-            <label for="pila">PILA Experts</label>
-          </div>
-
-          <div>
-            <input id="user" type="checkbox">
-            <label for="user">Your Creations</label>
+            <input id="user" v-model="userTasksOnlyFilter" type="checkbox">
+            <label for="user">Your Creations Only</label>
           </div>
         
       </div>
@@ -33,7 +28,7 @@
       <div class="task-choices-wrapper">
         <h3>Task List</h3>
         <div
-          v-for="task in $store.getters.filteredTasks({ subStr: nameFilter, favorites: favoritesFilter })"
+          v-for="task in $store.getters.filteredTasks({ subStr: nameFilter, favorites: favoritesFilter, userTasksOnly: userTasksOnlyFilter })"
           :key="`task-select-${task}`"
           class="task-choice"
           draggable="true"
@@ -98,6 +93,7 @@ export default {
       name,
       nameFilter: '',
       favoritesFilter: false,
+      userTasksOnlyFilter: false,
       selected: null
     }
   },
