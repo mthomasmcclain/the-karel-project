@@ -129,3 +129,10 @@ export function renameMapSwal(incomingName = '... name your map ...') {
         confirmButtonText: 'Update Map Name',
     })
 }
+
+export function addMapSwal() {
+    return Swal.fire({
+        icon: 'success',
+        text: 'Importing content created by other users is currently disabled... but we like the way you\'re thinking!'
+    })
+}

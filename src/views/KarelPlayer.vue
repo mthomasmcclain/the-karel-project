@@ -56,7 +56,7 @@
 import MapPlayer from '@/components/MapPlayer'
 import PilaLogoVueSvg from '@/assets/PilaLogoVueSvg'
 import MapCorrectSvgIcon from "@/components/MapCorrectSvgIcon"
-import { confirmDeleteSwal } from '@/helpers/projectSwallows'
+import { confirmDeleteSwal, addMapSwal } from '@/helpers/projectSwallows'
 
 export default {
   name: 'KarelPlayer',
@@ -67,8 +67,8 @@ export default {
     }
   },
   methods: {
-    addNew() {
-      prompt('placeholder for validate and add new map id')
+    addMap() {
+      addMapSwal()
     },
     getName(id) {
       return this.$store.getters.map(id).name
