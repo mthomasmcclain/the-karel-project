@@ -69,7 +69,7 @@ export default {
   methods: {
     addMap() {
       const mapId = prompt('placeholder for validate and add new map id')
-      this.$store.dispatch('addMapById', mapId)
+      this.$store.dispatch('loadMapAndEmbedded', mapId)
     },
     async confirmDelete(id) {
       const { isConfirmed } = await confirmDeleteSwal(this.$store.getters.name(id))

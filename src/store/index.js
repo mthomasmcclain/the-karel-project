@@ -1,6 +1,8 @@
 import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import { v4 as uuid } from 'uuid'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from '@/firebase/config'
 const copy = x => JSON.parse(JSON.stringify(x))
 
 const vuexLocal = new VuexPersistence({
@@ -9,6 +11,7 @@ const vuexLocal = new VuexPersistence({
   reducer: state => ({
     favorites: state.favorites,
     completed: state.completed,
+    expertIds: state.expertIds,
     loadedContent: state.loadedContent,
     mapIds: state.mapIds,
     taskIds: state.taskIds
@@ -20,7 +23,7 @@ export default createStore({
     loading: true,
     loadedContent: {},
     mapIds: [ ],
-    taskIds: ['490ea6f4-7805-4303-b164-c77cc937c267' ],
+    taskIds: [ '5e718562-b157-4150-bfb5-a99434dd0b5f' ],
     favorites: [ ],
     completed: [ ],
     expertIds: [ ],
@@ -68,7 +71,7 @@ export default createStore({
   },
   mutations: {
     loading: (state, bool) => state.loading = bool,
-    addMapById: (state, id) => state.mapIds.push(id), 
+    addToMapIds: (state, id) => state.mapIds.push(id), 
     addToLocalContent: (state, { data, id, type }) => {
       // action has already pushed optimistic save to firestore
       state.loadedContent[id] = data
@@ -99,7 +102,7 @@ export default createStore({
   actions: {
     setLoading: ({ commit }, bool) => commit('loading', bool),
 
-    loadContent: async ({ getters, commit, dispatch }) => {
+    loadContent: async ({ getters, dispatch }) => {
       const allMapIds = getters.mapIds()
       let allTaskIds = [ ...getters.taskIds() ]
       getters.embeddedTaskIds().forEach(id => {
@@ -108,12 +111,8 @@ export default createStore({
     
       const allIds = [ ...allMapIds, ...allTaskIds]
       const neededIds = allIds.filter(id => !Object.keys(getters.loadedContent()).includes(id))
-      if (!neededIds.length) {
-        commit('loading', false)
-        return
-      }
-
-      commit('loading', true)
+      if (!neededIds.length) return
+      
       try {
         const docRefs = neededIds.map(id => doc(db, 'content', id) )
         const docPromises = docRefs.map(ref => getDoc(ref))
@@ -127,7 +126,6 @@ export default createStore({
       } catch (e) {
         console.warn('Error in getItems', e)
       }
-      commit('loading', false)
     },
     
     addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
@@ -156,11 +154,26 @@ export default createStore({
       const savePayload = { data, id }
       return dispatch('save', savePayload) // returns the new id passed by back commit
     },
-    addMapById: async ({ dispatch, commit }, id) => {
+    loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
       commit('loading', true)
-      commit('addMapById', id)
-      await dispatch('loadContent')
-      await dispatch('loadContent')
+
+      // verify it loads and is a map
+      const ref = doc(db, 'content', id)
+      const r = await getDoc(ref)
+      if (!r
+        || !r.data()
+        || !r.data().src
+        || !JSON.parse(r.data().src)
+        || !JSON.parse(r.data().src).graph
+      ) {
+        alert('no map found with id of ${id}')
+      } else {
+        commit('addToMapIds', id)
+        await dispatch('loadContent')
+        await dispatch('loadContent')
+      }
+      commit('loading', false)
+
     },
 
     updateCustomizerState: ({ commit }, data) => commit('updateCustomizerState', data),

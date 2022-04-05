@@ -126,9 +126,7 @@ export default {
   },
   data() {
     const taskAtId = this.$store.getters.content(this.id)
-    console.log('task at id', taskAtId)
     const taskToStartCustomizingFrom = taskAtId ? copy(taskAtId) : copy(defaultNewTaskState)
-    console.log('taskToStartCustomizingFrom', taskToStartCustomizingFrom)
     const {
       name,
       instructions,
