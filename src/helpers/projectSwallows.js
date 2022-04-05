@@ -130,9 +130,16 @@ export function renameMapSwal(incomingName = '... name your map ...') {
     })
 }
 
-export function addMapSwal() {
+export function importingDisabledSwal() {
     return Swal.fire({
         icon: 'success',
         text: 'Importing content created by other users is currently disabled... but we like the way you\'re thinking!'
+    })
+}
+
+export function sharingDisabledSwal() {
+    return Swal.fire({
+        icon: 'success',
+        text: 'Sharing your maps with other users is currently disabled... but we like the way you\'re thinking!'
     })
 }
