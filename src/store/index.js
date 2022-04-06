@@ -150,17 +150,19 @@ export default createStore({
       try {
         const jsonData = JSON.stringify(data)
         const docRef = doc(db, "content", id)
-        await setDoc(docRef, { src: jsonData })
-        
+        await setDoc(docRef, { src: jsonData })     
       } catch (e) {
         console.warn('Error in writeAll', e)
       }
     },
-    copy: ({ dispatch, getters }, id) => {
+    copy: ({ getters, commit, dispatch }, id) => {
       const data = copy(getters.content(id))
       data.name = "Copy of " + data.name
-      const savePayload = { data, id }
-      return dispatch('save', savePayload) // returns the new id passed by back commit
+      const newId = uuid()
+      const type = getters.type(id)
+      commit('addToLocalContent', { type, data, id: newId })
+      dispatch('saveToFirestore', { data, id: newId })
+      return newId
     },
     loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
       // verify it loads and is a map
