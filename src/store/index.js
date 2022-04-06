@@ -170,7 +170,7 @@ export default createStore({
         || !JSON.parse(r.data().src)
         || !JSON.parse(r.data().src).graph
       ) {
-        alert('no map found with id of ${id}')
+        alert(`no map found with id of ${id}`)
       } else {
         commit('addToMapIds', id)
         await dispatch('loadContent')
