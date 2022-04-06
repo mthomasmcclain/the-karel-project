@@ -77,7 +77,7 @@ export default createStore({
   },
   mutations: {
     setLoading: (state, bool) => state.loading = bool,
-    addToMapIds: (state, id) => state.mapIds.push(id), 
+    addToMapIds: (state, id) => !state.mapIds.includes(id) && state.mapIds.push(id), 
     addToLocalContent: (state, { data, id, type }) => {
       // action has already pushed optimistic save to firestore
       state.loadedContent[id] = data
@@ -161,9 +161,10 @@ export default createStore({
       return dispatch('save', savePayload) // returns the new id passed by back commit
     },
     loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
-      commit('setLoading', true)
-
       // verify it loads and is a map
+      if (!id) return Promise.reject(new Error('cannot load map with falsey id'))
+
+
       const ref = doc(db, 'content', id)
       const r = await getDoc(ref)
       if (!r
@@ -172,14 +173,12 @@ export default createStore({
         || !JSON.parse(r.data().src)
         || !JSON.parse(r.data().src).graph
       ) {
-        alert(`no map found with id of ${id}`)
+        return Promise.reject(new Error('map not found or result failed map schema test'))
       } else {
         commit('addToMapIds', id)
         await dispatch('loadContent')
         await dispatch('loadContent')
       }
-      commit('setLoading', false)
-
     },
 
     updateCustomizerState: ({ commit }, data) => commit('updateCustomizerState', data),

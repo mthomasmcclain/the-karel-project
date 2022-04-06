@@ -130,16 +130,42 @@ export function renameMapSwal(incomingName = '... name your map ...') {
     })
 }
 
-export function importingDisabledSwal() {
+export function importMapSwal() {
     return Swal.fire({
-        icon: 'success',
-        text: 'Importing content created by other users is currently disabled... but we like the way you\'re thinking!'
+        title: 'Import Map',
+        text: 'Paste the id of the map you wish to import.',
+        input: 'text',
+        showCancelButton: true,
+        confirmButtonText: 'Import',
     })
 }
 
-export function sharingDisabledSwal() {
+export function getCodeSwal(id) {
     return Swal.fire({
-        icon: 'success',
-        text: 'Sharing your maps with other users is currently disabled... but we like the way you\'re thinking!'
+        title: 'Share Code',
+        html: `Share this code with anyone you want. <br><br> ${id}`,
+        type: 'success'
     })
 }
+
+export function mapNotFoundSwal() {
+    return Swal.fire(
+        'Not Found',
+        `Unable to find a a map with the provided access code.`,
+        'warning'
+    )
+}
+
+// export function importingDisabledSwal() {
+//     return Swal.fire({
+//         icon: 'success',
+//         text: 'Importing content created by other users is currently disabled... but we like the way you\'re thinking!'
+//     })
+// }
+
+// export function sharingDisabledSwal() {
+//     return Swal.fire({
+//         icon: 'success',
+//         text: 'Sharing your maps with other users is currently disabled... but we like the way you\'re thinking!'
+//     })
+// }

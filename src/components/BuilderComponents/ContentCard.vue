@@ -70,7 +70,7 @@ import GraphPreview from './GraphPreview'
 import KarelWorldRenderer from '@/components/KarelWorldRenderer'
 import PILALogo from '@/assets/PilaLogoVueSvg'
 import UserIcon from '@/assets/UserIconVueSvg'
-import { copyContentSwal, copyConfirmSwal, sharingDisabledSwal } from '@/helpers/projectSwallows'
+import { copyContentSwal, copyConfirmSwal, getCodeSwal } from '@/helpers/projectSwallows'
 
 export default {
   components: {
@@ -104,7 +104,7 @@ export default {
   },
   methods: {
     getCode() {
-      sharingDisabledSwal()
+      getCodeSwal(this.id)
     },
     async handleEditRequest(id) {
       const isExpert = this.$store.getters.isExpert(id)

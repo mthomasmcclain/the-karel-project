@@ -56,7 +56,7 @@
 import MapPlayer from '@/components/MapPlayer'
 import PilaLogoVueSvg from '@/assets/PilaLogoVueSvg'
 import MapCorrectSvgIcon from "@/components/MapCorrectSvgIcon"
-import { confirmDeleteSwal } from '@/helpers/projectSwallows'
+import { confirmDeleteSwal, importMapSwal, mapNotFoundSwal } from '@/helpers/projectSwallows'
 
 export default {
   name: 'KarelPlayer',
@@ -67,9 +67,16 @@ export default {
     }
   },
   methods: {
-    addMap() {
-      const mapId = prompt('placeholder for validate and add new map id')
-      this.$store.dispatch('loadMapAndEmbedded', mapId)
+    async addMap() {
+      this.$store.dispatch('setLoading', true)
+      const { value, isDismissed } = await importMapSwal()
+      if (isDismissed) {
+        this.$store.dispatch('setLoading', false)
+      } else {
+        this.$store.dispatch('loadMapAndEmbedded', value)
+          .catch(() => mapNotFoundSwal() )
+          .finally(() => this.$store.dispatch('setLoading', false))
+      }
     },
     async confirmDelete(id) {
       const { isConfirmed } = await confirmDeleteSwal(this.$store.getters.name(id))
