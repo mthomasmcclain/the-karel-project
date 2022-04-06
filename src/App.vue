@@ -1,9 +1,6 @@
 <template>
-  <router-view v-if="!$store.state.loading" />
-  <div v-else>
-    Looooooaaaddding....
-    <button @click="$store.dispatch('setLoading', false)">Stop Loading</button>"
-    </div>
+  <div v-if="$store.state.loading">Loading content...</div>
+  <router-view v-else />
 </template>
 
 <style>
