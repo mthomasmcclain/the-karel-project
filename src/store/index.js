@@ -39,13 +39,14 @@ export default createStore({
     mapIds: state => () => state.mapIds,
     taskIds: state => () => state.taskIds,
     embeddedTaskIds: state => () => {
-      if (state.loading) return []
       let output = []
       state.mapIds.forEach(mapId => {
         const mapContent = state.loadedContent[mapId]
-        const nodes = mapContent.graph.nodes
-        const taskIds = Object.values(nodes).map(nodeVal => nodeVal.taskId)
-        output = [ ...output, ...taskIds ]
+        if (mapContent) {
+          const nodes = mapContent.graph.nodes
+          const taskIds = Object.values(nodes).map(nodeVal => nodeVal.taskId)
+          output = [...output, ...taskIds]
+        }
       })
       return output
     },
@@ -75,7 +76,7 @@ export default createStore({
     }
   },
   mutations: {
-    loading: (state, bool) => state.loading = bool,
+    setLoading: (state, bool) => state.loading = bool,
     addToMapIds: (state, id) => state.mapIds.push(id), 
     addToLocalContent: (state, { data, id, type }) => {
       // action has already pushed optimistic save to firestore
@@ -105,7 +106,7 @@ export default createStore({
     }
   },
   actions: {
-    setLoading: ({ commit }, bool) => commit('loading', bool),
+    setLoading: ({ commit }, bool) => commit('setLoading', bool),
 
     loadContent: async ({ getters, dispatch }) => {
       const allMapIds = getters.mapIds()
@@ -160,7 +161,7 @@ export default createStore({
       return dispatch('save', savePayload) // returns the new id passed by back commit
     },
     loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
-      commit('loading', true)
+      commit('setLoading', true)
 
       // verify it loads and is a map
       const ref = doc(db, 'content', id)
@@ -177,7 +178,7 @@ export default createStore({
         await dispatch('loadContent')
         await dispatch('loadContent')
       }
-      commit('loading', false)
+      commit('setLoading', false)
 
     },
 
