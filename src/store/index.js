@@ -129,9 +129,11 @@ export default createStore({
           if (doc.data().isExpert) dispatch('addToExpertIds', id)
           dispatch('addToLocalContent', { id, data: contentData })
         })
+        return dispatch('loadContent')
       } catch (e) {
         console.warn('Error in getItems', e)
       }
+
     },
     
     addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
@@ -176,7 +178,6 @@ export default createStore({
         return Promise.reject(new Error('map not found or result failed map schema test'))
       } else {
         commit('addToMapIds', id)
-        await dispatch('loadContent')
         await dispatch('loadContent')
       }
     },
