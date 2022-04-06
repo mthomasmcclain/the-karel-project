@@ -7,7 +7,7 @@
           <b>Challenge:</b> {{ task.instructions }}
 
         </div>
-        <button class="reset-button" @click="resetTask">Reset Code</button>
+        <button class="karel-button reset" @click="resetTask">Reset Code</button>
       </div>
 
       <div class="worlds-wrapper">
@@ -34,7 +34,9 @@
           @setStepSpeed="stepSpeed = $event"
         />
       </div>
-      <button class="hint-button" v-if="task.hint" @click="showHint">hint</button>
+      <div>
+        <button class="karel-button hint" v-if="task.hint" @click="showHint">hint</button>
+      </div>
     </div>
 
     <div class="right-col">
@@ -150,21 +152,8 @@ export default {
   justify-content: space-between;
 }
 
-.reset-button {
-  cursor: pointer;
+.karel-button.reset {
   background: darkred;
-  display: block;
-  position: relative;
-  z-index: 10;
-  right: 1%;
-  color: white;
-  width: 100px;
-  height: 30px;
-  margin: 6px;
-  border-radius: 6px;
-  border: none;
-  font-size: 0.9em;
-  float: right;
 }
 
 .left-col .instructions-box {
@@ -198,14 +187,8 @@ export default {
 .left-col .controls-wrapper {
   height: 82px;
 }
-.left-col .hint-button {
+.left-col .karel-button.hint {
   background: purple;
-  color: white;
-  width: 70px;
-  height: 30px;
-  margin: 6px;
-  border-radius: 6px;
-  border: none;
-  font-size: 0.9em;
+  margin-top: 4px;
 }
 </style>

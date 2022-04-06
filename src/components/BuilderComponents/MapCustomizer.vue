@@ -1,13 +1,10 @@
 <template>
   <div id="wrapper">
     <div id="sidebar">
-      <button class="how-to-button mdc-button  mdc-button--raised" @click="launchHowTo">
-        <span class="mdc-button__ripple"></span>
-        <span class="mdc-button__label">How to Use</span>
-      </button>
+      <button class="karel-button how-to-button" @click="launchHowTo">How to Use</button>
 
       <div class="filter-search-wrapper">
-          <h3>Filters</h3>
+          <h3>Task Filters</h3>
           <input placeholder="Search" v-model="nameFilter">
 
           <div>
@@ -21,13 +18,8 @@
           </div>
 
           <div>
-            <input id="pila" type="checkbox">
-            <label for="pila">PILA Experts</label>
-          </div>
-
-          <div>
-            <input id="user" type="checkbox">
-            <label for="user">Your Creations</label>
+            <input id="user" v-model="userTasksOnlyFilter" type="checkbox">
+            <label for="user">Your Creations Only</label>
           </div>
         
       </div>
@@ -36,7 +28,7 @@
       <div class="task-choices-wrapper">
         <h3>Task List</h3>
         <div
-          v-for="task in $store.getters.filteredTasks({ subStr: nameFilter, favorites: favoritesFilter })"
+          v-for="task in $store.getters.filteredTasks({ subStr: nameFilter, favorites: favoritesFilter, userTasksOnly: userTasksOnlyFilter })"
           :key="`task-select-${task}`"
           class="task-choice"
           draggable="true"
@@ -101,6 +93,7 @@ export default {
       name,
       nameFilter: '',
       favoritesFilter: false,
+      userTasksOnlyFilter: false,
       selected: null
     }
   },
@@ -141,6 +134,7 @@ export default {
 #sidebar {
   display: flex;
   flex-direction: column;
+  width: 220px;
   background: whitesmoke;
   overflow: hidden;
 }
@@ -182,9 +176,7 @@ export default {
 }
 
 .how-to-button {
-  margin: 12px 0 0 0;
-  align-self: center;
-  flex-shrink: 0;
+  background: #7066e0;
 }
 
 #wrapper {

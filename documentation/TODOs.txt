@@ -1,17 +1,18 @@
 BUG FIXES
-o - (Will be resolved in data refactor) --Show Stopper on Content Save or Fork
+o - Show Stopper on Editing Task Already in Map (Will be solved in Sharing to permanent id )
 
+x - (Will be resolved in data refactor) --Show Stopper on Content Save or Fork
 x - Fix Content Overflowing Out of Modal (Scrollbar)
 x - Arrow Misposition after "Task Correct" modal
 x - Modal Header
 x - Fix "New Content" saving even after we cancel out of it wo/saving.
 
 NEEDED FEATURES
+o - Data Sharing Public
 o - Turtle Icon on Browser Tab
-o - Hook up user Filters
-o - Hook Up Live Data!
-o - Build Map for Pila Next Week
 
+x - Build Map for Pila Next Week
+x - Hook up user Filters
 x - Layout the Map Editor -- Task List / Filters on Map Editor / How To Button
 x - Layout Homepage
 x - "How To" on Map Editor

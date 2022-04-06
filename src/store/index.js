@@ -11,7 +11,7 @@ const copy = x => JSON.parse(JSON.stringify(x))
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  key: 'the-karel-project-1.5',
+  key: 'the-karel-project-1.7',
   reducer: state => ({
     favorites: state.favorites,
     completed: state.completed,
@@ -50,10 +50,11 @@ export default createStore({
       return output
     },
     customizerState: state => () => state.customizerState,
-    filteredTasks: (state, getters) => ({ subStr, favorites }) => {
+    filteredTasks: (state, getters) => ({ subStr, favorites, userTasksOnly }) => {
       return state.taskIds
         .filter(id => state.loadedContent[id].name.toLowerCase().includes(subStr.toLowerCase()))
         .filter(id => favorites ? getters.isFavorite(id) : true)
+        .filter(id => userTasksOnly ? !getters.isExpert(id) : true)
     },
     content: state => id => state.loadedContent[id],
     name: ( _state, getters) => id => {

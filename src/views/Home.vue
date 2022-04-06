@@ -21,7 +21,7 @@
         </svg>
       </div>
       <div class="text-area">
-        <span>Launch Learner Portal</span>
+        <span>Learner Portal</span>
       </div>
     </div>
 
@@ -39,7 +39,7 @@
         </svg>
       </div>
       <div class="text-area">
-        <span>Launch Customizer</span>
+        <span>Karel Customizer</span>
       </div>
     </div>
 

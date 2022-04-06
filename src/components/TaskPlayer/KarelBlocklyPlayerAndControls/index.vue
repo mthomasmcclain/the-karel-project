@@ -1,17 +1,17 @@
 <template>
   <div class="container">
     <div v-if="playing">
-      <button @click="$emit('pause')">pause</button>
+      <button class="karel-button" @click="$emit('pause')">pause</button>
     </div>
     <div v-else-if="currentStepData && currentStepData.error">
-      <button @click="reset">reset</button>
+      <button class="karel-button" @click="reset">reset</button>
     </div>
     <div v-else-if="playingTerminated">
-      <button @click="reset">reset</button>
+      <button class="karel-button" @click="reset">reset</button>
     </div>
     <div v-else>
-      <button @click="$emit('play')">play</button>
-      <button v-if="paused" @click="reset">reset</button>
+      <button class="karel-button" @click="$emit('play')">play</button>
+      <button class="karel-button" v-if="paused" @click="reset">reset</button>
     </div>
 
     <div class="play-speed-wrapper">
@@ -92,17 +92,6 @@
   justify-content: space-between;
   align-items: flex-end;
 }
-button {
-  background: green;
-  color: white;
-  min-width: 70px;
-  height: 30px;
-  margin: 0 6px;
-  border-radius: 6px;
-  border: none;
-  font-size: 0.9em;
-}
-
 .play-speed-wrapper {
     display: flex;
     color: #777;

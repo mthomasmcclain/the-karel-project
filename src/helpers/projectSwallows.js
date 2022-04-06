@@ -6,7 +6,7 @@ export function howToUseMapCustomizerSwal() {
         html:
             '<div style="display:flex; flex-direction: column; align-items: flex-start;">' +
                 '<h3 style="margin-bottom: -10px;">To Add a Task to Your Map</h3>' +
-                '<p>Drag the map name from the sidebar onto the map.</p>' +
+                '<p>Drag the task from the sidebar onto the map.</p>' +
                 
                 '<h3 style="margin-bottom: -10px;">To Remove a Task from Your Map</h3>' +
                 '<p>Click on a task and press the \'delete\' key.</p>' +
@@ -127,5 +127,19 @@ export function renameMapSwal(incomingName = '... name your map ...') {
         inputValue: incomingName,
         showCancelButton: true,
         confirmButtonText: 'Update Map Name',
+    })
+}
+
+export function importingDisabledSwal() {
+    return Swal.fire({
+        icon: 'success',
+        text: 'Importing content created by other users is currently disabled... but we like the way you\'re thinking!'
+    })
+}
+
+export function sharingDisabledSwal() {
+    return Swal.fire({
+        icon: 'success',
+        text: 'Sharing your maps with other users is currently disabled... but we like the way you\'re thinking!'
     })
 }
