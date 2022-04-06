@@ -1,14 +1,12 @@
 const defaultTaskIds = [
-    "3da7a961-a0e7-46e7-aa2d-f2cc2994a275",
-    "c446fe42-5945-4b04-a00a-9bc824b0d7de",
-    "73a2eff1-05e5-4334-bedd-cdcc2caf0adb",
-    "bf258132-7bc9-4c85-947c-9d7b4de5f8ec",
-    "73809f71-d14a-4ebd-8f62-3b7bfc40817c",
-    "e266aa31-4f85-44a2-970d-c2de547c8443",
-    "602f358b-6a1c-4028-aedc-132edb1f8f1d",
-    "c756c6db-d4da-48a9-a70e-a2d4018249e6",
-    "7c881004-5661-4bef-be36-a4bb662822b2",
-    "230b25c5-d49f-435b-9dfb-3c7eb9f86ba1",
-    "ac5c0453-5cdc-4e59-92d1-c5c7f1a585df"
+    '2baa57c1-80c1-4f16-9c28-bcb3ea13dd3a',
+    '3057cf71-42be-4ead-ab20-683f8e085efb',
+    '3d001131-390b-4165-8f3b-6a931155c34d',
+    '6fdc117b-3f4d-4420-bf03-ea3c115cd4a2',
+    '762deb0b-7746-471f-b654-352db9063b4f',
+    'c8505139-f7b7-48cd-86e4-dc7adb879436',
+    'd19720bd-c2b1-4393-9ea1-64f953889fc3',
+    'dd09a809-183b-4314-b3a1-8fea2a1c27c9',
+    'fe52cb84-193b-4a01-9b6d-0e3147a40bc4'
 ]
 export default defaultTaskIds

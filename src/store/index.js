@@ -3,6 +3,10 @@ import VuexPersistence from 'vuex-persist'
 import { v4 as uuid } from 'uuid'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase/config'
+import expertTaskIds from './taskIds'
+import expertMapIds from './mapIds'
+
+
 const copy = x => JSON.parse(JSON.stringify(x))
 
 const vuexLocal = new VuexPersistence({
@@ -22,8 +26,8 @@ export default createStore({
   state: {
     loading: true,
     loadedContent: {},
-    mapIds: [ ],
-    taskIds: [ '5e718562-b157-4150-bfb5-a99434dd0b5f' ],
+    mapIds: [ ...expertMapIds ],
+    taskIds: [ ...expertTaskIds ],
     favorites: [ ],
     completed: [ ],
     expertIds: [ ],
