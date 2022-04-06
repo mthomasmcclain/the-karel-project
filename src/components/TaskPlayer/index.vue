@@ -68,7 +68,7 @@ export default {
     }
   },
   data() {
-    const { karelBlockly } = this.$store.getters.task(this.id)
+    const { karelBlockly } = this.$store.getters.content(this.id)
     return {
       karelBlockly: copy(karelBlockly),
       currentStepData: null,
@@ -98,7 +98,7 @@ export default {
     }
   },
   computed: {
-    task() { return this.$store.getters.task(this.id) },
+    task() { return this.$store.getters.content(this.id) },
 
     world() {
       return this.currentStepData ? this.currentStepData.world : this.task.preWorld
@@ -122,7 +122,7 @@ export default {
   methods: {
     showHint() { taskHintSwal(this.task.hint) },
     resetTask() {
-      const { karelBlockly } = this.$store.getters.task(this.id)
+      const { karelBlockly } = this.$store.getters.content(this.id)
       this.karelBlockly = copy(karelBlockly)
       this.playing = false
       this.currentStepData = null

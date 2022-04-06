@@ -125,7 +125,7 @@ export default {
     KarelBlocklySettingsEditor
   },
   data() {
-    const taskAtId = this.$store.getters.task(this.id)
+    const taskAtId = this.$store.getters.content(this.id)
     const taskToStartCustomizingFrom = taskAtId ? copy(taskAtId) : copy(defaultNewTaskState)
     const {
       name,
@@ -144,7 +144,8 @@ export default {
   watch: {
     '$data': {
       deep: true,
-      handler() { this.update() }
+      handler() { this.update() },
+      immediate: true
     },
     'preWorld.walls': {
       handler( curr ) {

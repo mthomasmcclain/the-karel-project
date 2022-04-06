@@ -1,75 +1,98 @@
 import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import { v4 as uuid } from 'uuid'
-import tasks from './tasks'
-import maps from './maps'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from '@/firebase/config'
+import expertTaskIds from './taskIds'
+import expertMapIds from './mapIds'
+
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  key: 'the-karel-project-1.6',
-  // reducer: state => ({
-  //   favorites: state.favorites,
-  //   completed: state.completed
-  // }),
+  key: 'the-karel-project-1.7',
+  reducer: state => ({
+    favorites: state.favorites,
+    completed: state.completed,
+    expertIds: state.expertIds,
+    loadedContent: state.loadedContent,
+    mapIds: state.mapIds,
+    taskIds: state.taskIds
+  }),
 })
 
 export default createStore({
   state: {
-    tasks: { ...tasks },
-    maps: { ...maps },
+    loading: true,
+    loadedContent: {},
+    mapIds: [ ...expertMapIds ],
+    taskIds: [ ...expertTaskIds ],
     favorites: [ ],
     completed: [ ],
-    expertIds: [ ...Object.keys(tasks), ...Object.keys(maps) ],
+    expertIds: [ ],
     customizerState: null
   },
   getters: {
-    tasks: state => () => Object.keys(state.tasks),
-    maps: state => () => Object.keys(state.maps),
+    loading: state => () => state.loading,
+    loadedContent: state => () => state.loadedContent,
+    mapIds: state => () => state.mapIds,
+    taskIds: state => () => state.taskIds,
+    embeddedTaskIds: state => () => {
+      if (state.loading) return []
+      let output = []
+      state.mapIds.forEach(mapId => {
+        const mapContent = state.loadedContent[mapId]
+        const nodes = mapContent.graph.nodes
+        const taskIds = Object.values(nodes).map(nodeVal => nodeVal.taskId)
+        output = [ ...output, ...taskIds ]
+      })
+      return output
+    },
     customizerState: state => () => state.customizerState,
     filteredTasks: (state, getters) => ({ subStr, favorites, userTasksOnly }) => {
-      // TODO -- user's taks are not simply complement of isExpert once we have sharing!
-      return Object.entries(state.tasks)
-        .filter(([id]) => userTasksOnly ? !getters.isExpert(id) : true)
-        .filter(([ , task]) => task.name.toLowerCase().includes(subStr.toLowerCase()))
-        .filter(([id]) => favorites ? getters.isFavorite(id) : true)
-        .map(([id]) => id)
+      return state.taskIds
+        .filter(id => state.loadedContent[id].name.toLowerCase().includes(subStr.toLowerCase()))
+        .filter(id => favorites ? getters.isFavorite(id) : true)
+        .filter(id => userTasksOnly ? !getters.isExpert(id) : true)
     },
-    task: state => id => state.tasks[id],
-    map: state => id => state.maps[id],
+    content: state => id => state.loadedContent[id],
     name: ( _state, getters) => id => {
-      if (getters.type(id) === 'map') return getters.map(id).name
-      else if (getters.type(id) === 'task') return getters.task(id).name
+      return getters.content(id).name
     },
-    type: ( _state , {task, map} ) => id => {
-      if (task(id)) return 'task'
-      else if (map(id)) return 'map'
+    type: state => id => {
+      if (state.taskIds.includes(id)) return 'task'
+      else if (state.mapIds.includes(id)) return 'map'
       else return null
     },
     isExpert: state => id => state.expertIds.includes(id),
     isFavorite: state => id => state.favorites.includes(id),
     taskIsComplete: state => id => state.completed.includes(id),
     mapIsComplete: (_state, getters) => id => {
-      const mapData = getters.map(id)
+      const mapData = getters.content(id)
       const mapTasks = Object.values(mapData.graph.nodes).map(nodeData => nodeData.taskId)
       return mapTasks.every(taskId => getters.taskIsComplete(taskId))
     }
   },
   mutations: {
+    loading: (state, bool) => state.loading = bool,
+    addToMapIds: (state, id) => state.mapIds.push(id), 
+    addToLocalContent: (state, { data, id, type }) => {
+      // action has already pushed optimistic save to firestore
+      state.loadedContent[id] = data
+      state.loadedContent = { ...state.loadedContent }
+      if (type === 'map' && !state.mapIds.includes(id)) state.mapIds.push(id)
+      if (type === 'task' && !state.taskIds.includes(id)) state.taskIds.push(id)
+    },
     updateCustomizerState: (state, data) => state.customizerState = data,
-    saveMap:  (state, { id, data } ) => state.maps[id] = data,
-    saveTask: (state, { id, data }) => state.tasks[id] = data,
+    addToExpertIds: (state, id) => {
+      if (!state.expertIds.includes(id)) state.expertIds.push(id)
+    },
     delete: (state, id) => {
-      if (state.maps[id]) {
-        delete state.maps[id]
-        state.maps = { ...state.maps }
-      } else if (state.tasks[id]) {
-        delete state.tasks[id]
-        state.tasks = { ...state.tasks }
-      } else {
-        console.warn(`attempting to delete id not found in maps or tasks, ${id}`)
-      }
+      state.mapIds  = state.mapIds.filter(mapId => mapId !== id)
+      state.taskIds = state.taskIds.filter(taskId => taskId !== id)
+      delete state.loadedContent[id]
+      state.loadedContent = { ...state.loadedContent }
     },
     toggleFavorite: (state, id) => {
       const index = state.favorites.indexOf(id)
@@ -82,45 +105,80 @@ export default createStore({
     }
   },
   actions: {
+    setLoading: ({ commit }, bool) => commit('loading', bool),
 
-    save: ({ commit,getters }, swapId)  => {
+    loadContent: async ({ getters, dispatch }) => {
+      const allMapIds = getters.mapIds()
+      let allTaskIds = [ ...getters.taskIds() ]
+      getters.embeddedTaskIds().forEach(id => {
+        if (!allTaskIds.includes(id)) allTaskIds.push(id)
+      })
+    
+      const allIds = [ ...allMapIds, ...allTaskIds]
+      const neededIds = allIds.filter(id => !Object.keys(getters.loadedContent()).includes(id))
+      if (!neededIds.length) return
+      
+      try {
+        const docRefs = neededIds.map(id => doc(db, 'content', id) )
+        const docPromises = docRefs.map(ref => getDoc(ref))
+        const docs = await Promise.all(docPromises)
+        docs.forEach(doc => {
+          const id = doc.id
+          const contentData = JSON.parse(doc.data().src)
+          if (doc.data().isExpert) dispatch('addToExpertIds', id)
+          dispatch('addToLocalContent', { id, data: contentData })
+        })
+      } catch (e) {
+        console.warn('Error in getItems', e)
+      }
+    },
+    
+    addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
+    save: async ({ commit, dispatch, getters }, { swapId, type })  => {
       const newId = uuid()
-      const savePayload = {
-        id: newId,
-        data: getters.customizerState()
-      }
-      if (swapId === 'newTask') {
-        commit('saveTask', savePayload)
-      } else if (swapId === 'newMap') {
-        commit('saveMap', savePayload)
-      } else if (getters.type(swapId) === 'task') {
-        commit('saveTask', savePayload)
-        commit('delete', swapId)
-      } else if (getters.type(swapId) === 'map') {
-        commit('saveMap', savePayload)
-        commit('delete', swapId)
-      }
+      const payload = { type, id: newId, data: copy(getters.customizerState()) }
+      commit('addToLocalContent', payload)
+      dispatch('saveToFirestore', payload)
+      if (swapId) commit('delete', swapId)
       return newId
     },
-
-    copy: ({ commit, getters }, id) => {
-      const type = getters.type(id)
-      let data, mutation
-      if (type === 'task') {
-        data = getters.task(id)
-        mutation = 'saveTask'
-      } else if (type === 'map') {
-        data = getters.map(id)
-        mutation = 'saveMap'
-      } else {
-        console.warn('copy failed, unknown type of id: ', id)
+    addToLocalContent: ({ commit }, payload) => commit('addToLocalContent', payload),
+    saveToFirestore: async (_context, {id, data}) => {
+      try {
+        const jsonData = JSON.stringify(data)
+        const docRef = doc(db, "content", id)
+        await setDoc(docRef, { src: jsonData })
+        
+      } catch (e) {
+        console.warn('Error in writeAll', e)
       }
-      data = copy(data)
+    },
+    copy: ({ dispatch, getters }, id) => {
+      const data = copy(getters.content(id))
       data.name = "Copy of " + data.name
-      const newId = uuid()
-      const savePayload = { data, id: newId }
-      commit(mutation, savePayload)
-      return newId
+      const savePayload = { data, id }
+      return dispatch('save', savePayload) // returns the new id passed by back commit
+    },
+    loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
+      commit('loading', true)
+
+      // verify it loads and is a map
+      const ref = doc(db, 'content', id)
+      const r = await getDoc(ref)
+      if (!r
+        || !r.data()
+        || !r.data().src
+        || !JSON.parse(r.data().src)
+        || !JSON.parse(r.data().src).graph
+      ) {
+        alert(`no map found with id of ${id}`)
+      } else {
+        commit('addToMapIds', id)
+        await dispatch('loadContent')
+        await dispatch('loadContent')
+      }
+      commit('loading', false)
+
     },
 
     updateCustomizerState: ({ commit }, data) => commit('updateCustomizerState', data),
