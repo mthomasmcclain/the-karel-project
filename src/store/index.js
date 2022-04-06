@@ -11,7 +11,7 @@ const copy = x => JSON.parse(JSON.stringify(x))
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  key: 'the-karel-project-1.7',
+  key: 'the-karel-project-2.1',
   reducer: state => ({
     favorites: state.favorites,
     completed: state.completed,
