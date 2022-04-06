@@ -35,8 +35,9 @@
         v-for="id in content" class="content-card"
         :key="`card-for-${id}`"
         :id="id"
-        @previewAction="launchPreviewModal($event)"
-        @editAction="launchCustomizer($event)"
+        @preview="launchPreviewModal($event)"
+        @edit="launchCustomizer($event)"
+        @copy="copyAndLaunchCustomizer($event)"
       />
     </div>
   </div>
@@ -97,6 +98,10 @@ export default {
       const type = (this.mode === 'tasks') ? 'task' : 'map'
       this.$store.dispatch('save', { swapId, type })
       this.closeModal()
+    },
+    async copyAndLaunchCustomizer(id) {
+      const newId = await this.$store.dispatch('copy', id)
+      this.launchCustomizer(newId)
     },
     launchCustomizer(id) {
       this.editing = true
