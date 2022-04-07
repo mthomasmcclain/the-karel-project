@@ -165,6 +165,7 @@ export default {
 .left-col .worlds-wrapper {
   display: flex;
   min-height: 300px;
+  max-height: 300px;
   margin: 10px 0;
 }
 .left-col .world-col {
