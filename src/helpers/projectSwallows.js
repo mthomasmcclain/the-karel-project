@@ -151,7 +151,7 @@ export function getCodeSwal(id) {
 export function mapNotFoundSwal() {
     return Swal.fire(
         'Not Found',
-        `Unable to find a a map with the provided access code.`,
+        `Unable to find a map with the provided access code.`,
         'warning'
     )
 }
