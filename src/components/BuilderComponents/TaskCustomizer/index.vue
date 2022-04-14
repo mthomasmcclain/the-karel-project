@@ -136,6 +136,10 @@ export default {
       karelBlockly,
       tags
     } = taskToStartCustomizingFrom
+
+    // customizerMode toggles if uesr can lock/unlock fn blocks
+    karelBlockly.settings.customizerMode = true
+
     return  {
       activeTab: 'Basic',
       name, instructions, hint, preWorld, postWorld, karelBlockly, tags
@@ -172,7 +176,10 @@ export default {
   },
   methods: {
     update() {
-      const { name, instructions, hint, preWorld, postWorld, karelBlockly, tags } = this
+      const { name, instructions, hint, preWorld, postWorld, tags } = this
+      // karelBlockly pulled separately, customizerMode false for save
+      const karelBlockly = copy(this.karelBlockly)
+      karelBlockly.settings.customizerMode = false
       const customizerStateData = copy({ name, instructions, hint, preWorld, postWorld, karelBlockly, tags })
       this.$store.dispatch('updateCustomizerState', customizerStateData )
     },

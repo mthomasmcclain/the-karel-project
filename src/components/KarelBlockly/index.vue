@@ -257,7 +257,7 @@ export default {
           .forEach(block => {
             const node = document.querySelector(`[data-id="${block.id}"`)
             const lock = document.createElementNS("http://www.w3.org/2000/svg", "path")
-            setAttributes(lock, { d: SVG_LOCK_PATH, opacity: 0.4, transform: "translate(7, 5) scale(1.5)" })
+            setAttributes(lock, { d: SVG_LOCK_PATH, fill: 'black', transform: "translate(7, 5) scale(1.5)" })
             lock.classList.add("custom-lock-icon")
             node.appendChild(lock)
           })

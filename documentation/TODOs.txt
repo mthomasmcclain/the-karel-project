@@ -29,4 +29,5 @@ x - Delay Before Map Complete
 MAYBE FEATURES
 o - Finish Loading Page
 o - Refactor Expert Content Pattern
-o - CustmizerMode on MapCustomizer, Karel Graph
+
+x - CustmizerMode on MapCustomizer, Karel Graph
