@@ -68,9 +68,10 @@ export default {
     }
   },
   data() {
-    const { karelBlockly } = this.$store.getters.content(this.id)
+    const { karelBlockly } = copy(this.$store.getters.content(this.id))
+    karelBlockly.settings.customizerMode = false
     return {
-      karelBlockly: copy(karelBlockly),
+      karelBlockly,
       currentStepData: null,
       playing: false,
       stepSpeed: 5,
