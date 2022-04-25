@@ -1,4 +1,11 @@
+TO DO
+o - Code Wireframed Home Page
+o - Agreement
+
 BUG FIXES
+o - 'Basic Toolbox' not tagged correctly on first Loading
+o - Missing "not stones present" and "not front clear"
+o - Stone Number Visibility on Editor
 
 x - Show Stopper on Editing Task Already in Map (Will be solved in Sharing to permanent id )
 x - (Will be resolved in data refactor) --Show Stopper on Content Save or Fork
@@ -27,7 +34,5 @@ x - Delay Before Map Complete
 
 
 MAYBE FEATURES
-o - Finish Loading Page
-o - Refactor Expert Content Pattern
 
 x - CustmizerMode on MapCustomizer, Karel Graph
