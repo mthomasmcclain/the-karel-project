@@ -4,12 +4,23 @@
     <div class="student-display" v-if="!activeMap">
       <div class="student-header">
         <img src="@/assets/karelSide.png" />
-        <h2>Your Learner Dashboard</h2>
+        <h2>Your Karel Maps</h2>
       </div>
 
       <div class="student-task-area">
-        <h3>Your Karel Maps</h3>
-        <div v-for="id in $store.getters.mapIds()" :key="id"
+        <div class="tab-selector">
+          <div
+            v-for="tab in tabs"
+            :key="`tab-${tab}`"
+            @click="activeTab = tab"
+            :class="{
+              tab: true,
+              active: tab === activeTab
+            }"
+
+          >{{ tab }}</div>
+        </div>
+        <div v-for="id in filteredMaps" :key="id"
           class="map-display-line"
         >
           <div class="map-selector" @click="activeMap = id">
@@ -36,7 +47,7 @@
         </div>
       </div>
 
-      <div class="add-map-button" @click="addMap">
+      <div v-if="activeTab === 'Custom'" class="add-map-button" @click="addMap" >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
         </svg>
@@ -63,7 +74,14 @@ export default {
   components: { MapPlayer, MapCorrectSvgIcon, PilaLogoVueSvg },
   data() {
     return {
-      activeMap: null
+      activeMap: null,
+      tabs: [ 'Beginner', 'Intermediate', 'Advanced', 'Custom'],
+      activeTab: 'Beginner',
+    }
+  },
+  computed: {
+    filteredMaps() {
+      return this.$store.getters.mapIdsByDifficulty(this.activeTab)
     }
   },
   methods: {
@@ -90,6 +108,7 @@ export default {
 .karel-player {
   width: 100%;
   height: 100%;
+  user-select: none;
 }
 
 .student-display {
@@ -108,12 +127,38 @@ export default {
 }
 .student-task-area {
   margin: 20px auto;
+  min-width: 500px;
 }
-.student-task-area h3 {
-  margin: 12px 0;
+.student-task-area .tab-selector {
+  height: 40px;
+  display: flex;
+  font-size: 1.2rem;
+  justify-content: space-around;
+  align-items: center;
   border-bottom: 2px dotted;
-  text-align: center;
-  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+.student-task-area .tab {
+  color: grey;
+  cursor: pointer;
+  flex-grow: 1;
+  margin: 0 2px;
+
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.student-task-area .tab:hover {
+  background: whitesmoke;
+}
+.student-task-area .tab.active {
+  color: green;
+  background: whitesmoke;
 }
 .student-task-area .map-display-line {
   display: flex;

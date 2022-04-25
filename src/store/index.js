@@ -5,13 +5,13 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase/config'
 import expertTaskIds from './taskIds'
 import expertMapIds from './mapIds'
-
+import mapIdToDifficulty from './mapIdToDifficulty'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  key: 'the-karel-project-2.2',
+  key: 'the-karel-project-2.3',
   reducer: state => ({
     favorites: state.favorites,
     completed: state.completed,
@@ -31,13 +31,24 @@ export default createStore({
     favorites: [ ],
     completed: [ ],
     expertIds: [ ],
+    mapIdToDifficulty,
     customizerState: null
   },
   getters: {
     loading: state => () => state.loading,
     loadedContent: state => () => state.loadedContent,
     mapIds: state => () => state.mapIds,
+    mapIdsByDifficulty: state => difficulty => {
+      const validChoices = [ 'Beginner', 'Intermediate', 'Advanced' ]
+      if (validChoices.includes(difficulty)) {
+        return state.mapIds.filter(id => mapIdToDifficulty[id] === difficulty)
+      } else {
+        // for user built, return all map ids without difficulty label
+        return state.mapIds.filter(id => !mapIdToDifficulty[id])
+      } 
+    },
     taskIds: state => () => state.taskIds,
+    mapDifficulty: state => id => state.mapIdToDifficulty[id],
     embeddedTaskIds: state => () => {
       let output = []
       state.mapIds.forEach(mapId => {
