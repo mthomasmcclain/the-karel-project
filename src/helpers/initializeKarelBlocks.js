@@ -347,8 +347,16 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
                         "FRONT_CLEAR"
                     ],
                     [
+                        "%{BKY_KAREL_FRONT_IS_BLOCKED}",
+                        "FRONT_BLOCKED"
+                    ],
+                    [
                         "%{BKY_KAREL_STONES_PRESENT}",
                         "STONES_PRESENT"
+                    ],
+                    [
+                        "%{BKY_KAREL_STONES_NOT_PRESENT}",
+                        "STONES_NOT_PRESENT"
                     ]
                 ]
             },
