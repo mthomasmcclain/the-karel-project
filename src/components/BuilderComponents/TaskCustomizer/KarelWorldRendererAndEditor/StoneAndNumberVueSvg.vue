@@ -6,7 +6,8 @@
     />
     <text v-if="n" class="no-select"
       x="5" :y="numberYPos"
-      font-size="2"
+      font-size="3.5"
+      fill="white"
       font-family="Tahoma"
       text-anchor="middle"
       alignment-baseline="middle"
@@ -38,8 +39,8 @@ export default {
   },
   computed: {
     numberYPos() {
-      if (this.numPosition === 'top') return 5-3.5
-      else if (this.numPosition === 'bottom') return 5+3.5
+      if (this.numPosition === 'top') return 5-2.5
+      else if (this.numPosition === 'bottom') return 5+2.5
       else return 5
     }
   }

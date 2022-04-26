@@ -4,12 +4,20 @@
       
       <div class="start-world-area">
         <h4>Start World:</h4>
-        <KarelWorldRendererAndEditor :world="preWorld" @change="preWorld = $event" />
+        <KarelWorldRendererAndEditor
+          class="edit-start-world"
+          :world="preWorld"
+          @change="preWorld = $event"
+        />
       </div>
       
       <div class="end-world-area">
         <h4>Goal World:</h4>
-        <KarelWorldRendererAndEditor :world="postWorld" @change="postWorld= $event" />
+        <KarelWorldRendererAndEditor
+          class="edit-post-world"
+          :world="postWorld"
+          @change="postWorld = $event"
+        />
       </div>
       
       <div class="karel-blockly-wrapper">
@@ -282,6 +290,10 @@ export default {
     margin: 10px;
     display: flex;
     flex-direction: column;
+  }
+  .edit-start-world,
+  .edit-post-world {
+    max-height: 500px;
   }
   h4 { margin: 0; padding: 0;}
   .karel-renderer-wrapper {
