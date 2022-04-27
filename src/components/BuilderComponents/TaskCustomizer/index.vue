@@ -179,6 +179,7 @@ export default {
       handler(settings) {
         this.tags.systemTags = this.getSystemTags(settings)
       },
+      immediate: true,
       deep: true,
     },
   },
