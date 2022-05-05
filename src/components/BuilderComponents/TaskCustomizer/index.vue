@@ -6,8 +6,8 @@
         <h4>Start World:</h4>
         <KarelWorldRendererAndEditor
           class="edit-start-world"
-          :world="preWorld"
-          @change="preWorld = $event"
+          :world="worlds[0].preWorld"
+          @change="worlds[0].preWorld = $event"
         />
       </div>
       
@@ -15,8 +15,8 @@
         <h4>Goal World:</h4>
         <KarelWorldRendererAndEditor
           class="edit-post-world"
-          :world="postWorld"
-          @change="postWorld = $event"
+          :world="worlds[0].postWorld"
+          @change="worlds[0].postWorld = $event"
         />
       </div>
       
@@ -49,6 +49,8 @@
               @toggleBlock="toggleBlock"
               @setBlockLimit="({ name, amount }) => setBlockLimit(name, amount)"
               @updateSetting="({ name, value }) => updateBlocklySetting(name, value)"
+              :maxBlocks="maxBlocks"
+              @updateMaxBlocks="maxBlocks = $event"
             />
           </div>
           
@@ -138,9 +140,9 @@ export default {
     const {
       name,
       instructions,
+      maxBlocks,
       hint,
-      preWorld,
-      postWorld,
+      worlds,
       karelBlockly,
       tags
     } = taskToStartCustomizingFrom
@@ -150,7 +152,7 @@ export default {
 
     return  {
       activeTab: 'Basic',
-      name, instructions, hint, preWorld, postWorld, karelBlockly, tags
+      name, instructions, maxBlocks, hint, worlds, karelBlockly, tags
     }
   },
   watch: {
@@ -159,18 +161,18 @@ export default {
       handler() { this.update() },
       immediate: true
     },
-    'preWorld.walls': {
+    'worlds[0].preWorld.walls': {
       handler( curr ) {
-        if (!_.isEqual(this.postWorld.walls, curr)) {
-          this.postWorld.walls = copy(curr)
+        if (!_.isEqual(this.worlds[0].postWorld.walls, curr)) {
+          this.worlds[0].postWorld.walls = copy(curr)
         }
       },
       deep: true,
     },
-    'postWorld.walls': {
+    'worlds[0].postWorld.walls': {
       handler( curr ) {
-        if (!_.isEqual(this.preWorld.walls, curr)) {
-          this.preWorld.walls = copy(curr)
+        if (!_.isEqual(this.worlds[0].preWorld.walls, curr)) {
+          this.worlds[0].preWorld.walls = copy(curr)
         }
       },
       deep: true,
@@ -182,14 +184,17 @@ export default {
       immediate: true,
       deep: true,
     },
+    maxBlocks() {
+      this.tags.systemTags = this.getSystemTags(this.karelBlockly.settings)
+    }
   },
   methods: {
     update() {
-      const { name, instructions, hint, preWorld, postWorld, tags } = this
+      const { name, instructions, maxBlocks, hint, worlds, tags } = this
       // karelBlockly pulled separately, customizerMode false for save
       const karelBlockly = copy(this.karelBlockly)
       karelBlockly.settings.customizerMode = false
-      const customizerStateData = copy({ name, instructions, hint, preWorld, postWorld, karelBlockly, tags })
+      const customizerStateData = copy({ name, instructions, maxBlocks, hint, worlds, karelBlockly, tags })
       this.$store.dispatch('updateCustomizerState', customizerStateData )
     },
     getSystemTags(settings) {
@@ -206,7 +211,7 @@ export default {
         systemTags.push("Basic Toolbox")
       }
       const someBlockLimited = Object.values(settings.blocks).some(block => block.active && block.limit !== -1)
-      const totalBlocksLimited = settings.maxBlocks !== -1
+      const totalBlocksLimited = this.maxBlocks
       if (someBlockLimited || totalBlocksLimited) {
         systemTags.push("Limit Blocks")
       }
@@ -218,14 +223,14 @@ export default {
       return systemTags
     },
     handleRowOrColChange (param, delta) {
-      const newN = this.preWorld[param] + delta
+      const newN = this.worlds[0].preWorld[param] + delta
 
-      const allWalls =  [ ...this.preWorld.walls, ...this.postWorld.walls ]
-      const allStones = [ ...this.preWorld.stones, ...this.postWorld.stones ]
+      const allWalls =  [ ...this.worlds[0].preWorld.walls, ...this.worlds[0].postWorld.walls ]
+      const allStones = [ ...this.worlds[0].preWorld.stones, ...this.worlds[0].postWorld.stones ]
       
       // determine if karel is within new bounds
       const karelParam = (param === 'nCols') ? 'karelCol' : 'karelRow'
-      const karelN = Math.max(this.preWorld[karelParam], this.postWorld[karelParam])
+      const karelN = Math.max(this.worlds[0].preWorld[karelParam], this.worlds[0].postWorld[karelParam])
       const isKarelInBounds = (karelN < newN)
       
       // determine if any stones out of bounds
@@ -247,8 +252,8 @@ export default {
       else if (!isKarelInBounds) invalidResizeKarelSwal()
       else if (!wallsValid) invalidResizeWallsSwal()
       else {
-        this.preWorld[param] = newN
-        this.postWorld[param] = newN
+        this.worlds[0].preWorld[param] = newN
+        this.worlds[0].postWorld[param] = newN
       }
     },
     toggleBlock(blockName) {

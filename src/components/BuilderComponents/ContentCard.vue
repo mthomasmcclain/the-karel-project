@@ -95,8 +95,8 @@ export default {
     content() {
       return this.$store.getters.content(this.id)
     },
-    preWorld() { return this.content.preWorld },
-    postWorld() { return this.content.postWorld },
+    preWorld() { return this.content.worlds[0].preWorld },
+    postWorld() { return this.content.worlds[0].postWorld },
     tags() {
       if (!this.content.tags) return []
       else return [ ...this.content.tags.customTags, ...this.content.tags.systemTags ]

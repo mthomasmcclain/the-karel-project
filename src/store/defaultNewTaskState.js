@@ -2,24 +2,29 @@ export default {
     name: "New Karel Task",
     instructions: '',
     hint: '',
-    preWorld: {
-        nCols: 3,
-        nRows: 3,
-        karelRow: 2,
-        karelCol: 0,
-        karelDir: 'East',
-        walls: [],
-        stones: [],
-    },
-    postWorld: {
-        nCols: 3,
-        nRows: 3,
-        karelRow: 2,
-        karelCol: 2,
-        karelDir: 'East',
-        walls: [],
-        stones: [ { r: 2, c: 1, n: 1} ],
-    },
+    maxBlocks: null,
+    worlds: [
+        {
+            preWorld: {
+                nCols: 3,
+                nRows: 3,
+                karelRow: 2,
+                karelCol: 0,
+                karelDir: 'East',
+                walls: [],
+                stones: [],
+            },
+            postWorld: {
+                nCols: 3,
+                nRows: 3,
+                karelRow: 2,
+                karelCol: 2,
+                karelDir: 'East',
+                walls: [],
+                stones: [ { r: 2, c: 1, n: 1} ],
+            }
+        }
+    ],
     karelBlockly: {
         highlight: [],
         settings: {
@@ -59,7 +64,6 @@ export default {
             },
             "showToolbox": true,
             "disabled": false,
-            "maxBlocks": -1,
             "customizerMode": false
         },
         workspace: '<xml xmlns="https://developers.google.com/blockly/xml"><block type="karel_main" id="main" deletable="false" x="44" y="0"></block></xml>',

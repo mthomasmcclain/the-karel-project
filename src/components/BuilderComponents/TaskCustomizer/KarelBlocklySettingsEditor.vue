@@ -8,7 +8,7 @@
         :key="name"
         >
         <div @click="$emit('toggleBlock', name)">
-          <span class="checkbox">{{ active ? '☒' : '☐' }}</span>
+          <span class="checkbox">{{ active ? '☑' : '☐' }}</span>
           <span :class="!active ? 'inactive-name' : ''">
             {{ blockDisplayName(name) }}
           </span>
@@ -20,7 +20,7 @@
             <button @click="$emit('setBlockLimit', { name, amount: limit + 1 })">+</button>
           </span>
           <span @click="$emit('setBlockLimit', { name, amount: limit === -1 ? 3 : -1 })">
-            <span class="checkbox">{{ limit === -1 ? '☐' : '☒' }}</span>
+            <span class="checkbox">{{ limit === -1 ? '☐' : '☑' }}</span>
             <span>Limit</span>
           </span>
         </div>
@@ -31,22 +31,22 @@
     <div class="right-side">
       <h4>Other Settings:</h4>
       <div class="total-block-options">
-        <div @click="$emit('updateSetting', { name: 'maxBlocks', value: settings.maxBlocks === -1 ? 10 : -1})">
-          <span class="checkbox">{{ settings.maxBlocks !== -1 ? '☒' : '☐' }}</span>
+        <div @click="$emit('updateMaxBlocks', maxBlocks ? null : 10 )">
+          <span class="checkbox">{{ maxBlocks ? '☑' : '☐' }}</span>
           <span>Limit Total</span>
         </div>
-        <div v-if="settings.maxBlocks && settings.maxBlocks !== -1">
-          <button @click="$emit('updateSetting', { name: 'maxBlocks', value: Math.max(settings.maxBlocks -1, 1)})">-</button>
-          <span>{{ settings.maxBlocks }}</span>
-          <button @click="$emit('updateSetting', { name: 'maxBlocks', value: settings.maxBlocks+1 })">+</button>
+        <div v-if="maxBlocks">
+          <button @click="$emit('updateMaxBlocks', Math.max(maxBlocks - 1, 1))">-</button>
+          <span>{{ maxBlocks }}</span>
+          <button @click="$emit('updateMaxBlocks', maxBlocks + 1 )">+</button>
         </div>
       </div>
       <div @click="$emit('updateSetting', { name: 'showToolbox', value: !settings.showToolbox })">
-        <span class="checkbox">{{ settings.showToolbox ? '☐' : '☒' }}</span>
+        <span class="checkbox">{{ settings.showToolbox ? '☐' : '☑' }}</span>
         <span>Hide Toolbox</span>
       </div>
       <div @click="$emit('updateSetting', { name: 'disabled', value: !settings.disabled })">
-        <span class="checkbox">{{ settings.disabled ? '☒' : '☐' }}</span>
+        <span class="checkbox">{{ settings.disabled ? '☑' : '☐' }}</span>
         <span>Disable Workspace</span>
       </div>
     </div>
@@ -59,6 +59,9 @@ export default {
   props: {
     settings: {
       type: Object,
+      required: true
+    },
+    maxBlocks: {
       required: true
     }
   },
