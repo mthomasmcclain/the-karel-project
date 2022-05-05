@@ -3,20 +3,20 @@
     <div id="worlds-and-workspace">
       
       <div class="start-world-area">
-        <h4>Start World:</h4>
+        <h4>Start World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-start-world"
-          :world="worlds[0].preWorld"
-          @change="worlds[0].preWorld = $event"
+          :world="activeWorld.preWorld"
+          @change="activeWorld.preWorld = $event"
         />
       </div>
       
       <div class="end-world-area">
-        <h4>Goal World:</h4>
+        <h4>Goal World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-post-world"
-          :world="worlds[0].postWorld"
-          @change="worlds[0].postWorld = $event"
+          :world="activeWorld.postWorld"
+          @change="activeWorld.postWorld = $event"
         />
       </div>
       
@@ -32,7 +32,7 @@
     <div id="tabs">
       <div id="tab-bar"
       >
-        <span v-for="tabName in [ 'Basic', 'Toolbox', 'Tags' ]"
+        <span v-for="tabName in [ 'Basic', 'Toolbox', 'Multi-World', 'Tags'  ]"
           :key="`tab-${tabName}`"
           @click="activeTab = tabName"
           :class="{ active: activeTab === tabName, tab: true }"
@@ -101,6 +101,32 @@
           <div v-show="activeTab === 'Tags'">
             <KarelTagSelector :tags="tags" @change="tags = $event" />
           </div>
+
+          <div id="multi-world" v-show="activeTab === 'Multi-World'">
+            <h4>Active World: {{ activeWorldIndex + 1 }}</h4>
+            <button
+              v-for="(w,i) in worlds"
+              :key="`select-world-button-${i}`"
+              @click="activeWorldIndex = i"
+              :disabled="activeWorldIndex === i"
+            >
+              Select World {{ i + 1 }}
+            </button>
+            <br>
+            <button
+              @click="addWorld"
+              :disabled="worlds.length >= 4"
+            >Add World</button>
+            <br>
+            <button
+              v-for="(w,i) in worlds"
+              :key="`remove-world-button-${i}`"
+              @click="removeWorld(i)"
+              :disabled="worlds.length === 1"
+            >
+              Remove World {{ i + 1 }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -152,8 +178,18 @@ export default {
 
     return  {
       activeTab: 'Basic',
-      name, instructions, maxBlocks, hint, worlds, karelBlockly, tags
+      activeWorldIndex: 0,
+      name,
+      instructions,
+      maxBlocks,
+      hint,
+      worlds,
+      karelBlockly,
+      tags
     }
+  },
+  computed: {
+    activeWorld() { return this.worlds[this.activeWorldIndex] }
   },
   watch: {
     '$data': {
@@ -161,18 +197,18 @@ export default {
       handler() { this.update() },
       immediate: true
     },
-    'worlds[0].preWorld.walls': {
+    'activeWorld.preWorld.walls': {
       handler( curr ) {
-        if (!_.isEqual(this.worlds[0].postWorld.walls, curr)) {
-          this.worlds[0].postWorld.walls = copy(curr)
+        if (!_.isEqual(this.activeWorld.postWorld.walls, curr)) {
+          this.activeWorld.postWorld.walls = copy(curr)
         }
       },
       deep: true,
     },
-    'worlds[0].postWorld.walls': {
+    'activeWorld.postWorld.walls': {
       handler( curr ) {
-        if (!_.isEqual(this.worlds[0].preWorld.walls, curr)) {
-          this.worlds[0].preWorld.walls = copy(curr)
+        if (!_.isEqual(this.activeWorld.preWorld.walls, curr)) {
+          this.activeWorld.preWorld.walls = copy(curr)
         }
       },
       deep: true,
@@ -186,9 +222,23 @@ export default {
     },
     maxBlocks() {
       this.tags.systemTags = this.getSystemTags(this.karelBlockly.settings)
+    },
+    'worlds.length'() {
+      this.tags.systemTags = this.getSystemTags(this.karelBlockly.settings)
     }
   },
   methods: {
+    addWorld() {
+      const copyLastWorld = copy(this.worlds[this.worlds.length - 1])
+      this.worlds.push(copyLastWorld)
+      this.activeWorldIndex = this.worlds.length - 1
+    },
+    removeWorld(i) {
+      if (this.activeWorldIndex === i && this.activeWorldIndex !== 0) {
+        this.activeWorldIndex = i-1
+      }
+      this.worlds.splice(i,1)
+    },
     update() {
       const { name, instructions, maxBlocks, hint, worlds, tags } = this
       // karelBlockly pulled separately, customizerMode false for save
@@ -211,7 +261,10 @@ export default {
         systemTags.push("Basic Toolbox")
       }
       const someBlockLimited = Object.values(settings.blocks).some(block => block.active && block.limit !== -1)
+
       const totalBlocksLimited = this.maxBlocks
+      if (this.worlds.length > 1) systemTags.push("Multi-World")
+
       if (someBlockLimited || totalBlocksLimited) {
         systemTags.push("Limit Blocks")
       }
@@ -223,14 +276,14 @@ export default {
       return systemTags
     },
     handleRowOrColChange (param, delta) {
-      const newN = this.worlds[0].preWorld[param] + delta
+      const newN = this.activeWorld.preWorld[param] + delta
 
-      const allWalls =  [ ...this.worlds[0].preWorld.walls, ...this.worlds[0].postWorld.walls ]
-      const allStones = [ ...this.worlds[0].preWorld.stones, ...this.worlds[0].postWorld.stones ]
+      const allWalls =  [ ...this.activeWorld.preWorld.walls, ...this.activeWorld.postWorld.walls ]
+      const allStones = [ ...this.activeWorld.preWorld.stones, ...this.activeWorld.postWorld.stones ]
       
       // determine if karel is within new bounds
       const karelParam = (param === 'nCols') ? 'karelCol' : 'karelRow'
-      const karelN = Math.max(this.worlds[0].preWorld[karelParam], this.worlds[0].postWorld[karelParam])
+      const karelN = Math.max(this.activeWorld.preWorld[karelParam], this.activeWorld.postWorld[karelParam])
       const isKarelInBounds = (karelN < newN)
       
       // determine if any stones out of bounds
@@ -252,8 +305,8 @@ export default {
       else if (!isKarelInBounds) invalidResizeKarelSwal()
       else if (!wallsValid) invalidResizeWallsSwal()
       else {
-        this.worlds[0].preWorld[param] = newN
-        this.worlds[0].postWorld[param] = newN
+        this.activeWorld.preWorld[param] = newN
+        this.activeWorld.postWorld[param] = newN
       }
     },
     toggleBlock(blockName) {
@@ -379,6 +432,9 @@ export default {
     margin: 6px 20px 20px 20px;
     flex: 1 0 0;
 
+  }
+  #multi-world button {
+    margin: 4px;
   }
   .instructions-wrapper,
   .hint-wrapper {
