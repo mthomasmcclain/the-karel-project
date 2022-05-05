@@ -93,7 +93,6 @@ export function taskSuccessSwal() {
     const header = ''
     return Swal.fire(header, body, 'success')
 }
-
 export function taskIncorrectSwal(errorMessage) {
     if (errorMessage) {
         return Swal.fire(
@@ -105,6 +104,19 @@ export function taskIncorrectSwal(errorMessage) {
             'warning'
         )
     }
+}
+
+export function taskPartialSuccessSwal(numRemainingWorlds) {
+    const bodyOptions = ['Good job!', 'Nice Work.', 'You did it!', 'Well Done!', 'Awesome.']
+    var body = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
+    body += "<br> Let's see if the same code also solves the " + (numRemainingWorlds == 1 ? "other scenario." : ("remaining " + numRemainingWorlds.toString() + " scenarios."))
+    const header = ''
+    return Swal.fire(header, body, 'success')
+}
+export function taskTooManyBlocksSwal() {
+    var body = "You solved the task, but used too many blocks."
+    const header = ''
+    return Swal.fire(header, body, 'warning')
 }
 
 export function mapCompleteSwal() {
