@@ -3,9 +3,6 @@
     <div class="container" ref="container"
       :style="{ 'pointer-events': settings.disabled ? 'none' : 'auto' }"
     />
-    <div v-if="settings.maxBlocks !== -1" class="blocks-remaining">Blocks Left:
-      <span>{{ totalBlocksLeft }}</span>
-    </div>
   </div>
 </template>
 
@@ -127,14 +124,6 @@ export default {
     injectedToolbox() {
       return this.settings.showToolbox ? this.toolbox : null;
     },
-    totalBlocksLeft() {
-      if (this.settings.maxBlocks === -1 ) return -1
-      else {
-        // look at workspace and count and return maxBlocks minus number of used blocks
-        const count = (this.workspace.match(/<block /g) || []).length
-        return this.settings.maxBlocks - count
-      }
-    },
     blocksUsedByType() {
     const blocksUsedByType = {}
       Object.entries(settingNameToTypeName).forEach(([settingName, blockType]) => {
@@ -167,7 +156,6 @@ export default {
       // define and inject Blockly instance
       this.workspaceInstance = Blockly.inject(this.$refs.container, {
         toolbox: this.injectedToolbox,
-        maxBlocks: (this.settings && this.settings.maxBlocks !== -1) ? this.settings.maxBlocks : Infinity,
         maxInstances: this.maxInstances,
         zoom: {
           controls: false,

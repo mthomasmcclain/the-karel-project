@@ -44,6 +44,7 @@ const db = getFirestore(app)
 //             delete newSrcUnJSON.preWorld
 //             delete newSrcUnJSON.postWorld
 //             newSrcUnJSON.maxBlocks = parsedSrc.karelBlockly.settings.maxBlocks
+//             if (newSrcUnJSON.maxBlocks === -1) newSrcUnJSON.maxBlocks = null
 //             delete newSrcUnJSON.karelBlockly.settings.maxBlocks
 //             const src = JSON.stringify(newSrcUnJSON)
 //             const newData = { src }

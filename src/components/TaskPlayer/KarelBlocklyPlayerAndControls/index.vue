@@ -51,6 +51,8 @@
         }
         else if (this.nextStep) clearTimeout(this.nextStep)
       },
+      preWorld()  { this.reset() },
+      workspace() { this.reset() },
     },
     computed: {
       playingTerminated() {

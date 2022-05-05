@@ -11,7 +11,7 @@ const copy = x => JSON.parse(JSON.stringify(x))
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  key: 'the-karel-project-2.3',
+  key: 'the-karel-project-2.5',
   reducer: state => ({
     favorites: state.favorites,
     completed: state.completed,
@@ -131,7 +131,7 @@ export default createStore({
       if (!neededIds.length) return
       
       try {
-        const docRefs = neededIds.map(id => doc(db, 'content', id) )
+        const docRefs = neededIds.map(id => doc(db, 'contentv2', id) )
         const docPromises = docRefs.map(ref => getDoc(ref))
         const docs = await Promise.all(docPromises)
         docs.forEach(doc => {
@@ -160,7 +160,7 @@ export default createStore({
     saveToFirestore: async (_context, {id, data}) => {
       try {
         const jsonData = JSON.stringify(data)
-        const docRef = doc(db, "content", id)
+        const docRef = doc(db, 'contentv2', id)
         await setDoc(docRef, { src: jsonData })     
       } catch (e) {
         console.warn('Error in writeAll', e)
@@ -180,7 +180,7 @@ export default createStore({
       if (!id) return Promise.reject(new Error('cannot load map with falsey id'))
 
 
-      const ref = doc(db, 'content', id)
+      const ref = doc(db, 'contentv2', id)
       const r = await getDoc(ref)
       if (!r
         || !r.data()
