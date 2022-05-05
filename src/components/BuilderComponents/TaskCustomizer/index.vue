@@ -234,9 +234,7 @@ export default {
       this.activeWorldIndex = this.worlds.length - 1
     },
     removeWorld(i) {
-      if (this.activeWorldIndex === i && this.activeWorldIndex !== 0) {
-        this.activeWorldIndex = i-1
-      }
+      this.activeWorldIndex = 0
       this.worlds.splice(i,1)
     },
     update() {
