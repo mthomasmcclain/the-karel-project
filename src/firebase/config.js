@@ -13,4 +13,52 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
+
+// SCRIPT RAN TO COPY COLLECTION CONTENT ==> CONTENTV2
+// added imports above for { collection, getDocs, doc, setDoc }
+
+// const logAll = async () => {
+//     const querySnapshot = await getDocs(collection(db, "content"));
+//     querySnapshot.forEach(dbdoc => {
+//         const id = dbdoc.id
+//         const data = dbdoc.data()
+//         const parsedSrc = JSON.parse(data.src)
+
+//         if (parsedSrc.graph) { // is map
+//             try {
+//                 const docRef = doc(db, "contentv2", id)
+//                 setDoc(docRef, data)
+//             } catch (e) {
+//                 console.warn('Error in writeAll', e)
+//             }
+//             console.log(id, 'is map')
+//         } else { // is graph
+//             const newSrcUnJSON = { ...parsedSrc }
+//             newSrcUnJSON.worlds = [
+//                 {
+//                     preWorld: { ...parsedSrc.preWorld },
+//                     postWorld: { ...parsedSrc.postWorld }
+
+//                 }
+//             ]
+//             delete newSrcUnJSON.preWorld
+//             delete newSrcUnJSON.postWorld
+//             newSrcUnJSON.maxBlocks = parsedSrc.karelBlockly.settings.maxBlocks
+//             delete newSrcUnJSON.karelBlockly.settings.maxBlocks
+//             const src = JSON.stringify(newSrcUnJSON)
+//             const newData = { src }
+//             if (data.isExpert) newData.isExpert = true
+//             try {
+//                 const docRef = doc(db, "contentv2", id)
+//                 setDoc(docRef, newData )
+//             } catch (e) {
+//                 console.warn('Error in writeAll', e)
+//             }
+
+//             console.log(id, newSrcUnJSON)
+//         }
+//     })
+// }
+// logAll()
+
 export { db }
