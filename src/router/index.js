@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import KarelPlayer from '../views/KarelPlayer.vue'
 import KarelBuilder from '../views/KarelBuilder.vue'
+import WorldFromJson from '../views/WorldFromJson.vue'
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: '/karel-builder',
     name: 'KarelBuilder',
     component: KarelBuilder
+  },
+  {
+    path: '/world-from-json',
+    name: 'WorldFromJson',
+    component: WorldFromJson
   }
 ]
 
