@@ -1,8 +1,6 @@
 import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import { v4 as uuid } from 'uuid'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { db } from '@/firebase/config'
 import expertTaskIds from './taskIds'
 import expertMapIds from './mapIds'
 import mapIdToDifficulty from './mapIdToDifficulty'
@@ -131,20 +129,18 @@ export default createStore({
       if (!neededIds.length) return
       
       try {
-        const docRefs = neededIds.map(id => doc(db, 'contentv2', id) )
-        const docPromises = docRefs.map(ref => getDoc(ref))
-        const docs = await Promise.all(docPromises)
-        docs.forEach(doc => {
-          const id = doc.id
-          const contentData = JSON.parse(doc.data().src)
-          if (doc.data().isExpert) dispatch('addToExpertIds', id)
-          dispatch('addToLocalContent', { id, data: contentData })
+        const docs = await Promise.all(
+          neededIds.map(id => Core.download(id).then(r => r.json()))
+        )
+        docs.forEach((doc, i) => {
+          const id = neededIds[i]
+          if (doc.isExpert) dispatch('addToExpertIds', id)
+          dispatch('addToLocalContent', { id, data: doc })
         })
         return dispatch('loadContent')
       } catch (e) {
         console.warn('Error in getItems', e)
       }
-
     },
     
     addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
@@ -159,9 +155,9 @@ export default createStore({
     addToLocalContent: ({ commit }, payload) => commit('addToLocalContent', payload),
     saveToFirestore: async (_context, {id, data}) => {
       try {
-        const jsonData = JSON.stringify(data)
-        const docRef = doc(db, 'contentv2', id)
-        await setDoc(docRef, { src: jsonData })     
+        const md = { name: `KITW content ${id}`, id, type: 'application/json' }
+        const content = JSON.stringify(data)
+        await Core.upload(md, content)
       } catch (e) {
         console.warn('Error in writeAll', e)
       }
@@ -179,19 +175,14 @@ export default createStore({
       // verify it loads and is a map
       if (!id) return Promise.reject(new Error('cannot load map with falsey id'))
 
-
-      const ref = doc(db, 'contentv2', id)
-      const r = await getDoc(ref)
-      if (!r
-        || !r.data()
-        || !r.data().src
-        || !JSON.parse(r.data().src)
-        || !JSON.parse(r.data().src).graph
-      ) {
-        return Promise.reject(new Error('map not found or result failed map schema test'))
-      } else {
+      try {
+        const content = await Core.download(id).then(r => r.json())
+        if (!content.graph) throw new Error('Map not in schema!')
         commit('addToMapIds', id)
         await dispatch('loadContent')
+      }
+      catch (e) {
+        return Promise.reject(new Error('map not found or result failed map schema test'))
       }
     },
 
