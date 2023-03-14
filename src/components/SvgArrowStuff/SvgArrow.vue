@@ -37,7 +37,7 @@
 
 <script>
 import { v1 as uuid } from 'uuid'
-import minimumAreaEllipseIntersections from './minimumAreaEllipseIntersections'
+import minimumAreaEllipseIntersections from './minimumAreaEllipseIntersections.js'
 
 const dist2 = ({x:x1, y:y1}, {x:x2, y:y2}) => (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1)
 const closest = (pts, pt) => {

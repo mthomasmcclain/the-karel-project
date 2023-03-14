@@ -47,9 +47,9 @@
 </template>
 
 <script>
-import MapGraph from './MapGraph'
-import TaskPlayer from '@/components/TaskPlayer'
-import { mapCompleteSwal } from '@/helpers/projectSwallows'
+import MapGraph from './MapGraph/index.vue'
+import TaskPlayer from '../TaskPlayer/index.vue'
+import { mapCompleteSwal } from '../../helpers/projectSwallows.js'
 const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {

@@ -66,11 +66,11 @@
 </template>
 
 <script>
-import GraphPreview from './GraphPreview'
-import KarelWorldRenderer from '@/components/KarelWorldRenderer'
-import PILALogo from '@/assets/PilaLogoVueSvg'
-import UserIcon from '@/assets/UserIconVueSvg'
-import { copyContentSwal, copyConfirmSwal, getCodeSwal } from '@/helpers/projectSwallows'
+import GraphPreview from './GraphPreview.vue'
+import KarelWorldRenderer from '../KarelWorldRenderer.vue'
+import PILALogo from '../../assets/PilaLogoVueSvg.vue'
+import UserIcon from '../../assets/UserIconVueSvg.vue'
+import { copyContentSwal, copyConfirmSwal, getCodeSwal } from '../../helpers/projectSwallows.js'
 
 export default {
   components: {

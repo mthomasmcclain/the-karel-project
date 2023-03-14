@@ -1,9 +1,9 @@
 import { createStore } from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import { v4 as uuid } from 'uuid'
-import expertTaskIds from './taskIds'
-import expertMapIds from './mapIds'
-import mapIdToDifficulty from './mapIdToDifficulty'
+import expertTaskIds from './taskIds.js'
+import expertMapIds from './mapIds.js'
+import mapIdToDifficulty from './mapIdToDifficulty.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 

@@ -1,14 +1,13 @@
 //<script>//hack for syntax
 import Blockly from 'blockly/browser'
 import * as en from 'blockly/msg/en'
-import initializeKarelBlocklyGenerators from './initializeKarelBlocklyGenerators'
-import enTranslations from '@/helpers/karelTranslationsEN'
-import initializeKarelBlocks from '@/helpers/initializeKarelBlocks'
+import initializeKarelBlocklyGenerators from './initializeKarelBlocklyGenerators.js'
+import enTranslations from '../../../helpers/karelTranslationsEN.js'
+import initializeKarelBlocks from '../../../helpers/initializeKarelBlocks.js'
 
-import KarelWorld from "./KarelWorld"
+import KarelWorld from "./KarelWorld.js"
 
-Object.assign(en, enTranslations)
-Blockly.setLocale(en)
+Blockly.setLocale({ ...en, ...enTranslations })
 initializeKarelBlocks(Blockly)
 initializeKarelBlocklyGenerators(Blockly)
 

@@ -21,7 +21,7 @@
 
 <script>
 
-import SvgArrow from './SvgArrow'
+import SvgArrow from './SvgArrow.vue'
 
 export default {
   components: { SvgArrow },

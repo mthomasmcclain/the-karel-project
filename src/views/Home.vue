@@ -1,7 +1,7 @@
 <template>
   <div class="home">
       <div class="student-header">
-        <img src="@/assets/karelSide.png" />
+        <img src="../assets/karelSide.png" />
         <h2>The Karel Project</h2>
       </div>
 
