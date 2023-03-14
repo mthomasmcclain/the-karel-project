@@ -10,7 +10,6 @@
   "dependencies": {
     "blockly": "^5.20210325.1",
     "core-js": "^3.6.5",
-    "firebase": "^9.6.10",
     "lodash": "^4.17.21",
     "sweetalert2": "^11.4.6",
     "uuid": "^8.3.2",
