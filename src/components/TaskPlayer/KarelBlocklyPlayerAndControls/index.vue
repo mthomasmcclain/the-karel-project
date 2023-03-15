@@ -31,7 +31,7 @@
 </template>
 
 <script>
-  import KarelBlocklyWorld from "./KarelBlocklyWorld"
+  import KarelBlocklyWorld from "./KarelBlocklyWorld/index.js"
   export default {
     props: [ 'playing', 'stepSpeed', 'preWorld', 'workspace', 'toolbox' ],
     data() {

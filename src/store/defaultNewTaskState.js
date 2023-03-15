@@ -12,7 +12,7 @@ export default {
                 karelCol: 0,
                 karelDir: 'East',
                 walls: [],
-                stones: [],
+                stones: []
             },
             postWorld: {
                 nCols: 3,
@@ -21,7 +21,7 @@ export default {
                 karelCol: 2,
                 karelDir: 'East',
                 walls: [],
-                stones: [ { r: 2, c: 1, n: 1} ],
+                stones: [ { r: 2, c: 1, n: 1} ]
             }
         }
     ],
@@ -78,6 +78,6 @@ export default {
     },
     tags: {
         'customTags': [],
-        'systemTags': [],
+        'systemTags': []
     }
 }

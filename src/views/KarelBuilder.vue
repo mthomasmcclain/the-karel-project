@@ -51,7 +51,7 @@ import ContentCard from '../components/BuilderComponents/ContentCard.vue'
 import { confirmDeleteSwal, confirmCloseWithoutSaveSwal } from '../helpers/projectSwallows.js'
 import TaskCustomizer from '../components/BuilderComponents/TaskCustomizer/index.vue'
 import TaskPlayer from '../components/TaskPlayer/index.vue'
-import MapCustomizer from '@/components/BuilderComponents/MapCustomizer.vue'
+import MapCustomizer from '../components/BuilderComponents/MapCustomizer.vue'
 import MapPlayer from '../components/MapPlayer/index.vue'
 
 export default {

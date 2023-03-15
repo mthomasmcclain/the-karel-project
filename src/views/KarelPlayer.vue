@@ -3,7 +3,7 @@
 
     <div class="student-display" v-if="!activeMap">
       <div class="student-header">
-        <img src="@/assets/karelSide.png" />
+        <img src="../assets/karelSide.png" />
         <h2>Your Karel Maps</h2>
       </div>
 
