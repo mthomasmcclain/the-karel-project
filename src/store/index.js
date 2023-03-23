@@ -155,7 +155,12 @@ export default createStore({
     saveToLocalContent: ({ commit }, payload) => commit('saveToLocalContent', payload),
     saveToRemoteContent: async (_context, {id, data}) => {
       try {
-        const md = { name: `KITW content ${id}`, id, type: 'application/json' }
+        const params = data.type === 'task' ? ';type=karel-task;v=1.0.0' : ';type=karel-map;v=1.0.0'
+        const md = {
+          name: `KITW content ${id}`,
+          id,
+          type: `application/json${params}`
+        }
         const content = JSON.stringify(data)
         await Core.upload(md, content)
       } catch (e) {
