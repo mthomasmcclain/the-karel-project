@@ -7,7 +7,7 @@ import 'npm/unscoped/vue-router/4.1.6'
 import 'npm/unscoped/blockly/5.20210325.1'
 import 'npm/unscoped/lodash/4.17.21'
 
-import { createApp } from 'vue'
+import { createApp } from 'npm/unscoped/vue/3.2.39'
 import App from './App.vue'
 import router from './router/index.js'
 import store from './store/index.js'
