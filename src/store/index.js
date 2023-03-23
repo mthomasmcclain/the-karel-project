@@ -87,7 +87,7 @@ export default createStore({
   mutations: {
     setLoading: (state, bool) => state.loading = bool,
     addToMapIds: (state, id) => !state.mapIds.includes(id) && state.mapIds.push(id), 
-    addToLocalContent: (state, { data, id, type }) => {
+    saveToLocalContent: (state, { data, id, type }) => {
       // action has already pushed optimistic save to firestore
       state.loadedContent[id] = data
       state.loadedContent = { ...state.loadedContent }
@@ -135,7 +135,7 @@ export default createStore({
         docs.forEach((doc, i) => {
           const id = neededIds[i]
           if (doc.isExpert) dispatch('addToExpertIds', id)
-          dispatch('addToLocalContent', { id, data: doc })
+          dispatch('saveToLocalContent', { id, data: doc })
         })
         return dispatch('loadContent')
       } catch (e) {
@@ -147,13 +147,13 @@ export default createStore({
     save: async ({ commit, dispatch, getters }, { swapId, type })  => {
       const newId = uuid()
       const payload = { type, id: newId, data: copy(getters.customizerState()) }
-      commit('addToLocalContent', payload)
-      dispatch('saveToFirestore', payload)
+      commit('saveToLocalContent', payload)
+      dispatch('saveToRemoteContent', payload)
       if (swapId) commit('delete', swapId)
       return newId
     },
-    addToLocalContent: ({ commit }, payload) => commit('addToLocalContent', payload),
-    saveToFirestore: async (_context, {id, data}) => {
+    saveToLocalContent: ({ commit }, payload) => commit('saveToLocalContent', payload),
+    saveToRemoteContent: async (_context, {id, data}) => {
       try {
         const md = { name: `KITW content ${id}`, id, type: 'application/json' }
         const content = JSON.stringify(data)
@@ -167,8 +167,8 @@ export default createStore({
       data.name = "Copy of " + data.name
       const newId = uuid()
       const type = getters.type(id)
-      commit('addToLocalContent', { type, data, id: newId })
-      dispatch('saveToFirestore', { data, id: newId })
+      commit('saveToLocalContent', { type, data, id: newId })
+      dispatch('saveToRemoteContent', { data, id: newId })
       return newId
     },
     loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
