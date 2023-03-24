@@ -132,7 +132,10 @@ export default {
     },
     taskAtNodeIsCorrect(nodeId) {
       const taskId = this.graph.nodes[nodeId].taskId
-      return this.$store.getters.taskIsComplete(taskId)
+
+      //  TODO: use something like an analyzer when we're rendering on the core
+      if (this.$store) return this.$store.getters.taskIsComplete(taskId)
+      else return false
     },
     handleResize() {
       this.height = this.$refs.wrapper.clientHeight
@@ -188,12 +191,22 @@ export default {
       const existingReference = Object.values(this.nodes).find(ref => ref.taskId === taskId)
       if (existingReference) Object.assign(existingReference, {x,y})
       else {
-        this.nodes[uuid()] = {
+        const node = {
           taskId, x, y,
           w: 0, h: 0,
-          visited: false,
-          label: this.$store.getters.name(taskId)
+          visited: false
         }
+        //  TODO: use something like an analyzer when we're rendering on the core
+        if (this.$store) node.label = this.$store.getters.name(taskId)
+        else {
+          Core
+            .send({ type: 'metadata', id: taskId })
+            .then(({ metadata }) => {
+              if (metadata) node.label = metadata.name
+              else node.label = 'Error Finding Content'
+            })
+        }
+        this.nodes[uuid()] = node
       }
       this.emitChange()
     },

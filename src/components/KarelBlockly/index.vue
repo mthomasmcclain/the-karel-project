@@ -92,7 +92,8 @@ export default {
   props: [ 'settings', 'toolbox', 'workspace', 'highlight' ],
   mounted() {
     this.$emit('update:toolbox', generateToolbox(this.activeBlocks))
-    this.instantiateBlockly()
+    // Blockly demands for its container to be attached to the current document when it starts...
+    this.$nextTick(() => this.instantiateBlockly())
   },
   beforeUnmount() {
     this.workspaceInstance.dispose()

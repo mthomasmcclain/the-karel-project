@@ -98,11 +98,18 @@ export default {
   props: {
     id: {
       type: String,
-      required: true
+      required: false
+    },
+    taskConfig: {
+      type: Object,
+      required: false
     }
   },
   data() {
-    const task = copy(this.$store.getters.content(this.id))
+    let task
+    if (this.id) task = copy(this.$store.getters.loadedContent()[this.id])
+    else task = copy(this.taskConfig)
+
     const { karelBlockly } = task
     karelBlockly.settings.customizerMode = false
     return {
@@ -165,7 +172,10 @@ export default {
     }
   },
   computed: {
-    task() { return this.$store.getters.content(this.id) },
+    task() {
+      if (this.id) return this.$store.getters.loadedContent()[this.id]
+      else return this.taskConfig
+    },
     blocksUsed() { return (this.karelBlockly.workspace.match(/block /g) || []).length },
     activePreWorld() {
       return this.task.worlds[this.activeScenarioIndex].preWorld

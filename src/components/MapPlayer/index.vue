@@ -30,10 +30,14 @@
     </div>
     
     <div class="content-wrapper" style="flex-grow: 1;">
-      <TaskPlayer v-if="taskIsActive"
+      <TaskPlayer v-if="taskIsActive && id"
         :key="`task-player-in-map-${selected}`"
         @taskCorrect="handleTaskCorrect"
         :id="activeTask"
+      />
+      <content
+        v-else="!id"
+        :content="activeTask"
       />
 
       <MapGraph v-else class="map-body"
@@ -57,16 +61,30 @@ export default {
   props: {
     id: {
       type: String,
-      required: true
+      required: false
     },
     previewMode: {
       type: Boolean,
       required: false,
       default: false
+    },
+    mapConfig: {
+      type: Object,
+      required: false
     }
   },
   data() {
-    const { graph, name } = this.$store.getters.content(this.id)
+    let graph
+    let name
+    if (this.id) {
+      const g = this.$store.getters.content(this.id)
+      graph = g.graph
+      name = g.name
+    }
+    else {
+      graph = this.mapConfig.graph
+      name = this.mapConfig.name
+    }
     return {
       graph: copy(graph),
       name,
