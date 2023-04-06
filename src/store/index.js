@@ -156,18 +156,15 @@ export default createStore({
     saveToRemoteContent: async ({ getters }, {id, data}) => {
       try {
         let type
-        let view
         const { name } = data
         if (getters.type(id) === 'task') {
           type = 'application/json;type=karel-task;v=1.0.0'
-          view = '../views/core-karel-task.js'
         }
         else {
           type = 'application/json;type=karel-map;v=1.0.0'
-          view = '../views/core-map.js'
         }
 
-        const md = { name, id, type, view }
+        const md = { name, id, type }
         const content = JSON.stringify(data)
         await Core.upload(md, content)
       } catch (e) {
