@@ -74,6 +74,7 @@ export default {
     }
   },
   data() {
+    //  TODO: always get scope from environment and load content from that id
     let graph
     let name
     if (this.id) {

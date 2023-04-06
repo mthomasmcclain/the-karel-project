@@ -156,7 +156,6 @@ export default createStore({
     saveToRemoteContent: async ({ getters }, {id, data}) => {
       try {
         let type
-        const { name } = data
         if (getters.type(id) === 'task') {
           type = 'application/json;type=karel-task;v=1.0.0'
         }
@@ -164,7 +163,42 @@ export default createStore({
           type = 'application/json;type=karel-map;v=1.0.0'
         }
 
-        const md = { name, id, type }
+        const md = { name: data.name, id, type }
+
+        // create translation page for content
+        const { state: assertions } = await Core.send({ type: 'state', scope: 'assertions', mutable: true })
+
+        const makeAssertion = (path, value) => assertions[uuid()] = { path, value, ts: Date.now() }
+
+        //  assertion to create group (use task's id)
+        makeAssertion(`projects/${id}`, { name: `Karel Task: ${ data.name }`, archived: false })
+
+        const { name, instructions, hint } = data
+
+        data.name = uuid()
+        data.instructions = uuid()
+        data.hint = uuid()
+
+        const lang = 'en'
+
+        //  create translations assertions for the three fields above
+        makeAssertion(`translations/${data.name}/${lang}`, name)
+        makeAssertion(`translations/${data.instructions}/${lang}`, instructions)
+        makeAssertion(`translations/${data.hint}/${lang}`, hint)
+
+        makeAssertion(`defaultLanguage/${data.name}`, lang)
+        makeAssertion(`defaultLanguage/${data.instructions}`, lang)
+        makeAssertion(`defaultLanguage/${data.hint}`, lang)
+
+        makeAssertion(`links/${data.name}/${id}`, true)
+        makeAssertion(`links/${data.instructions}/${id}`, true)
+        makeAssertion(`links/${data.hint}/${id}`, true)
+
+        // TODO: swap translatable parts of blockly workspace and toolbox with uuids (recognize with regex)
+        const { workspace, toolbox } = data.karelBlockly
+        console.log('TODO: swap translatable parts for uuids!!!!!!', id, workspace, toolbox)
+
+
         const content = JSON.stringify(data)
         await Core.upload(md, content)
       } catch (e) {

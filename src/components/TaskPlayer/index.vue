@@ -106,6 +106,7 @@ export default {
     }
   },
   data() {
+    //  TODO: always get scope from environment and load content from that id
     let task
     if (this.id) task = copy(this.$store.getters.loadedContent()[this.id])
     else task = copy(this.taskConfig)
