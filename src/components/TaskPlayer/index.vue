@@ -3,7 +3,11 @@
     <div class="left-col">
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
-          <b>Challenge:</b> {{ task.instructions }}
+          <b>Challenge:</b>
+          <TranslationResolver
+            :id="task.instructions"
+            lang="en"
+          />
           <p v-if="task.maxBlocks" class="max-blocks-p">
             Solve the challenge using <b>{{task.maxBlocks}}</b> or fewer blocks. The current code uses <b :style="`color: ${blocksUsed > task.maxBlocks ? 'red' : 'green'};`">{{ blocksUsed }}</b> blocks.
           </p>
@@ -81,6 +85,7 @@ import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls/index
 import KarelWorldRenderer from '../KarelWorldRenderer.vue'
 import KarelBlockly from '../KarelBlockly/index.vue'
 import worldsMatch from './karelWorldsMatch.js'
+import TranslationResolver from '../TranslationResolver.vue'
 import {
   taskSuccessSwal,
   taskPartialSuccessSwal,
@@ -94,7 +99,12 @@ const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
   name: 'task-player',
-  components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls },
+  components: {
+    KarelBlockly,
+    KarelWorldRenderer,
+    KarelBlocklyPlayerAndControls,
+    TranslationResolver
+  },
   props: {
     id: {
       type: String,

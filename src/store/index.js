@@ -186,9 +186,9 @@ export default createStore({
         makeAssertion(`translations/${data.instructions}/${lang}`, instructions)
         makeAssertion(`translations/${data.hint}/${lang}`, hint)
 
-        makeAssertion(`defaultLanguage/${data.name}`, lang)
-        makeAssertion(`defaultLanguage/${data.instructions}`, lang)
-        makeAssertion(`defaultLanguage/${data.hint}`, lang)
+        makeAssertion(`sourceLanguage/${data.name}/lang`, lang)
+        makeAssertion(`sourceLanguage/${data.instructions}/lang`, lang)
+        makeAssertion(`sourceLanguage/${data.hint}/lang`, lang)
 
         makeAssertion(`links/${data.name}/${id}`, true)
         makeAssertion(`links/${data.instructions}/${id}`, true)
