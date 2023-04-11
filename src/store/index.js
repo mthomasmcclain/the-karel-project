@@ -166,12 +166,9 @@ export default createStore({
         const md = { name: data.name, id, type }
 
         // create translation page for content
-        const { state: assertions } = await Core.send({ type: 'state', scope: 'assertions', mutable: true })
+        const { state: assertions } = await Core.send({ type: 'state', scope: 'assertions.v.3.0', mutable: true })
 
         const makeAssertion = (path, value) => assertions[uuid()] = { path, value, ts: Date.now() }
-
-        //  assertion to create group (use task's id)
-        makeAssertion(`projects/${id}`, { name: `Karel Task: ${ data.name }`, archived: false })
 
         const { name, instructions, hint } = data
 
@@ -190,9 +187,9 @@ export default createStore({
         makeAssertion(`sourceLanguage/${data.instructions}/lang`, lang)
         makeAssertion(`sourceLanguage/${data.hint}/lang`, lang)
 
-        makeAssertion(`links/${data.name}/${id}`, true)
-        makeAssertion(`links/${data.instructions}/${id}`, true)
-        makeAssertion(`links/${data.hint}/${id}`, true)
+        makeAssertion(`links/${id}/${data.name}`, true)
+        makeAssertion(`links/${id}/${data.instructions}`, true)
+        makeAssertion(`links/${id}/${data.hint}`, true)
 
         // TODO: swap translatable parts of blockly workspace and toolbox with uuids (recognize with regex)
         const { workspace, toolbox } = data.karelBlockly

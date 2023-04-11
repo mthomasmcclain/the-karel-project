@@ -26,8 +26,8 @@
         { state: sourceLang },
         { state: translations }
       ] = await Promise.all([
-        Core.send({ type: 'state', user: 'assertions', scope: `sourceLanguage-${this.id}`, domain: 'internal' }),
-        Core.send({ type: 'state', user: 'assertions', scope: `translations-${this.id}`, domain: 'internal' })
+        Core.send({ type: 'state', user: 'assertions-v3', scope: `sourceLanguage-${this.id}`, domain: 'asdf-translation.knowlearning.systems' }),
+        Core.send({ type: 'state', user: 'assertions-v3', scope: `translations-${this.id}`, domain: 'asdf-translation.knowlearning.systems' })
       ])
       console.log('CREATED AND GOT STUFFFFFF!', sourceLang, translations)
 
