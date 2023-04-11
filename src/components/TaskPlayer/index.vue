@@ -6,7 +6,7 @@
           <b>Challenge:</b>
           <TranslationResolver
             :id="task.instructions"
-            lang="en"
+            lang="pt"
           />
           <p v-if="task.maxBlocks" class="max-blocks-p">
             Solve the challenge using <b>{{task.maxBlocks}}</b> or fewer blocks. The current code uses <b :style="`color: ${blocksUsed > task.maxBlocks ? 'red' : 'green'};`">{{ blocksUsed }}</b> blocks.
