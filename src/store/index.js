@@ -222,7 +222,7 @@ export default createStore({
         data.instructions = uuid()
         data.hint = uuid()
 
-        const lang = 'en'
+        const lang = getters.language()
 
         //  create translations assertions for the three fields above
         makeAssertion(`translations/${data.name}/${lang}`, name)
