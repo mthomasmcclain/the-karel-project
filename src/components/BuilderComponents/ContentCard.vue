@@ -5,7 +5,7 @@
     @dragstart="event => event.dataTransfer.setData('text/plain', id)"
   >
 
-    <div class="title">{{ content.name }}</div>
+    <div class="title">{{ t(content.name) }}</div>
 
     <div class="author">
       <PILALogo
@@ -103,6 +103,7 @@ export default {
     }
   },
   methods: {
+    t(id) { return this.$store.getters.translation(id) },
     getCode() {
       getCodeSwal(this.id)
     },
