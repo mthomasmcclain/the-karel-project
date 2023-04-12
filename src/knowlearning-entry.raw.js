@@ -11,6 +11,7 @@ import { createApp } from 'npm/unscoped/vue/3.2.39'
 import App from './App.vue'
 import router from './router/index.js'
 import store from './store/index.js'
+import matchNavigatorLanguage from './helpers/matchNavigatorLanguage.js'
 import './main.css'
 
 import './helpers/vue3DragEvents.js'
@@ -22,6 +23,7 @@ export const initialize = () => {
 
     const initialLoad = async () => {
         store.dispatch('setLoading', true)
+        store.dispatch('language', matchNavigatorLanguage(['en', 'pt']))
         await store.dispatch('loadContent')
         store.dispatch('setLoading', false)
     }

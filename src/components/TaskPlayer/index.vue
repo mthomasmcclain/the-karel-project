@@ -4,10 +4,7 @@
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
           <b>Challenge:</b>
-          <TranslationResolver
-            :id="task.instructions"
-            lang="pt"
-          />
+          {{ t(task.instructions )}}
           <p v-if="task.maxBlocks" class="max-blocks-p">
             Solve the challenge using <b>{{task.maxBlocks}}</b> or fewer blocks. The current code uses <b :style="`color: ${blocksUsed > task.maxBlocks ? 'red' : 'green'};`">{{ blocksUsed }}</b> blocks.
           </p>
@@ -214,6 +211,7 @@ export default {
     }
   },
   methods: {
+    t(id) { return this.$store.getters.translation(id) },
     getScenarioLabel(i) {
       const start = `Scenario ${i+1}: `
       let end = 'Not Tried'
@@ -221,7 +219,11 @@ export default {
       else if (this.correctScenarios[i] === false) end = 'Not Solved'
       return start + end
     },
-    showHint() { taskHintSwal(this.task.hint) },
+    showHint() {
+      const { hint } = this.task
+      const translatedHint = this.t(hint)
+      taskHintSwal(translatedHint)
+    },
     resetTask() {
       const { karelBlockly } = this.task
       this.karelBlockly = copy(karelBlockly)

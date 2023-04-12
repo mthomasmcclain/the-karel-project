@@ -23,6 +23,7 @@ const vuexLocal = new VuexPersistence({
 export default createStore({
   state: {
     loading: true,
+    language: null,
     loadedContent: {},
     mapIds: [ ...expertMapIds ],
     taskIds: [ ...expertTaskIds ],
@@ -30,11 +31,18 @@ export default createStore({
     completed: [ ],
     expertIds: [ ],
     mapIdToDifficulty,
-    customizerState: null
+    customizerState: null,
+    translations: {}
   },
   getters: {
     loading: state => () => state.loading,
     loadedContent: state => () => state.loadedContent,
+    translation: state => target => {
+      const lang = state.language
+      const found = state.translations[target] && state.translations[target][lang] && state.translations[target][lang].value
+      return found ? state.translations[target][lang].value : `${lang} translation not found for ${target}`
+    },
+    language: state => () => state.language,
     mapIds: state => () => state.mapIds,
     mapIdsByDifficulty: state => difficulty => {
       const validChoices = [ 'Beginner', 'Intermediate', 'Advanced' ]
@@ -84,7 +92,10 @@ export default createStore({
       return mapTasks.every(taskId => getters.taskIsComplete(taskId))
     }
   },
+
   mutations: {
+    addTranslation: (state, { id, value }) => state.translations[id] = value,
+    language: (state, value) => state.language = value,
     setLoading: (state, bool) => state.loading = bool,
     addToMapIds: (state, id) => !state.mapIds.includes(id) && state.mapIds.push(id), 
     saveToLocalContent: (state, { data, id, type }) => {
@@ -117,7 +128,7 @@ export default createStore({
   actions: {
     setLoading: ({ commit }, bool) => commit('setLoading', bool),
 
-    loadContent: async ({ getters, dispatch }) => {
+    loadContent: async ({ getters, commit, dispatch }) => {
       const allMapIds = getters.mapIds()
       let allTaskIds = [ ...getters.taskIds() ]
       getters.embeddedTaskIds().forEach(id => {
@@ -125,6 +136,41 @@ export default createStore({
       })
     
       const allIds = [ ...allMapIds, ...allTaskIds]
+
+      // look for translation targets under all ids
+      const translationTargetsForItems = await Promise.all(
+        allIds.map(
+          id => Core.send({
+            type: 'state',
+            user: 'assertionsv3',
+            domain: 'internal',
+            scope: `links-${id}`
+          })
+        )
+      )
+      const translationTargets = translationTargetsForItems.reduce((acc, itemArray) => {
+        // filter needed because the group membership can be present but FALSE
+        const arrayToAdd = Object.keys(itemArray.state).filter(id => itemArray.state[id])
+        return [ ...acc, ...arrayToAdd ]
+      }, [])
+
+      const fetchedTranslations = await Promise.all(
+        translationTargets.map(
+          id => Core.send({
+            type: 'state',
+            user: 'assertionsv3',
+            domain: 'internal',
+            scope: `translations-${id}`
+          })
+        )
+      )
+
+      fetchedTranslations.forEach((fetchedTranslation, i) => {
+        const targetId = translationTargets[i]
+        commit('addTranslation', { id: targetId, value: fetchedTranslation.state })
+      })
+
+      // load the content itself
       const neededIds = allIds.filter(id => !Object.keys(getters.loadedContent()).includes(id))
       if (!neededIds.length) return
       
@@ -232,7 +278,9 @@ export default createStore({
 
     toggleFavorite: ({ commit }, id) => commit('toggleFavorite', id),
 
-    taskComplete: ({ commit }, id) => commit('taskComplete', id)
+    taskComplete: ({ commit }, id) => commit('taskComplete', id),
+
+    language: ({ commit }, value) => commit('language', value)
 
   },
   plugins: [vuexLocal.plugin]
