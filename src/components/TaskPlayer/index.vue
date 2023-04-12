@@ -82,7 +82,6 @@ import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls/index
 import KarelWorldRenderer from '../KarelWorldRenderer.vue'
 import KarelBlockly from '../KarelBlockly/index.vue'
 import worldsMatch from './karelWorldsMatch.js'
-import TranslationResolver from '../TranslationResolver.vue'
 import {
   taskSuccessSwal,
   taskPartialSuccessSwal,
@@ -99,8 +98,7 @@ export default {
   components: {
     KarelBlockly,
     KarelWorldRenderer,
-    KarelBlocklyPlayerAndControls,
-    TranslationResolver
+    KarelBlocklyPlayerAndControls
   },
   props: {
     id: {
