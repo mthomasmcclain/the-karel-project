@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 import expertTaskIds from './taskIds.js'
 import expertMapIds from './mapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
+import { extractTranslationsForBlocklyWorkspaceUserMethods } from './translateBlocklyWorkspaceUserMethods.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
@@ -237,10 +238,14 @@ export default createStore({
         makeAssertion(`links/${id}/${data.instructions}`, true)
         makeAssertion(`links/${id}/${data.hint}`, true)
 
-        // TODO: swap translatable parts of blockly workspace and toolbox with uuids (recognize with regex)
-        const { workspace, toolbox } = data.karelBlockly
-        console.log('TODO: swap translatable parts for uuids!!!!!!', id, workspace, toolbox)
-
+        // swap translatable parts of blockly workspace and toolbox with uuids
+        const { workspace, userMethods } = extractTranslationsForBlocklyWorkspaceUserMethods(data.karelBlockly.workspace)
+        data.karelBlockly.workspace = workspace
+        Object.entries(userMethods).forEach(([translationId, methodName]) => {
+          makeAssertion(`translations/${translationId}/${lang}`, methodName)
+          makeAssertion(`sourceLanguage/${translationId}/lang`, lang)
+          makeAssertion(`links/${id}/${translationId}`, true)
+        })
 
         const content = JSON.stringify(data)
         await Core.upload(md, content)

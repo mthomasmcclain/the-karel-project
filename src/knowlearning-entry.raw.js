@@ -6,6 +6,7 @@ import 'npm/unscoped/uuid/9.0.0'
 import 'npm/unscoped/vue-router/4.1.6'
 import 'npm/unscoped/blockly/5.20210325.1'
 import 'npm/unscoped/lodash/4.17.21'
+import 'npm/unscoped/elementtree/0.1.7'
 
 import { createApp } from 'npm/unscoped/vue/3.2.39'
 import App from './App.vue'
