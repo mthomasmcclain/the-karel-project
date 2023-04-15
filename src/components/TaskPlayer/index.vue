@@ -89,7 +89,7 @@ import {
   taskTooManyBlocksSwal,
   taskHintSwal
 } from '../../helpers/projectSwallows.js'
-
+import { injectTranslationsForBlocklyWorkspaceUserMethods } from '../../helpers/translateBlocklyWorkspaceUserMethods.js'
 const copy = x => JSON.parse(JSON.stringify(x))
 
 
@@ -118,6 +118,12 @@ export default {
 
     const { karelBlockly } = task
     karelBlockly.settings.customizerMode = false
+    const translationMap = Object.keys(this.$store.state.translations).reduce((acc,id) => {
+      return { ...acc, [id] : this.t(id) }
+    }, {})
+    karelBlockly.workspace =  injectTranslationsForBlocklyWorkspaceUserMethods(karelBlockly.workspace, translationMap)
+
+
     return {
       karelBlockly,
       currentStepData: null,

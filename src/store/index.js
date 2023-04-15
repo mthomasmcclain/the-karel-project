@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 import expertTaskIds from './taskIds.js'
 import expertMapIds from './mapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
-import { extractTranslationsForBlocklyWorkspaceUserMethods } from './translateBlocklyWorkspaceUserMethods.js'
+import { extractTranslationsForBlocklyWorkspaceUserMethods } from '../helpers/translateBlocklyWorkspaceUserMethods.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
