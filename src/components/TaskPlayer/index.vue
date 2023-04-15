@@ -118,7 +118,10 @@ export default {
 
     const { karelBlockly } = task
     karelBlockly.settings.customizerMode = false
-    const translationMap = Object.keys(this.$store.state.translations).reduce((acc,id) => {
+    // TODO ... this won't work if there's not id ... what's the plan here for the 
+    // taskConfig prop veruss the id prop?
+    const translationIds = this.$store.state.translationGroups[this.id]
+    const translationMap = translationIds.reduce((acc,id) => {
       return { ...acc, [id] : this.t(id) }
     }, {})
     karelBlockly.workspace =  injectTranslationsForBlocklyWorkspaceUserMethods(karelBlockly.workspace, translationMap)

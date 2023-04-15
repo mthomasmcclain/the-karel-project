@@ -33,7 +33,8 @@ export default createStore({
     expertIds: [ ],
     mapIdToDifficulty,
     customizerState: null,
-    translations: {}
+    translations: {},
+    translationGroups: {}, // { [id] : Array of target ids }
   },
   getters: {
     loading: state => () => state.loading,
@@ -43,6 +44,8 @@ export default createStore({
       const found = state.translations[target] && state.translations[target][lang] && state.translations[target][lang].value
       return found ? state.translations[target][lang].value : `${lang} translation not found for ${target}`
     },
+    translationGroups: state => () => state.translationGroups,
+    translationGroup: state => id => state.translationGroups[id],
     language: state => () => state.language,
     mapIds: state => () => state.mapIds,
     mapIdsByDifficulty: state => difficulty => {
@@ -96,6 +99,7 @@ export default createStore({
 
   mutations: {
     addTranslation: (state, { id, value }) => state.translations[id] = value,
+    addTranslationGroup: (state, { groupId, members }) => state.translationGroups[groupId] = members,
     language: (state, value) => state.language = value,
     setLoading: (state, bool) => state.loading = bool,
     addToMapIds: (state, id) => !state.mapIds.includes(id) && state.mapIds.push(id), 
@@ -149,11 +153,17 @@ export default createStore({
           })
         )
       )
-      const translationTargets = translationTargetsForItems.reduce((acc, itemArray) => {
-        // filter needed because the group membership can be present but FALSE
-        const arrayToAdd = Object.keys(itemArray.state).filter(id => itemArray.state[id])
-        return [ ...acc, ...arrayToAdd ]
-      }, [])
+
+      translationTargetsForItems.forEach(({state}, i) => {
+        if (state) {
+          const groupId = allIds[i]
+          const members = Object.keys(state).filter(id => state[id].value)
+          commit('addTranslationGroup', { groupId, members })
+        }
+      })
+      
+      const translationTargets = Object.values(getters.translationGroups())
+        .reduce((acc,item) => [ ...acc, ...item], [])
 
       const fetchedTranslations = await Promise.all(
         translationTargets.map(
