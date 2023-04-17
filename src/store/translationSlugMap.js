@@ -33,4 +33,18 @@ export default {
     "full-toolbox": "40d111f7-866d-4e51-b191-7ca5f3ae2fd4",
     "beginner": "a7dd929b-3e90-4307-9892-0b06f3a00e22",
     "intermediate": "7648f759-cefa-4205-949b-065824d52402",
+    "cancel": "dd6ba7e0-6b1e-4087-8bdf-9ebc0901ec82",
+    "close": "e2081c2f-03d3-435c-9953-3e3f5ddfc774",
+    "not-quite": "f3c0114b-6374-4fe0-9009-354a0632ddd1",
+    "karels-world-does-not-exactly-match-the-goal-state": "f1b88c50-05bd-42cb-933e-ffefda1d7273",
+    "karel-had-a-problem": "3c01d2cf-6cfd-4557-8e75-c7eb516a85d8",
+    "good-job": "e126adc9-07fa-4efd-b4e2-11233754fd50",
+    "nice-work": "804750c2-901e-465e-9f81-182d9b3cc2c0",
+    "you-did-it": "dea4d039-52cb-478b-b56e-0858fb7c71ed",
+    "well-done": "8c81a6f3-49a5-4a6d-a5c3-b8efbf6d3a60",
+    "awesome": "f64d4f4e-b514-4a5d-9bdb-3beacf333a9e",
+    "lets-see-if-the-same-code-also-solves-the-other-scenarios": "3df18ad0-e759-4fcd-8f1e-4a359cc4e977",
+    "you-solved-the-task-but-used-too-many-blocks": "8f8bb1c2-ca72-4e9b-9fc3-7f5a83316438",
+    "map-complete": "7978652f-d11e-48d5-9be2-b2266c045d95",
+    "all-tasks-correctly-completed": "0ee96cb5-8f72-4280-8b5f-2d139d36b5fa"
 }

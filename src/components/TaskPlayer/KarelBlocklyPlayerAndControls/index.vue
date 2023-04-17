@@ -1,29 +1,29 @@
 <template>
   <div class="container">
     <div v-if="playing">
-      <button class="karel-button" @click="$emit('pause')">pause</button>
+      <button class="karel-button" @click="$emit('pause')">{{ t('pause') }}</button>
     </div>
     <div v-else-if="currentStepData && currentStepData.error">
-      <button class="karel-button" @click="reset">reset</button>
+      <button class="karel-button" @click="reset">{{ t('reset') }}</button>
     </div>
     <div v-else-if="playingTerminated">
-      <button class="karel-button" @click="reset">reset</button>
+      <button class="karel-button" @click="reset">{{ t('reset') }}</button>
     </div>
     <div v-else>
-      <button class="karel-button" @click="$emit('play')">play</button>
-      <button class="karel-button" v-if="paused" @click="reset">reset</button>
+      <button class="karel-button" @click="$emit('play')">{{ t('play') }}</button>
+      <button class="karel-button" v-if="paused" @click="reset">{{ t('reset') }}</button>
     </div>
 
     <div class="play-speed-wrapper">
-      <span><strong>Play Speed</strong></span>
+      <span><strong>{{ t('play-speed') }}</strong></span>
       <input
         type="range"
         min="1" max="26" step="1" :value="stepSpeed"
         @change="$emit('setStepSpeed', parseInt($event.target.value))"
       />
       <div class="speed-labels-row">
-        <span>(slow)</span>
-        <span>(fast)</span>
+        <span>({{ t('slow') }})</span>
+        <span>({{ t('fast') }})</span>
       </div>    
     </div>
 
@@ -64,6 +64,9 @@
       }
     },
     methods: {
+      t(target) {
+        return this.$store.getters.translation(target)
+      },
       reset() {
         this.karelBlocklyWorld = null
         this.currentStepData = null

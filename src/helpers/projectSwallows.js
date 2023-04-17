@@ -1,4 +1,7 @@
 import Swal from 'sweetalert2'
+import store from '../store/index.js'
+
+const t = target => store.getters.translation(target)
 
 export function howToUseMapCustomizerSwal() {
     return Swal.fire({
@@ -88,7 +91,13 @@ export function confirmDeleteSwal(name) {
 }
 
 export function taskSuccessSwal() {
-    const bodyOptions = ['Good job!', 'Nice Work.', 'You did it!', 'Well Done!', 'Awesome']
+    const bodyOptions = [
+        t('good-job'),
+        t('nice-work'),
+        t('you-did-it'),
+        t('well-done'),
+        t('awesome'),
+    ]
     const body = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
     const header = ''
     return Swal.fire(header, body, 'success')
@@ -96,40 +105,57 @@ export function taskSuccessSwal() {
 export function taskIncorrectSwal(errorMessage) {
     if (errorMessage) {
         return Swal.fire(
-            'Karel had a problem.', errorMessage, 'warning')
+            t('karel-had-a-problem'), errorMessage, 'warning')
     } else {
         return Swal.fire(
-            'Not quite...',
-            'Karel\'s world does not exactly match the goal state.',
+            t('not-quite'),
+            t('karels-world-does-not-exactly-match-the-goal-state'),
             'warning'
         )
     }
 }
 
 export function taskPartialSuccessSwal(numRemainingWorlds) {
-    const bodyOptions = ['Good job!', 'Nice Work.', 'You did it!', 'Well Done!', 'Awesome.']
+    const bodyOptions = [
+        t('good-job'),
+        t('nice-work'),
+        t('you-did-it'),
+        t('well-done'),
+        t('awesome'),
+    ]
     var body = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
-    body += "<br> Let's see if the same code also solves the " + (numRemainingWorlds == 1 ? "other scenario." : ("remaining " + numRemainingWorlds.toString() + " scenarios."))
+    body += "<br>"
+    body += t('lets-see-if-the-same-code-also-solves-the-other-scenarios')
     const header = ''
     return Swal.fire(header, body, 'success')
 }
 export function taskTooManyBlocksSwal() {
-    var body = "You solved the task, but used too many blocks."
+    var body = t('you-solved-the-task-but-used-too-many-blocks')
     const header = ''
     return Swal.fire(header, body, 'warning')
 }
 
 export function mapCompleteSwal() {
-    const bodyOptions = ['Good job!', 'Nice Work!', 'You did it!', 'Well Done!', 'Awesome!']
+    const bodyOptions = [
+        t('good-job'),
+        t('nice-work'),
+        t('you-did-it'),
+        t('well-done'),
+        t('awesome'),
+    ]
     const bodyStart = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
-    const body = bodyStart + '  All tasks correctly completed.'
-    const header = 'Map Complete'
+    const body = bodyStart + '  ' + t('all-tasks-correctly-completed')
+    const header = t('map-complete')
     return Swal.fire(header, body, 'success')
 }
 
 
 export function taskHintSwal(hint) {
-    return Swal.fire('Hint:', hint, 'question')
+    return Swal.fire(
+        t('hint'),
+        hint,
+        'question'
+    )
 }
 
 export function renameMapSwal(incomingName = '... name your map ...') {
@@ -167,17 +193,3 @@ export function mapNotFoundSwal() {
         'warning'
     )
 }
-
-// export function importingDisabledSwal() {
-//     return Swal.fire({
-//         icon: 'success',
-//         text: 'Importing content created by other users is currently disabled... but we like the way you\'re thinking!'
-//     })
-// }
-
-// export function sharingDisabledSwal() {
-//     return Swal.fire({
-//         icon: 'success',
-//         text: 'Sharing your maps with other users is currently disabled... but we like the way you\'re thinking!'
-//     })
-// }

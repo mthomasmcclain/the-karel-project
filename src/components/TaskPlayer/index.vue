@@ -3,13 +3,17 @@
     <div class="left-col">
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
-          <b>Challenge:</b>
+          <b>{{ t('challenge') }}:</b>
           {{ t(task.instructions )}}
           <p v-if="task.maxBlocks" class="max-blocks-p">
             Solve the challenge using <b>{{task.maxBlocks}}</b> or fewer blocks. The current code uses <b :style="`color: ${blocksUsed > task.maxBlocks ? 'red' : 'green'};`">{{ blocksUsed }}</b> blocks.
           </p>
         </div>
-        <button v-if="!karelBlockly.settings.disabled" class="karel-button reset" @click="resetTask">Reset Code</button>
+        <button
+          v-if="!karelBlockly.settings.disabled"
+          class="karel-button reset"
+          @click="resetTask"
+        >{{ t('reset-code') }}</button>
       </div>
 
       <div class="worlds-wrapper">
@@ -210,10 +214,10 @@ export default {
   methods: {
     t(target) { return this.$store.getters.translation(target) },
     getScenarioLabel(i) {
-      const start = `Scenario ${i+1}: `
-      let end = 'Not Tried'
-      if (this.correctScenarios[i]) end = 'Solved'
-      else if (this.correctScenarios[i] === false) end = 'Not Solved'
+      const start = `${this.t('scenario')} ${i+1}: ` // eg: 'Scenario 1:'
+      let end = this.t('not-tried')
+      if (this.correctScenarios[i]) end = this.t('solved')
+      else if (this.correctScenarios[i] === false) end = this.t('not-solved')
       return start + end
     },
     showHint() {

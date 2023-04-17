@@ -3,7 +3,7 @@
     <div id="worlds-and-workspace">
       
       <div class="start-world-area">
-        <h4>Start World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
+        <h4>{{ t('start') }}{{ worlds.length > 1 ? ` (${t('scenario')} ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-start-world"
           :world="activeWorld.preWorld"
@@ -12,7 +12,7 @@
       </div>
       
       <div class="end-world-area">
-        <h4>Goal World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
+        <h4>{{ t('goal') }} {{ worlds.length > 1 ? ` (${t('scenario')} ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-post-world"
           :world="activeWorld.postWorld"
@@ -141,7 +141,11 @@ import KarelBlockly from '../../KarelBlockly/index.vue'
 import KarelTagSelector from './KarelTagSelector.vue'
 import KarelBlocklySettingsEditor from './KarelBlocklySettingsEditor.vue'
 import defaultNewTaskState from '../../../store/defaultNewTaskState.js'
-import { invalidResizeWallsSwal, invalidResizeKarelSwal, invalidResizeStonesSwal } from '../../../helpers/projectSwallows.js'
+import {
+  invalidResizeWallsSwal,
+  invalidResizeKarelSwal,
+  invalidResizeStonesSwal
+} from '../../../helpers/projectSwallows.js'
 
 
 const copy = (val)  => JSON.parse(JSON.stringify(val))
@@ -228,6 +232,7 @@ export default {
     }
   },
   methods: {
+    t(target) { return this.$store.getters.translation(target) },
     addWorld() {
       const copyLastWorld = copy(this.worlds[this.worlds.length - 1])
       this.worlds.push(copyLastWorld)
