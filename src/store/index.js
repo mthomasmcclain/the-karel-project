@@ -5,6 +5,7 @@ import expertTaskIds from './expertTaskIds.js'
 import expertMapIds from './expertMapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
 import { extractTranslationsForBlocklyWorkspaceUserMethods } from '../helpers/translateBlocklyWorkspaceUserMethods.js'
+import translationSlugMap from './translationSlugMap.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 const TASK_TYPE = 'application/json;type=karel-task;v=1.0.0'
@@ -45,9 +46,13 @@ export default createStore({
     loading: state => () => state.loading,
     loadedContent: state => () => state.loadedContent,
     translation: state => target => {
+      // incoming 'target' can be slug (for app stuff) or raw id (for item stuff)
+      const isSlug = translationSlugMap[target]
+      const id = isSlug ? translationSlugMap[target]: target
+
       const lang = state.language
-      const found = state.translations[target] && state.translations[target][lang] && state.translations[target][lang].value
-      return found ? state.translations[target][lang].value : `${lang} translation not found for ${target}`
+      const found = state.translations[id] && state.translations[id][lang] && state.translations[id][lang].value
+      return found ? state.translations[id][lang].value : `${lang} translation not found for ${id}`
     },
     translationGroups: state => () => state.translationGroups,
     translationGroup: state => id => state.translationGroups[id],
@@ -188,8 +193,14 @@ export default createStore({
           commit('addTranslationGroup', { groupId, members })
         }
       })
+
+      // translation targets from items (the group is the task or map id)
       const translationTargets = Object.values(getters.translationGroups())
         .reduce((acc,item) => [ ...acc, ...item], [])
+
+      // add translationTargets for app level stuff
+      Object.values(translationSlugMap).forEach( id => translationTargets.push(id) )
+
       const fetchedTranslations = await Promise.all(
         translationTargets.map(
           id => Core.send({
