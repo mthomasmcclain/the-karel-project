@@ -46,5 +46,6 @@ export default {
     "lets-see-if-the-same-code-also-solves-the-other-scenarios": "3df18ad0-e759-4fcd-8f1e-4a359cc4e977",
     "you-solved-the-task-but-used-too-many-blocks": "8f8bb1c2-ca72-4e9b-9fc3-7f5a83316438",
     "map-complete": "7978652f-d11e-48d5-9be2-b2266c045d95",
-    "all-tasks-correctly-completed": "0ee96cb5-8f72-4280-8b5f-2d139d36b5fa"
+    "all-tasks-correctly-completed": "0ee96cb5-8f72-4280-8b5f-2d139d36b5fa",
+    "new-karel-task": "bca44c4a-fe20-45ca-a5c2-ced924925ab8"
 }

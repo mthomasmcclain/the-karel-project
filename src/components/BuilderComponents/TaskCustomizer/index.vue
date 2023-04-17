@@ -146,6 +146,7 @@ import {
   invalidResizeKarelSwal,
   invalidResizeStonesSwal
 } from '../../../helpers/projectSwallows.js'
+import { injectTranslationsForBlocklyWorkspaceUserMethods } from '../../../helpers/translateBlocklyWorkspaceUserMethods.js'
 
 
 const copy = (val)  => JSON.parse(JSON.stringify(val))
@@ -166,7 +167,29 @@ export default {
   },
   data() {
     const taskAtId = this.$store.getters.content(this.id)
-    const taskToStartCustomizingFrom = taskAtId ? copy(taskAtId) : copy(defaultNewTaskState)
+    let customizerStartState
+    if (taskAtId) {
+      customizerStartState = copy(taskAtId)
+      customizerStartState.name = this.t(customizerStartState.name)
+      customizerStartState.instructions = this.t(customizerStartState.instructions)
+      if (customizerStartState.hint) {
+        customizerStartState.hint = this.t(customizerStartState.hint)
+      }
+      // TODO: translate embedded method names
+      const itemTranslationIds = this.$store.state.translationGroups[this.id]
+      if (itemTranslationIds) {
+        const translationMap = itemTranslationIds.reduce((acc, id) => {
+          return { ...acc, [id]: this.t(id) }
+        }, {})
+        const newWorkspace = injectTranslationsForBlocklyWorkspaceUserMethods(customizerStartState.karelBlockly.workspace, translationMap)
+        customizerStartState.karelBlockly.workspace = newWorkspace
+              
+      }
+
+    } else {
+      customizerStartState = copy(defaultNewTaskState)
+      customizerStartState.name = this.t('new-karel-task') 
+    }
     const {
       name,
       instructions,
@@ -175,7 +198,7 @@ export default {
       worlds,
       karelBlockly,
       tags
-    } = taskToStartCustomizingFrom
+    } = customizerStartState
 
     // customizerMode toggles if uesr can lock/unlock fn blocks
     karelBlockly.settings.customizerMode = true
