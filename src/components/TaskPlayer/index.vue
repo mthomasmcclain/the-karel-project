@@ -103,29 +103,22 @@ export default {
   props: {
     id: {
       type: String,
-      required: false
-    },
-    taskConfig: {
-      type: Object,
-      required: false
+      required: true
     }
   },
   data() {
-    //  TODO: always get scope from environment and load content from that id
-    let task
-    if (this.id) task = copy(this.$store.getters.loadedContent()[this.id])
-    else task = copy(this.taskConfig)
+    const task = copy(this.$store.getters.loadedContent()[this.id])
 
     const { karelBlockly } = task
     karelBlockly.settings.customizerMode = false
-    // TODO ... this won't work if there's not id ... what's the plan here for the 
-    // taskConfig prop veruss the id prop?
-    const translationIds = this.$store.state.translationGroups[this.id]
-    const translationMap = translationIds.reduce((acc,id) => {
-      return { ...acc, [id] : this.t(id) }
-    }, {})
-    karelBlockly.workspace =  injectTranslationsForBlocklyWorkspaceUserMethods(karelBlockly.workspace, translationMap)
 
+    const translationIds = this.$store.state.translationGroups[this.id]
+    if (translationIds) {
+      const translationMap = translationIds.reduce((acc, id) => {
+        return { ...acc, [id]: this.t(id) }
+      }, {})
+      karelBlockly.workspace = injectTranslationsForBlocklyWorkspaceUserMethods(karelBlockly.workspace, translationMap)
+    }
 
     return {
       karelBlockly,
@@ -187,10 +180,7 @@ export default {
     }
   },
   computed: {
-    task() {
-      if (this.id) return this.$store.getters.loadedContent()[this.id]
-      else return this.taskConfig
-    },
+    task() { return this.$store.getters.loadedContent()[this.id] },
     blocksUsed() { return (this.karelBlockly.workspace.match(/block /g) || []).length },
     activePreWorld() {
       return this.task.worlds[this.activeScenarioIndex].preWorld

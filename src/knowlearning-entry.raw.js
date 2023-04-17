@@ -26,6 +26,7 @@ export const initialize = () => {
         store.dispatch('setLoading', true)
         store.dispatch('language', matchNavigatorLanguage(['en', 'pt']))
         await store.dispatch('loadContent')
+        await store.dispatch('loadTranslations')
         store.dispatch('setLoading', false)
     }
 

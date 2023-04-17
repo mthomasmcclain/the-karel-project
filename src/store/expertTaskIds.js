@@ -1,2 +1,2 @@
-const defaultTaskIds = []
+const defaultTaskIds = [ ]
 export default defaultTaskIds
