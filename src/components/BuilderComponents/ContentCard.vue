@@ -17,11 +17,11 @@
 
     <div v-if="contentType === 'task'" class="preview-area">
       <div class="preview-col-wrapper">
-        <div class="col-title">Start:</div>
+        <div class="col-title"> {{ t('start' )}}: </div>
         <karel-world-renderer :world="preWorld" />
       </div>
       <div class="preview-col-wrapper">
-        <div class="col-title">Goal:</div>
+        <div class="col-title"> {{ t('goal' )}}: </div>
         <karel-world-renderer :world="postWorld" />
       </div>
     </div>
@@ -34,11 +34,11 @@
         v-for="(tag,i) in tags"
         :key="`tag-${i}`"
       >
-        {{ tag }}
+        {{ t(tag) }}
       </div>
     </div>
     <div class="tags" v-else>
-       <button class="get-code-btn" @click="getCode">Get Code</button>
+       <button class="get-code-btn" @click="getCode"> {{ t('get-code' )}}</button>
     </div>
 
     <div class="icons">
@@ -103,7 +103,7 @@ export default {
     }
   },
   methods: {
-    t(id) { return this.$store.getters.translation(id) },
+    t(target) { return this.$store.getters.translation(target) },
     getCode() {
       getCodeSwal(this.id)
     },

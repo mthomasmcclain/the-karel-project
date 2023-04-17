@@ -14,11 +14,11 @@
 
       <div class="worlds-wrapper">
         <div class="world-col left">
-          <h2>Start:</h2>
+          <h2> {{ t('start') }}:</h2>
           <KarelWorldRenderer :world="world" key="active-world" />
         </div>
         <div class="world-col right">
-          <h2>Goal:</h2>
+          <h2> {{ t('goal') }}:</h2>
           <KarelWorldRenderer :world="activePostWorld" key="goal-world"/>
         </div>
       </div>
@@ -208,7 +208,7 @@ export default {
     }
   },
   methods: {
-    t(id) { return this.$store.getters.translation(id) },
+    t(target) { return this.$store.getters.translation(target) },
     getScenarioLabel(i) {
       const start = `Scenario ${i+1}: `
       let end = 'Not Tried'

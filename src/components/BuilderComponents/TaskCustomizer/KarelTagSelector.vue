@@ -28,7 +28,7 @@
 </template>
 
 <script>
-const TAG_CHOICES = [ "Beginner", "Intermediate", "Challenge" ]
+const TAG_CHOICES = [ "beginner", "intermediate", "challenge" ]
 export default {
   name: 'App',
   props: [ 'tags' ],

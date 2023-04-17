@@ -140,7 +140,6 @@ export default createStore({
     setLoading: ({ commit }, bool) => commit('setLoading', bool),
 
     loadContent: async ({ getters, dispatch }) => {
-      console.log('load content pulse')
       // fires twice if needed, because embedded tasks wont surface until map embedding themloads
       const allMapIds = getters.mapIds()
       let allTaskIds = [ ...getters.taskIds() ]
@@ -167,7 +166,6 @@ export default createStore({
     },
 
     loadTranslations: async ({ getters, commit }) => {
-      console.log('load translations pulse')
       // assumes embedded task content loaded
       const allIds = Array.from(
         new Set([

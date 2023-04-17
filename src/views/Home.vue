@@ -2,7 +2,7 @@
   <div class="home">
       <div class="student-header">
         <img src="../assets/karelSide.png" />
-        <h2>The Karel Project</h2>
+        <h2>{{ t('the-karel-project' )}}</h2>
       </div>
 
     <div class="button-w-icon" @click="$router.push('/karel-player')">
@@ -21,7 +21,7 @@
         </svg>
       </div>
       <div class="text-area">
-        <span>Learner Portal</span>
+        <span>{{ t('learner-portal') }}</span>
       </div>
     </div>
 
@@ -39,7 +39,7 @@
         </svg>
       </div>
       <div class="text-area">
-        <span>Karel Customizer</span>
+        <span>{{ t('karel-customizer' )}}</span>
       </div>
     </div>
 
@@ -49,8 +49,11 @@
 <script>
 export default {
   name: 'Home',
+  methods: {
+    t(target) { return this.$store.getters.translation(target) }
+  }
 }
-</script>
+</script> 
 
 <style scoped>
 .home {
