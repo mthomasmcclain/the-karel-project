@@ -13,7 +13,7 @@
       text-anchor="middle"
       alignment-baseline="center"
     >
-      {{ t(label) }}
+      {{ label }}
     </text>
 
     <SvgPositioner
@@ -64,9 +64,6 @@ export default {
       type: String,
       default: '#f9e6e3',
     },
-  },
-  methods: {
-    t(target) { return this.$store.getters.translation(target) }
   }
 }
 </script>
