@@ -7,86 +7,74 @@ export function howToUseMapCustomizerSwal() {
     return Swal.fire({
         icon: 'info',
         html:
-            '<div style="display:flex; flex-direction: column; align-items: flex-start;">' +
-                '<h3 style="margin-bottom: -10px;">To Add a Task to Your Map</h3>' +
-                '<p>Drag the task from the sidebar onto the map.</p>' +
+            `<div style="display:flex; flex-direction: column; align-items: flex-start;">` +
+            `<h3 style="margin-bottom: -10px;"> ${t("to-add-a-task-to-your-map")} </h3>` +
+                `<p>${t("drag-the-task-from-the-sidebar-onto-the-map")}</p>` +
                 
-                '<h3 style="margin-bottom: -10px;">To Remove a Task from Your Map</h3>' +
-                '<p>Click on a task and press the \'delete\' key.</p>' +
+                `<h3 style="margin-bottom: -10px;"> ${ t("to-remove-a-task-from-your-map") } </h3>` +
+                `<p> ${ t("click-on-a-task-and-press-the-delete-key") } </p>` +
 
-                '<h3 style="margin-bottom: -10px;">To Add a Dependency Arrow</h3>' +
-                '<p>Click <em>next to</em>, but not on, a task and start dragging. Try it!</p>' +
+                `<h3 style="margin-bottom: -10px;"> ${ t("to-add-a-dependency-arrow") } </h3>` +
+                `<p> ${ t("click-next-to-but-not-on-a-task-and-start-dragging-try-it") } </p>` +
 
-                '<h3 style="margin-bottom: -10px;">To Remove a Dependency Arrow</h3>' +
-                '<p>Click on an arrow and press the \'delete\' key.</p>' +
+                `<h3 style="margin-bottom: -10px;"> ${ t("to-remove-a-dependency-arrow") } </h3>` +
+                `<p> ${ t("click-on-an-arrow-and-press-the-delete-key") } </p>` +
 
             '</div>',
 
-        confirmButtonText: 'Got It!'
+        confirmButtonText: t('got-it')
     })
 }
 
 
 export function confirmCloseWithoutSaveSwal() {
     return Swal.fire({
-        title: 'Confirm Close',
-        text: 'Are you sure you want to close without saving? Unsaved changes will be lost.',
+        title: t("confirm-close"),
+        text: t("are-you-sure-you-want-to-close-without-saving-unsaved-changes-will-be-lost"),
         icon: 'question',
-        confirmButtonText:'Close without Saving',
-        cancelButtonText: 'Continue Editing',
+        confirmButtonText: t("close-without-saving"),
+        cancelButtonText: t("continue-editing"),
         showCancelButton: true,
     })
 }
 
-export function duplicateNameSwal(contentName) {
-    return Swal.fire(
-        'Choose a Different Name',
-        `You already have content named ${contentName}. Choose a different name to save your task. To edit '${contentName}', select it from the gallery.`,
-        'warning'
-    )
-}
-
-export function noBlankNameSwal() {
-    return Swal.fire(
-        'Content Requires a Name',
-        `You must provide a name to save.`,
-        'warning'
-    )
-}
-
 export function copyContentSwal() {
     return Swal.fire({
-        title: 'Copy Expert Content?',
-        text: `You are cannot edit pre-loaded, expert content. Would you like to create a copy?`,
+        title: t("copy-expert-content"),
+        text: t("you-cannot-edit-pre-loaded-expert-content-would-you-like-to-create-a-copy"),
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Copy Task'
+        confirmButtonText: t("copy-task")
     })
 }
 
 export function copyConfirmSwal() {
     return Swal.fire({
-        title: 'Copy Complete',
-        text: `Your can now edit your copy of this content.`,
+        title: t("copy-complete"),
+        text: t("you-can-now-edit-your-copy-of-this-content"),
         icon: 'success',
         confirmButtonText: 'OK'
     })
 }
 
 export function invalidResizeSwal(message) {
-    return Swal.fire('Invalid World Resize', message, 'warning')
+    return Swal.fire(
+        t("invalid-world-resize"),
+        message,
+        'warning'
+    )
 }
-export function invalidResizeStonesSwal() { return invalidResizeSwal('Can\'t change world size. Stone would be outside world boundary.') }
-export function invalidResizeWallsSwal() { return invalidResizeSwal('Can\'t change world size. Wall would be outside world or on world edge.') }
-export function invalidResizeKarelSwal() { return invalidResizeSwal('Can\'t change world size. Karel would be outside world boundary bounds.') }
+export function invalidResizeStonesSwal() { return invalidResizeSwal( t("cant-change-world-size-stone-would-be-outside-world-boundary") ) }
+export function invalidResizeWallsSwal() { return invalidResizeSwal(t('cant-change-world-size-wall-would-be-outside-world-or-on-world-edge') ) }
+export function invalidResizeKarelSwal() { return invalidResizeSwal(t('cant-change-world-size-karel-would-be-outside-world-boundary-bounds') ) }
 
 export function confirmDeleteSwal(name) {
     return Swal.fire({
-        title: 'Are you sure?',
-        text: `Confirm deletion${name ? ` of '${name}'` : ''}. You cannot undo this.`,
+        title: t("are-you-sure"),
+        text: t("confirm-deletion-you-cannot-undo-this"),
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Delete'
+        confirmButtonText: t('delete')
     })
 }
 
@@ -149,7 +137,6 @@ export function mapCompleteSwal() {
     return Swal.fire(header, body, 'success')
 }
 
-
 export function taskHintSwal(hint) {
     return Swal.fire(
         t('hint'),
@@ -158,38 +145,38 @@ export function taskHintSwal(hint) {
     )
 }
 
-export function renameMapSwal(incomingName = '... name your map ...') {
+export function renameMapSwal(incomingName = t("name-your-map") ) {
     return Swal.fire({
-        title: 'Update Map Name',
+        title: t("update-map-name"),
         input: 'text',
         inputValue: incomingName,
         showCancelButton: true,
-        confirmButtonText: 'Update Map Name',
+        confirmButtonText: t("update-map-name"),
     })
 }
 
 export function importMapSwal() {
     return Swal.fire({
-        title: 'Import Map',
-        text: 'Paste the id of the map you wish to import.',
+        title: t('import-map'),
+        text: t("paste-the-id-of-the-map-you-wish-to-import"),
         input: 'text',
         showCancelButton: true,
-        confirmButtonText: 'Import',
+        confirmButtonText: t('import'),
     })
 }
 
 export function getCodeSwal(id) {
     return Swal.fire({
-        title: 'Share Code',
-        html: `Share this code with anyone you want. <br><br> ${id}`,
+        title: t('share-code'),
+        html:  `${ t("share-this-code-with-anyone-you-want")} <br><br> ${id}`,
         type: 'success'
     })
 }
 
 export function mapNotFoundSwal() {
     return Swal.fire(
-        'Not Found',
-        `Unable to find a map with the provided access code.`,
+        t('not-found'),
+        t('unable-to-find-a-map-with-the-provided-access-code'),
         'warning'
     )
 }
