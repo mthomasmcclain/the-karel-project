@@ -28,7 +28,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
           </svg>
-          <span>{{ mode === 'tasks' ? 'New Task' : 'New Map' }}</span>
+          <span>{{ mode === 'tasks' ? t('new-task') : t('new-map') }}</span>
         </div>
       </div>
       <ContentCard
@@ -93,6 +93,9 @@ export default {
     },
   },
   methods: {
+    t(target) {
+      return this.$store.getters.translation(target)
+    },
     save() {
       const swapId = this.modalContent
       const type = (this.mode === 'tasks') ? 'task' : 'map'

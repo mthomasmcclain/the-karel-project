@@ -88,7 +88,7 @@ export default createStore({
         .filter(id => userTasksOnly ? !getters.isExpert(id) : true)
     },
     content: state => id => state.loadedContent[id],
-    name: ( _state, getters) => id => {
+    name: ( _, getters) => id => {
       return getters.content(id).name
     },
     type: state => id => {
@@ -285,14 +285,41 @@ export default createStore({
         console.warn('Error in saveTaskAndTranslations', e)
       }
     },
-    saveMapAndTranslations: async ({ commit }, payload) => {
-      // try {
-      //   const md = { name: data.name, id, type }
-      //   const { state: assertions } = await Core.send({ type: 'state', scope: 'assertionsv31', mutable: true })
-      //   const makeAssertion = (path, value) => assertions[uuid()] = { path, value, ts: Date.now() }
-      // } catch (e) {
-      //   console.warn('Error in saveMapAndTranslations', e)
-      // }
+    saveMapAndTranslations: async ({ dispatch, commit, getters }, { id, type, data }) => {
+      try {
+        // 0. grab name for use after uuid replace
+        const { name } = data
+
+        // 1. update name fields within data to uuids in place
+        data.name = uuid()
+
+        // 2. save local
+        dispatch('saveToLocalContent', { id, type, data })
+
+        // 3. save remote
+        const md = { name: data.name, id, type: MAP_TYPE }
+        const content = JSON.stringify(data)
+        await Core.upload(md, content)
+
+        const lang = getters.language()
+        // 4. optimistically update translations in local store
+        commit('addTranslation', { id: data.name, value: { [lang]: { value: name } } })
+        commit('addTranslationGroup', {
+          groupId: id,
+          members: [ data.name ]
+        })
+
+        //  5. update translations for agent (populated to store on reload)
+        const { state: assertions } = await Core.send({ type: 'state', scope: 'assertionsv31', mutable: true })
+        const makeAssertion = (path, value) => assertions[uuid()] = { path, value, ts: Date.now() }
+
+        makeAssertion(`translations/${data.name}/${lang}`, name)
+        makeAssertion(`sourceLanguage/${data.name}/lang`, lang)
+        makeAssertion(`links/${id}/${data.name}`, true)
+
+      } catch (e) {
+        console.warn('Error in saveMapAndTranslations', e)
+      }
     },
     saveToLocalContent: ({ commit }, payload) => commit('saveToLocalContent', payload),
     copy: ({ getters, dispatch }, id) => {

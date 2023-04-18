@@ -1,16 +1,16 @@
 <template>
   <div id="wrapper">
     <div id="sidebar">
-      <button class="karel-button how-to-button" @click="launchHowTo">How to Use</button>
+      <button class="karel-button how-to-button" @click="launchHowTo">{{ t('how-to-use') }}</button>
 
       <div class="filter-search-wrapper">
-          <h3>Task Filters</h3>
+          <h3>{{ t('filters') }}</h3>
           <input placeholder="Search" v-model="nameFilter">
 
           <div>
             <input class="search" id="fav" type="checkbox" v-model="favoritesFilter">
             <label class="fav-label" for="fav">
-              <span>Favorite</span>
+              <span>{{ t('favorite') }}</span>
               <svg fill="red" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z" />
               </svg>
@@ -19,14 +19,14 @@
 
           <div>
             <input id="user" v-model="userTasksOnlyFilter" type="checkbox">
-            <label for="user">Your Creations Only</label>
+            <label for="user">{{ t('your-creations' )}}</label>
           </div>
         
       </div>
       <!-- End Filters Section of SideBar -->
 
       <div class="task-choices-wrapper">
-        <h3>Task List</h3>
+        <h3>{{ t('tasks') }}</h3>
         <div
           v-for="task in $store.getters.filteredTasks({ subStr: nameFilter, favorites: favoritesFilter, userTasksOnly: userTasksOnlyFilter })"
           :key="`task-select-${task}`"
@@ -34,7 +34,7 @@
           draggable="true"
           @dragstart="event => event.dataTransfer.setData('text/plain', task)"
         >
-          {{ $store.getters.name(task) }}
+          {{ t( $store.getters.name(task) ) }}
         </div>
       </div>
 
@@ -47,7 +47,7 @@
         <img id="kl-logo">
         <div class="map-name-wrapper">
           <span class="rename-map-icon" @click="launchRenameMapSwal">✎</span>
-          <h3 class="title">{{ name || 'Name Your Karel Map' }}</h3>
+          <h3 class="title">{{ name || t('name-your-karel-map') }}</h3>
         </div>
 
         <!-- Empty div so no css changes needed... haha -->
@@ -85,9 +85,15 @@ export default {
   },
   data() {
     const mapAtId = this.$store.getters.content(this.id)
-    const mapToStartCustomizingFrom = mapAtId ? copy(mapAtId) : copy(defaultNewMapState)
-
-    const { graph, name } = mapToStartCustomizingFrom
+    let customizerStartState
+    if (mapAtId) {
+      customizerStartState = copy(mapAtId)
+      customizerStartState.name = this.t(customizerStartState.name)
+    } else {
+      customizerStartState = copy(defaultNewMapState)
+      customizerStartState.name = this.t('new-karel-map')
+    }
+    const { graph, name } = customizerStartState
     return {
       graph,
       name,
@@ -104,6 +110,9 @@ export default {
     }
   },
   methods: {
+    t(target) {
+      return this.$store.getters.translation(target)
+    },
     launchHowTo() {
       howToUseMapCustomizerSwal()
     },

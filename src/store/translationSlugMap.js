@@ -2,7 +2,7 @@ export default {
     "karel-tasks": "5abd88b3-220b-4e9a-9ca5-54239daada92",
     "karel-maps": "03855580-d726-41f7-817d-a421013c9f5e",
     "new-task": "21a0eee2-24ce-4dba-a151-3e82542e4b06",
-    "new-maps": "d16b2b8b-d869-4ae4-8ba9-261ebdc03d26",
+    "new-map": "d16b2b8b-d869-4ae4-8ba9-261ebdc03d26",
     "the-karel-project": "0d058d7f-81d1-4067-863b-396a971dd099",
     "learner-portal": "96dff9be-76fe-4075-9c9e-1286bc066099",
     "karel-customizer": "4eece057-2e77-47b1-8845-aa7c62ba7fb3",
@@ -47,5 +47,14 @@ export default {
     "you-solved-the-task-but-used-too-many-blocks": "8f8bb1c2-ca72-4e9b-9fc3-7f5a83316438",
     "map-complete": "7978652f-d11e-48d5-9be2-b2266c045d95",
     "all-tasks-correctly-completed": "0ee96cb5-8f72-4280-8b5f-2d139d36b5fa",
-    "new-karel-task": "bca44c4a-fe20-45ca-a5c2-ced924925ab8"
+    "new-karel-task": "bca44c4a-fe20-45ca-a5c2-ced924925ab8",
+    "name-your-karel-map": "11ac313c-1b20-4c6c-959a-4004c87e7015",
+    "how-to-use": "791bdc72-c1c3-4f8b-b2f3-5a62e08f61fc",
+    "filters": "9026dd1e-e002-4d6b-9c98-6a22c1b65ae4",
+    "your-creations": "1ea3d439-e1e2-429e-8a3c-60eca50cb7ee",
+    "favorite": "46fa4a70-920d-4b7f-9cd9-3d0514911ae5",
+    "tasks": "b5047371-d710-4eb6-a1b3-8b4da66c709e",
+    "advanced": "a31e4854-5a5f-44d4-9150-1066793497f3",
+    "custom": "0d54c03a-36f6-4f3a-926a-ed23af796621",
+    "new-karel-map": "5ffbf330-3e57-400a-9288-eaa5b0dd5746"
 }

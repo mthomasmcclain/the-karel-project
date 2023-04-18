@@ -124,6 +124,9 @@ export default {
     }
   },
   methods: {
+    t(target) {
+      return this.$store.getters.translation(target)
+    },
     emitChange() {
       this.$emit('change', {
         edges: this.edges,
@@ -197,7 +200,7 @@ export default {
           visited: false
         }
         //  TODO: use something like an analyzer when we're rendering on the core
-        if (this.$store) node.label = this.$store.getters.name(taskId)
+        if (this.$store) node.label = this.t( this.$store.getters.name(taskId) )
         else {
           Core
             .send({ type: 'metadata', id: taskId })

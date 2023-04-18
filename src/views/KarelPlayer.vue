@@ -18,7 +18,7 @@
               active: tab === activeTab
             }"
 
-          >{{ tab }}</div>
+          >{{ t(tab) }}</div>
         </div>
         <div v-for="id in filteredMaps" :key="id"
           class="map-display-line"
@@ -32,7 +32,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4v16m14-8L6 20m14-8L6 4"/>
             </svg>
             <MapCorrectSvgIcon class="correct-svg" :correct="$store.getters.mapIsComplete(id)" />
-            <span class="map-name">{{ $store.getters.name(id) }}</span>
+            <span class="map-name">{{ t( $store.getters.name(id) ) }}</span>
           </div>
           <svg v-if="!$store.getters.isExpert(id)"
             class="trash-icon"
@@ -75,8 +75,8 @@ export default {
   data() {
     return {
       activeMap: null,
-      tabs: [ 'Beginner', 'Intermediate', 'Advanced', 'Custom'],
-      activeTab: 'Beginner',
+      tabs: [ 'beginner', 'intermediate', 'advanced', 'custom'],
+      activeTab: 'beginner',
     }
   },
   computed: {
@@ -85,6 +85,9 @@ export default {
     }
   },
   methods: {
+    t(target) {
+      return this.$store.getters.translation(target)
+    },
     async addMap() {
       this.$store.dispatch('setLoading', true)
       const { value, isDismissed } = await importMapSwal()
