@@ -1,7 +1,7 @@
 <template>
   <div class="home">
       <div class="student-header">
-        <img src="../assets/karelSide.png" />
+        <img src="https://staging.knowlearning.systems/41d23979-de11-11ed-98c5-754324f93e89" />
         <h2>{{ t('the-karel-project' )}}</h2>
       </div>
 
