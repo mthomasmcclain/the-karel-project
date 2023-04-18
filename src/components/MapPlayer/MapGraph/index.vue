@@ -40,7 +40,7 @@
       @click.stop="handleNodeClick(nodeId)"
     >
       <IconAndName class="icon-and-name"
-        :label="label"
+        :label="t(label)"
         :locked="!isAccessible(nodeId)"
         :correct="editMode || previewMode ? undefined : taskAtNodeIsCorrect(nodeId)"
         :highlighted="nodeId === newFromNode || nodeId === newToNode || selected === nodeId"
