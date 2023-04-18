@@ -24,7 +24,7 @@
         <div>Back</div><div>Home</div>
       </div>
 
-      <h3>{{ taskIsActive ? graph.nodes[selected].label : name }}</h3>
+      <h3>{{ taskIsActive ? t(graph.nodes[selected].label) : t(name) }}</h3>
       <div></div>
       
     </div>
@@ -102,6 +102,9 @@ export default {
     }
   },
   methods: {
+    t(target) {
+      return this.$store.getters.translation(target)
+    },
     handleNodeSelected(id) {
       this.selected = id
       if (this.graph.nodes[id]) this.graph.nodes[id].visited = true

@@ -199,16 +199,8 @@ export default {
           w: 0, h: 0,
           visited: false
         }
-        //  TODO: use something like an analyzer when we're rendering on the core
-        if (this.$store) node.label = this.t( this.$store.getters.name(taskId) )
-        else {
-          Core
-            .send({ type: 'metadata', id: taskId })
-            .then(({ metadata }) => {
-              if (metadata) node.label = metadata.name
-              else node.label = 'Error Finding Content'
-            })
-        }
+        node.label = this.$store.getters.name(taskId) // this writes the raw uuid, do not translate
+
         this.nodes[uuid()] = node
       }
       this.emitChange()
