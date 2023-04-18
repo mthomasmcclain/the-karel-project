@@ -50,9 +50,25 @@ export default createStore({
       const isSlug = translationSlugMap[target]
       const id = isSlug ? translationSlugMap[target]: target
 
-      const lang = state.language
-      const found = state.translations[id] && state.translations[id][lang] && state.translations[id][lang].value
-      return found ? state.translations[id][lang].value : `${lang} translation not found for ${id}`
+      // HAAAACK to render sourceLangague for target if translation not found
+      // What I SHOULD do is grab the sourceLanguage map in the loadTranslations action
+      //  ... and mirror that into a store, and reference it if the requested one not found.
+      // ... proably also surface a console.warn that requested lang not found, falling back
+      // INSTEAD we'll just rely on the fact that we only are in EN or PT for now
+
+      // Prev code (no default to sourceLanguage)
+      // const lang = state.language
+      // const found = state.translations[id] && state.translations[id][lang] && state.translations[id][lang].value
+      // return found ? state.translations[id][lang].value : `${lang} translation not found for ${id}`
+
+      let lang = state.language
+      let found = state.translations[id] && state.translations[id][lang] && state.translations[id][lang].value
+      if (found) return state.translations[id][lang].value
+      lang = (lang === 'pt') ? 'en' : 'pt'
+      found = state.translations[id] && state.translations[id][lang] && state.translations[id][lang].value
+      if (found) return state.translations[id][lang].value
+      return `translation for ${id} not found`
+
     },
     translationGroups: state => () => state.translationGroups,
     translationGroup: state => id => state.translationGroups[id],
