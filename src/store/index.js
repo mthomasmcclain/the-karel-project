@@ -75,7 +75,7 @@ export default createStore({
     language: state => () => state.language,
     mapIds: state => () => state.mapIds,
     mapIdsByDifficulty: state => difficulty => {
-      const validChoices = [ 'Beginner', 'Intermediate', 'Advanced' ]
+      const validChoices = [ 'beginner', 'intermediate', 'advanced' ]
       if (validChoices.includes(difficulty)) {
         return state.mapIds.filter(id => mapIdToDifficulty[id] === difficulty)
       } else {
@@ -348,11 +348,15 @@ export default createStore({
     },
     loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
       // verify it loads and is a map
-      if (!id) return Promise.reject(new Error('cannot load map with falsey id'))
+      if (!id) return Promise.reject(new Error('Cannot load map with falsey id.'))
 
       try {
+        const { metadata } = await Core.send({ type: 'metadata', id })
+        console.log('metadata for attempted map id', metadata)
+        if (!metadata.type === MAP_TYPE) throw new Error('Id not of valid map type.')
+
         const content = await Core.download(id).then(r => r.json())
-        if (!content.graph) throw new Error('Map not in schema!')
+
         commit('addToMapIds', id)
         await dispatch('loadContent')
       }

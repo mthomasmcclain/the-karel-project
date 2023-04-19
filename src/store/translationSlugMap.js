@@ -90,5 +90,6 @@ export default {
     "got-it": "1b7b9504-5f61-4e97-9983-fcba815c083f",
     "to-add-a-task-to-your-map": "5a8d7b76-7fb9-4ebf-b0dd-2024127bcce6",
     "drag-the-task-from-the-sidebar-onto-the-map": "95be56e7-d143-4f0d-be70-8e2ab69e43f6",
-    "delete": "0cfd9b64-818f-47b0-9dba-444b4ff018af"
+    "delete": "0cfd9b64-818f-47b0-9dba-444b4ff018af",
+    "add-map": "30b3adb7-8ab6-4201-9ae6-973452f5f476",
 }
