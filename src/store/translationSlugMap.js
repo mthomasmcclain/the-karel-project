@@ -92,4 +92,10 @@ export default {
     "drag-the-task-from-the-sidebar-onto-the-map": "95be56e7-d143-4f0d-be70-8e2ab69e43f6",
     "delete": "0cfd9b64-818f-47b0-9dba-444b4ff018af",
     "add-map": "30b3adb7-8ab6-4201-9ae6-973452f5f476",
+    "your-karel-maps": "2c15e075-f3dd-4ce4-832e-369248392c4c",
+    "content-requires-a-name": "341f68f6-828e-473e-8aef-d67279dfd8bf",
+    "you-must-provide-a-name-to-save": "f3c14ddc-fe00-4831-8db4-fc25a7451aa3",
+    "save": "80d51528-ff30-47ae-97c4-05cf8e75058d",
+    "task-instructions-missing": "d62959ea-04bc-4bad-8ffe-1c97f26bbd64",
+    "tasks-require-instructions": "51c8cc24-bbec-4e69-a54c-f073dc7f03e7"
 }
