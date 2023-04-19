@@ -13,7 +13,7 @@ const MAP_TYPE = 'application/json;type=karel-map;v=1.0.0'
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  key: 'the-karel-project-2.8',
+  key: 'the-karel-project-2.9',
   reducer: state => ({
     favorites: state.favorites,
     completed: state.completed,
@@ -352,7 +352,6 @@ export default createStore({
 
       try {
         const { metadata } = await Core.send({ type: 'metadata', id })
-        console.log('metadata for attempted map id', metadata)
         if (!metadata.type === MAP_TYPE) throw new Error('Id not of valid map type.')
 
         const content = await Core.download(id).then(r => r.json())
