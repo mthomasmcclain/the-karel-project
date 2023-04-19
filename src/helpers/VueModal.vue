@@ -61,16 +61,21 @@ export default {
 .modal-content {
   position: absolute;
   top: 42px;
-  left:42px;
-  right: 42px;
   bottom: 42px;
 
-  display: flex;
-  flex-direction: column;
-  
+  left: 50%;
+  right: 50%;
+  transform: translate(-50%);
+  width: 100%;
+  min-width: 540px;
+  max-width: 900px;
+
   background: white;
   border-radius: 10px;
   padding: 10px;
+
+  display: flex;
+  flex-direction: column;  
 }
 .modal-header {
   text-align: center;
