@@ -99,5 +99,6 @@ export default {
     "task-instructions-missing": "d62959ea-04bc-4bad-8ffe-1c97f26bbd64",
     "tasks-require-instructions": "51c8cc24-bbec-4e69-a54c-f073dc7f03e7",
     "back-home": "c75e5a68-d04b-49e9-8fd2-da280b391ac8",
-    "back-to-map": "0795a824-05a3-408f-b9a3-abe5a6fa7f25"
+    "back-to-map": "0795a824-05a3-408f-b9a3-abe5a6fa7f25",
+    "search": "f3dfbfaa-c17d-4881-9bbf-10167d48f048",
 }

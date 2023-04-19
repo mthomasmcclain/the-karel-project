@@ -5,7 +5,10 @@
 
       <div class="filter-search-wrapper">
           <h3>{{ t('filters') }}</h3>
-          <input placeholder="Search" v-model="nameFilter">
+          <input
+            :placeholder="t('search')"
+            v-model="nameFilter"
+          >
 
           <div>
             <input class="search" id="fav" type="checkbox" v-model="favoritesFilter">
