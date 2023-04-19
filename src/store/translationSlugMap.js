@@ -97,5 +97,7 @@ export default {
     "you-must-provide-a-name-to-save": "f3c14ddc-fe00-4831-8db4-fc25a7451aa3",
     "save": "80d51528-ff30-47ae-97c4-05cf8e75058d",
     "task-instructions-missing": "d62959ea-04bc-4bad-8ffe-1c97f26bbd64",
-    "tasks-require-instructions": "51c8cc24-bbec-4e69-a54c-f073dc7f03e7"
+    "tasks-require-instructions": "51c8cc24-bbec-4e69-a54c-f073dc7f03e7",
+    "back-home": "c75e5a68-d04b-49e9-8fd2-da280b391ac8",
+    "back-to-map": "0795a824-05a3-408f-b9a3-abe5a6fa7f25"
 }
