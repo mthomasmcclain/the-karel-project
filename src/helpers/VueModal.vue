@@ -15,8 +15,12 @@
         >
           Delete
         </button>
-        <button class="karel-button modal-button" v-if="editing" @click="$emit('save')">
-          Save
+        <button
+          class="karel-button modal-button"
+          v-if="editing"
+          @click="$emit('save')"
+        >
+          {{ t('save') }}
         </button>
       </div>
     </div>

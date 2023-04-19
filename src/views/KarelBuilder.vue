@@ -48,7 +48,12 @@
 import Modal from '../helpers/VueModal.vue'
 import Navbar from '../components/BuilderComponents/Navbar.vue'
 import ContentCard from '../components/BuilderComponents/ContentCard.vue'
-import { confirmDeleteSwal, confirmCloseWithoutSaveSwal } from '../helpers/projectSwallows.js'
+import {
+  confirmDeleteSwal,
+  confirmCloseWithoutSaveSwal,
+  noBlankNameSwal,
+  noBlankInstructionsSwal
+} from '../helpers/projectSwallows.js'
 import TaskCustomizer from '../components/BuilderComponents/TaskCustomizer/index.vue'
 import TaskPlayer from '../components/TaskPlayer/index.vue'
 import MapCustomizer from '../components/BuilderComponents/MapCustomizer.vue'
@@ -97,8 +102,19 @@ export default {
       return this.$store.getters.translation(target)
     },
     save() {
-      const swapId = this.modalContent
+      const customizerState = this.$store.state.customizerState
+      if (!customizerState || !customizerState.name ) {
+        noBlankNameSwal()
+        return
+      }
+
       const type = (this.mode === 'tasks') ? 'task' : 'map'
+      if (type === 'task' && !customizerState.instructions) {
+        noBlankInstructionsSwal()
+        return
+      }
+
+      const swapId = this.modalContent
       this.$store.dispatch('save', { swapId, type })
       this.closeModal()
     },

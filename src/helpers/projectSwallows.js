@@ -184,3 +184,19 @@ export function mapNotFoundSwal() {
         'warning'
     )
 }
+
+export function noBlankNameSwal() {
+    return Swal.fire(
+        t('content-requires-a-name'),
+        t('you-must-provide-a-name-to-save'),
+        'warning'
+    )
+}
+
+export function noBlankInstructionsSwal() {
+    return Swal.fire(
+        t('task-instructions-missing'),
+        t('tasks-require-instructions'),
+        'warning'
+    )
+}
