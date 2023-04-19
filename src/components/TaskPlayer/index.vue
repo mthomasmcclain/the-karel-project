@@ -66,7 +66,7 @@
         />
       </div>
       <div>
-        <button class="karel-button hint" v-if="task.hint" @click="showHint">hint</button>
+        <button class="karel-button hint" v-if="task.hint" @click="showHint">{{ t('hint') }}</button>
       </div>
     </div>
 

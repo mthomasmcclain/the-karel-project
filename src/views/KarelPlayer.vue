@@ -3,8 +3,8 @@
 
     <div class="student-display" v-if="!activeMap">
       <div class="student-header">
-        <img src="../assets/karelSide.png" />
-        <h2>Your Karel Maps</h2>
+        <img src="https://staging.knowlearning.systems/41d23979-de11-11ed-98c5-754324f93e89" />
+        <h2>{{ t('your-karel-maps') }}</h2>
       </div>
 
       <div class="student-task-area">
