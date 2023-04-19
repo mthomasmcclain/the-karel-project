@@ -200,7 +200,6 @@ export default {
   margin: auto;
   padding: 4px 10px 4px 6px;
   border-radius: 16px;
-  width: 110px;
   background: rgb(228, 228, 228);
   display: flex;
   justify-content: space-around;
@@ -213,5 +212,6 @@ export default {
 .add-map-button svg {
   width: 20px;
   height: 20px;
+  margin-right: 8px;
 }
 </style>

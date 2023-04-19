@@ -281,6 +281,7 @@ export default {
 
 .karel-button.reset {
   background: darkred;
+  height: 36px;
 }
 
 .left-col .instructions-box {
