@@ -2,7 +2,7 @@
   <div id="karel-tag-selector">
 
     <div class="user-select-tag-section">
-      <span class="section-header">User Tags:</span>
+      <span class="section-header">{{ t('user-tags') }}:</span>
       <span class="tag"
         v-for="(tag, i) in customTagChoices"
         :key="`tag-select-${i}`"
@@ -10,17 +10,17 @@
         :style="tags.customTags.includes(tag) ? 'background: green; color: white': ''"
         >
         <span style="margin-right: 4px;">{{ tags.customTags.includes(tag) ? '☒' : '☐' }}</span>
-        <span> {{ tag }}</span>
+        <span> {{ t(tag) }}</span>
       </span>
     </div>
     
     <div class="auto-populated-tags-section">
-      <span class="section-header">System Auto Tags:</span>
+      <span class="section-header">{{ t('system-auto-tags') }}:</span>
       <span class="tag"
         v-for="(tag, i) in tags.systemTags"
         :key="`system-tag-${i}`"
         >
-        <span> {{ tag }}</span>
+        <span> {{ t(tag) }}</span>
       </span>
     </div>
   </div>
@@ -36,6 +36,9 @@ export default {
     customTagChoices() { return TAG_CHOICES }
   },
   methods: {
+    t(target) {
+      return this.$store.getters.translation(target)
+    },
     toggleSelected(tag) {
       const newCustomTags = [ ...this.tags.customTags ]
       const index = newCustomTags.indexOf(tag)
@@ -74,6 +77,8 @@ export default {
 }
 .user-select-tag-section .tag,
 .auto-populated-tags-section .tag {
+  display: inline-flex;
+  font-size: 0.9rem;
   padding: 2px 14px;
   border-radius: 30px;
   background: #ddd;

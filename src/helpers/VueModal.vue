@@ -13,7 +13,7 @@
           v-if="editing && id !== 'newTask' && id !== 'newMap'"
           @click="$emit('delete')"
         >
-          Delete
+          {{ t('delete') }}
         </button>
         <button
           class="karel-button modal-button"

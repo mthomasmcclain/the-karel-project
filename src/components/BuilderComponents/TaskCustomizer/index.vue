@@ -32,18 +32,18 @@
     <div id="tabs">
       <div id="tab-bar"
       >
-        <span v-for="tabName in [ 'Basic', 'Toolbox', 'Multi-World', 'Tags'  ]"
-          :key="`tab-${tabName}`"
-          @click="activeTab = tabName"
-          :class="{ active: activeTab === tabName, tab: true }"
+        <span v-for="tab in [ 'basic', 'toolbox', 'multi-world', 'tags'  ]"
+          :key="`tab-${tab}`"
+          @click="activeTab = tab"
+          :class="{ active: activeTab === tab, tab: true }"
         >
-          {{ tabName }}
+          {{ t(tab) }}
         </span>
         <span class="spaceholder"></span>
       </div>
       <div id="tab-body">
         <div id="tab-body-scroller">
-          <div v-show="activeTab === 'Toolbox'">
+          <div v-show="activeTab === 'toolbox'">
             <KarelBlocklySettingsEditor
               :settings="karelBlockly.settings"
               @toggleBlock="toggleBlock"
@@ -54,22 +54,22 @@
             />
           </div>
           
-          <div id='basic-settings' v-show="activeTab === 'Basic'">
+          <div id='basic-settings' v-show="activeTab === 'basic'">
             
             <div id="basic-settings-left-side">
               <div class="task-name-wrapper">
-                <span>Task Name: </span>
+                <span>{{ t('task-name') }}: </span>
                 <input
                   id="task-name"
-                  placeholder="Task Name goes here..."
+                  :placeholder="t('task-name-goes-here')"
                   v-model="name"
                 />
               </div>
               <div class="instructions-wrapper">
-                <div>Instructions:</div>
+                <div>{{ t('instructions') }}:</div>
                 <textarea
                   id="task-instructions"
-                  placeholder="Instructions go here..."
+                  :placeholder="t('instructions-go-here')"
                   v-model="instructions"
                 />
               </div>              
@@ -77,19 +77,19 @@
             
             <div id="basic-settings-right-side">
               <div>
-                Rows:
+                {{ t('rows') }}:
                 <button @click="handleRowOrColChange('nRows', -1)">-</button>
                 <button @click="handleRowOrColChange('nRows', 1)">+</button>
-                Cols:
+                {{ t('columns') }}:
                 <button @click="handleRowOrColChange('nCols', -1)">-</button>
                 <button @click="handleRowOrColChange('nCols', 1)">+</button>
               </div>
 
               <div class="hint-wrapper">
-                <div>Hint: (optional) </div>
+                <div>{{ t('hint') }}: ({{ t('optional' )}}) </div>
                 <textarea
                   id="task-hint"
-                  placeholder="Hint goes here..."
+                  :placeholder="t('hint-goes-here')"
                   v-model="hint"
                 />
               </div>
@@ -98,25 +98,25 @@
           </div>
           <!-- END OF BASIC SETTINGS TAB -->
           
-          <div v-show="activeTab === 'Tags'">
+          <div v-show="activeTab === 'tags'">
             <KarelTagSelector :tags="tags" @change="tags = $event" />
           </div>
 
-          <div id="multi-world" v-show="activeTab === 'Multi-World'">
-            <h4>Active World: {{ activeWorldIndex + 1 }}</h4>
+          <div id="multi-world" v-show="activeTab === 'multi-world'">
+            <h4>{{ t('active-world') }}: {{ activeWorldIndex + 1 }}</h4>
             <button
               v-for="(w,i) in worlds"
               :key="`select-world-button-${i}`"
               @click="activeWorldIndex = i"
               :disabled="activeWorldIndex === i"
             >
-              Select World {{ i + 1 }}
+              {{ t('select-world') }} {{ i + 1 }}
             </button>
             <br>
             <button
               @click="addWorld"
               :disabled="worlds.length >= 4"
-            >Add World</button>
+            >{{ t('add-world') }}</button>
             <br>
             <button
               v-for="(w,i) in worlds"
@@ -124,7 +124,7 @@
               @click="removeWorld(i)"
               :disabled="worlds.length === 1"
             >
-              Remove World {{ i + 1 }}
+              {{ t('remove-world') }} {{ i + 1 }}
             </button>
           </div>
         </div>
@@ -204,7 +204,7 @@ export default {
     karelBlockly.settings.customizerMode = true
 
     return  {
-      activeTab: 'Basic',
+      activeTab: 'basic',
       activeWorldIndex: 0,
       name,
       instructions,
