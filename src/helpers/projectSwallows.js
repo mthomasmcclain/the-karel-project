@@ -95,7 +95,10 @@ export function taskSuccessSwal() {
 export function taskIncorrectSwal(errorMessage) {
     if (errorMessage) {
         return Swal.fire(
-            t('karel-had-a-problem'), errorMessage, 'warning')
+            t('karel-had-a-problem'),
+            t('errorMessage'),
+            'warning'
+        )
     } else {
         return Swal.fire(
             t('not-quite'),

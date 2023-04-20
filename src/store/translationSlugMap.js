@@ -101,4 +101,12 @@ export default {
     "back-home": "c75e5a68-d04b-49e9-8fd2-da280b391ac8",
     "back-to-map": "0795a824-05a3-408f-b9a3-abe5a6fa7f25",
     "search": "f3dfbfaa-c17d-4881-9bbf-10167d48f048",
+    "move-forward": "d7f2fc05-7a0f-45af-be71-4ecd1ca71583",
+    "turn-left": "13b9e31e-8c4d-4923-ae1e-4dffeb5b908b",
+    "place-stone": "a71db5ad-e21f-43a8-bf8b-e9a3ced01824",
+    "pickup-stone": "323b4bc9-6014-4294-99d1-5d28e76220f5",
+    "front-is-blocked": "7147b785-71e7-4bad-8e8a-7d3631a2dbf9",
+    "no-stones-to-pick": "a3f35c0c-a86a-4037-ab93-24dbc0a4fac5",
+    "new-string-to-translate": "905a7ec4-238b-48b5-90b1-79a651378d79",
+    "new-sting-to-translate": "e3352337-ea9c-4180-9e70-588d4867b23e"
 }

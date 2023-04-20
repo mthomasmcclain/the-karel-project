@@ -19,7 +19,7 @@ function Karel(world) {
     const stonesUnderKarel = () => stonesAtLocation(world.karelRow, world.karelCol)
 
     this.move = () => {
-        if (!this.frontIsClear()) this.error = 'Front is blocked!'
+        if (!this.frontIsClear()) this.error = 'front-is-blocked'
         else if (world.karelDir === 'North') world.karelRow -= 1
         else if (world.karelDir === 'South') world.karelRow += 1
         else if (world.karelDir === 'East') world.karelCol += 1
@@ -29,7 +29,7 @@ function Karel(world) {
     this.turnLeft = () => world.karelDir = { North: 'West', West: 'South', South: 'East', East: 'North' }[world.karelDir]
 
     this.pickStone = () => {
-        if (!this.stonesPresent()) this.error = 'No stones to pick!'
+        if (!this.stonesPresent()) this.error = 'no-stones-to-pick'
         else {
             world.pickedStones += 1
             stonesUnderKarel().n -= 1
