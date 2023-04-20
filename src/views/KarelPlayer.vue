@@ -89,14 +89,10 @@ export default {
       return this.$store.getters.translation(target)
     },
     async addMap() {
-      this.$store.dispatch('setLoading', true)
       const { value, isDismissed } = await importMapSwal()
-      if (isDismissed) {
-        this.$store.dispatch('setLoading', false)
-      } else {
+      if (!isDismissed) {
         this.$store.dispatch('loadMapAndEmbedded', value)
           .catch(() => mapNotFoundSwal() )
-          .finally(() => this.$store.dispatch('setLoading', false))
       }
     },
     async confirmDelete(id) {

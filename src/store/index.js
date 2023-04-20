@@ -354,10 +354,9 @@ export default createStore({
         const { metadata } = await Core.send({ type: 'metadata', id })
         if (!metadata.type === MAP_TYPE) throw new Error('Id not of valid map type.')
 
-        const content = await Core.download(id).then(r => r.json())
-
         commit('addToMapIds', id)
         await dispatch('loadContent')
+        await dispatch('loadTranslations')
       }
       catch (e) {
         return Promise.reject(new Error('map not found or result failed map schema test'))
