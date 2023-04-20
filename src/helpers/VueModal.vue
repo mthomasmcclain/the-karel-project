@@ -72,7 +72,7 @@ export default {
   transform: translate(-50%);
   width: 100%;
   min-width: 540px;
-  max-width: 900px;
+  max-width: 1000px;
 
   background: white;
   border-radius: 10px;

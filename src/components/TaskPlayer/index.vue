@@ -242,13 +242,13 @@ export default {
   height: 100%;
 }
 .left-col {
-  flex: 2 0 400px;
+  width: 420px;
   margin: 2px 2px 0 4px;
   display: flex;
   flex-direction: column;
 }
 .right-col {
-  flex: 1 0 400px;
+  flex-grow: 1;
 }
 .left-col .instructions-and-reset-wrapper {
   display: flex;
