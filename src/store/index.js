@@ -13,7 +13,7 @@ const MAP_TYPE = 'application/json;type=karel-map;v=1.0.0'
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  key: 'the-karel-project-2.9',
+  key: 'the-karel-project-2.10',
   reducer: state => ({
     favorites: state.favorites,
     completed: state.completed,
