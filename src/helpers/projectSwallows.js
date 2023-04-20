@@ -92,11 +92,11 @@ export function taskSuccessSwal() {
     const header = ''
     return Swal.fire(header, body, 'success')
 }
-export function taskIncorrectSwal(errorMessage) {
-    if (errorMessage) {
+export function taskIncorrectSwal(error) {
+    if (error) {
         return Swal.fire(
             t('karel-had-a-problem'),
-            t('errorMessage'),
+            t(error),
             'warning'
         )
     } else {
