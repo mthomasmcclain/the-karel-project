@@ -31,7 +31,7 @@
       <div class="task-choices-wrapper">
         <h3>{{ t('tasks') }}</h3>
         <div
-          v-for="task in $store.getters.filteredTasks({ subStr: nameFilter, favorites: favoritesFilter, userTasksOnly: userTasksOnlyFilter })"
+          v-for="task in filteredTasks"
           :key="`task-select-${task}`"
           class="task-choice"
           draggable="true"
@@ -104,6 +104,15 @@ export default {
       favoritesFilter: false,
       userTasksOnlyFilter: false,
       selected: null
+    }
+  },
+  computed: {
+    filteredTasks() {
+      return this.$store.getters.filteredTasks({
+        subStr: this.nameFilter,
+        favorites: this.favoritesFilter,
+        userTasksOnly: this.userTasksOnlyFilter
+      })
     }
   },
   watch: {

@@ -99,8 +99,11 @@ export default createStore({
     customizerState: state => () => state.customizerState,
     filteredTasks: (state, getters) => ({ subStr, favorites, userTasksOnly }) => {
       return state.taskIds
-        .filter(id => state.loadedContent[id].name.toLowerCase().includes(subStr.toLowerCase()))
-        .filter(id => favorites ? getters.isFavorite(id) : true)
+        .filter(id => {
+          const taskNameTranslationTarget = state.loadedContent[id].name
+          const translatedTaskName = getters.translation(taskNameTranslationTarget)
+          return translatedTaskName.toLowerCase().includes(subStr.toLowerCase())
+        }).filter(id => favorites ? getters.isFavorite(id) : true)
         .filter(id => userTasksOnly ? !getters.isExpert(id) : true)
     },
     content: state => id => state.loadedContent[id],
