@@ -9,12 +9,6 @@
 
 <script>
 import Blockly from 'blockly'
-import * as en from 'blockly/msg/en'
-import enTranslations from '../../helpers/karelTranslationsEN.js'
-import initializeKarelBlocks from '../../helpers/initializeKarelBlocks.js'
-  
-Blockly.setLocale({ ...en, ...enTranslations })
-initializeKarelBlocks(Blockly)
 
 const generateToolbox = ({
   karel_move=true,

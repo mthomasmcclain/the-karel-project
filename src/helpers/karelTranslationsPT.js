@@ -1,0 +1,22 @@
+export default  {
+    "PROCEDURES_DEFAULT_NAME": "meu nome",
+    "PROCEDURES_DEFNOARGSNORETURN_TITLE": "definir",
+    "KAREL_MAIN_TITLE": "definir principal",
+    "KAREL_MOVE_FORWARD": "mover adiante",
+    "KAREL_TURN_LEFT": "virar à esquerda",
+    "KAREL_PLACE_STONE": "colocar pedra",
+    "KAREL_PICKUP_STONE": "pegar pedra",
+    "KAREL_FRONT_IS_CLEAR": "frente liberada",
+    "KAREL_FRONT_IS_BLOCKED": "frente bloqueada",
+    "KAREL_STONES_PRESENT": "com pedras",
+    "KAREL_STONES_NOT_PRESENT": "sem pedras",
+    "KAREL_IF_FRONT_IS": "se frente estiver",
+    "KAREL_CLEAR": "liberada",
+    "KAREL_BLOCKED": "bloqueada",
+    "KAREL_IF_STONES_ARE": "se",
+    "KAREL_PRESENT": "com pedras",
+    "KAREL_NOT_PRESENT": "sem pedras",
+    "KAREL_WHILE": "enquanto",
+    "KAREL_WHILE_FRONT_IS": "enquanto frente estiver",
+    "KAREL_WHILE_STONES_ARE": "enquanto"
+}

@@ -69,16 +69,19 @@ export default {
     possibleKarelBlocks() { return Object.entries(this.settings.blocks) },
   },
   methods: {
+    t(target) {
+      return this.$store.getters.translation(target)
+    },
     blockDisplayName(rawName) {
       return {
-        karel_move: 'Move Forward',
-        karel_turn: 'Turn Left',
-        karel_place: 'Place Stone',
-        karel_pickup: 'Pickup Stone',
-        karel_if: "'If' Block",
-        karel_repeat: "'Repeat' Block",
-        karel_while: "'While' Block",
-        karel_define: "Define Function"
+        karel_move: this.t("move-forward"),
+        karel_turn: this.t("turn-left"),
+        karel_place: this.t("place-stone"),
+        karel_pickup: this.t("pickup-stone"),
+        karel_if: this.t("has-if"),
+        karel_repeat: this.t("has-repeat"),
+        karel_while: this.t("has-while"),
+        karel_define: this.t("has-function")
       }[rawName]
     }
   }
