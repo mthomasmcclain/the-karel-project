@@ -51,9 +51,10 @@
 </template>
 
 <script>
+import 'npm/unscoped/blockly/5.20210325.1'
 import MapGraph from './MapGraph/index.vue'
-import TaskPlayer from '../TaskPlayer/index.vue'
-import { mapCompleteSwal } from '../../helpers/projectSwallows.js'
+import TaskPlayer from './TaskPlayer/index.vue'
+import { mapCompleteSwal } from './helpers/mapAndTaskPlayerSwallows.js.js'
 const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {

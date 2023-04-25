@@ -67,7 +67,7 @@
 import MapPlayer from '../components/MapPlayer/index.vue'
 import PilaLogoVueSvg from '../assets/PilaLogoVueSvg.vue'
 import MapCorrectSvgIcon from "../components/MapCorrectSvgIcon.vue"
-import { confirmDeleteSwal, importMapSwal, mapNotFoundSwal } from '../helpers/projectSwallows.js'
+import { confirmDeleteSwal, importMapSwal, mapNotFoundSwal } from '../helpers/mapAndTaskPlayerSwallows.js.js'
 
 export default {
   name: 'KarelPlayer',

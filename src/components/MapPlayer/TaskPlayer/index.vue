@@ -83,8 +83,8 @@
 
 <script>
 import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls/index.vue'
-import KarelWorldRenderer from '../KarelWorldRenderer.vue'
-import KarelBlockly from '../KarelBlockly/index.vue'
+import KarelWorldRenderer from './KarelWorldRenderer.vue'
+import KarelBlockly from './KarelBlockly/index.vue'
 import worldsMatch from './karelWorldsMatch.js'
 import {
   taskSuccessSwal,
@@ -92,8 +92,8 @@ import {
   taskIncorrectSwal,
   taskTooManyBlocksSwal,
   taskHintSwal
-} from '../../helpers/projectSwallows.js'
-import { injectTranslationsForBlocklyWorkspaceUserMethods } from '../../helpers/translateBlocklyWorkspaceUserMethods.js'
+} from '../helpers/mapAndTaskPlayerSwallows.js.js'
+import { injectTranslationsForBlocklyWorkspaceUserMethods } from '../helpers/translateBlocklyWorkspaceUserMethods.js'
 const copy = x => JSON.parse(JSON.stringify(x))
 
 

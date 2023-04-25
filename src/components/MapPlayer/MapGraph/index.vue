@@ -51,10 +51,10 @@
 </template>
 
 <script>
-import { v4 as uuid } from 'uuid'
-import SvgArrow from '../../SvgArrowStuff/SvgArrow.vue'
-import SvgArrowDrawer from '../../SvgArrowStuff/SvgArrowDrawer.vue'
-import Swal from 'sweetalert2'
+import { v4 as uuid } from 'npm/unscoped/uuid/9.0.0'
+import SvgArrow from './SvgArrowStuff/SvgArrow.vue'
+import SvgArrowDrawer from './SvgArrowStuff/SvgArrowDrawer.vue'
+import Swal from 'npm/unscoped/sweetalert2/11.7.3'
 import IconAndName from './IconAndNameForMap.vue'
 
 const isUUID = x => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x)

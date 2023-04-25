@@ -1,5 +1,5 @@
-import Swal from 'sweetalert2'
-import store from '../store/index.js'
+import Swal from 'npm/unscoped/sweetalert2/11.7.3'
+import store from '../../../store/index.js'
 
 const t = target => store.getters.translation(target)
 

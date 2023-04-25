@@ -53,7 +53,7 @@ import {
   confirmCloseWithoutSaveSwal,
   noBlankNameSwal,
   noBlankInstructionsSwal
-} from '../helpers/projectSwallows.js'
+} from '../helpers/mapAndTaskPlayerSwallows.js.js'
 import TaskCustomizer from '../components/BuilderComponents/TaskCustomizer/index.vue'
 import TaskPlayer from '../components/TaskPlayer/index.vue'
 import MapCustomizer from '../components/BuilderComponents/MapCustomizer.vue'

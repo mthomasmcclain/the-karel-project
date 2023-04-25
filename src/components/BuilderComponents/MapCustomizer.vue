@@ -74,7 +74,7 @@
 
 <script>
 import MapGraph from '../MapPlayer/MapGraph/index.vue'
-import { renameMapSwal, howToUseMapCustomizerSwal } from '../../helpers/projectSwallows.js'
+import { renameMapSwal, howToUseMapCustomizerSwal } from '../../helpers/mapAndTaskPlayerSwallows.js.js'
 import defaultNewMapState from '../../store/defaultNewMapState.js'
 const copy = x => JSON.parse(JSON.stringify(x))
 

@@ -1,12 +1,13 @@
 //<script>//hack for syntax
+import 'npm/unscoped/blockly/5.20210325.1'
 import Blockly from 'blockly/browser'
 import * as en from 'blockly/msg/en'
 import * as pt from 'blockly/msg/pt'
 import initializeKarelBlocklyGenerators from './initializeKarelBlocklyGenerators.js'
-import enTranslations from '../../../../helpers/karelTranslationsEN.js'
-import ptTranslations from '../../../../helpers/karelTranslationsPT.js'
-import matchNavigatorLanguage from '../../../../helpers/matchNavigatorLanguage.js'
-import initializeKarelBlocks from '../../../../helpers/initializeKarelBlocks.js'
+import enTranslations from '../../../helpers/karelTranslationsEN.js'
+import ptTranslations from '../../../helpers/karelTranslationsPT.js'
+import matchNavigatorLanguage from '../../../helpers/matchNavigatorLanguage.js'
+import initializeKarelBlocks from '../../../helpers/initializeKarelBlocks.js'
 import KarelWorld from "./KarelWorld.js"
 
 const lang = matchNavigatorLanguage(['en', 'pt'])

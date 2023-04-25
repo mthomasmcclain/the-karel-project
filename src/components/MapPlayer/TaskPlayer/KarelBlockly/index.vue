@@ -8,7 +8,7 @@
 
 
 <script>
-import Blockly from 'blockly'
+import Blockly from 'npm/unscoped/blockly/5.20210325.1'
 
 const generateToolbox = ({
   karel_move=true,

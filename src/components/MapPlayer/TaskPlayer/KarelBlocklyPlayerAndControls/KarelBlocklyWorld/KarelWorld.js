@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'npm/unscoped/lodash/4.17.21'
 
 const copy = data => _.cloneDeep(data)
 

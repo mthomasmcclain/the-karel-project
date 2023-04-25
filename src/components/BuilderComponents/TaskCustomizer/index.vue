@@ -145,7 +145,7 @@ import {
   invalidResizeWallsSwal,
   invalidResizeKarelSwal,
   invalidResizeStonesSwal
-} from '../../../helpers/projectSwallows.js'
+} from '../../../helpers/mapAndTaskPlayerSwallows.js.js'
 import { injectTranslationsForBlocklyWorkspaceUserMethods } from '../../../helpers/translateBlocklyWorkspaceUserMethods.js'
 
 

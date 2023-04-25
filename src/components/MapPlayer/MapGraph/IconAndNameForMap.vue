@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import SvgPositioner from '../../SvgPositioner.vue'
-import Karel from '../../../assets/KarelVueSvg.vue'
+import SvgPositioner from '../SvgPositioner.vue'
+import Karel from '../assets/KarelVueSvg.vue'
 
 export default {
   name: 'icon-and-name',

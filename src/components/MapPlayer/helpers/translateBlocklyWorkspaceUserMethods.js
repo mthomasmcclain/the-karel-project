@@ -1,5 +1,5 @@
-import et from 'elementtree'
-import { v4 as uuid } from 'uuid'
+import et from 'npm/unscoped/elementtree/0.1.7'
+import { v4 as uuid } from 'npm/unscoped/uuid/9.0.0'
 
 export function extractTranslationsForBlocklyWorkspaceUserMethods(workspace) {
     // return:

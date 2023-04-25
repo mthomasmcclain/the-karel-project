@@ -70,7 +70,7 @@ import GraphPreview from './GraphPreview.vue'
 import KarelWorldRenderer from '../KarelWorldRenderer.vue'
 import PILALogo from '../../assets/PilaLogoVueSvg.vue'
 import UserIcon from '../../assets/UserIconVueSvg.vue'
-import { copyContentSwal, copyConfirmSwal, getCodeSwal } from '../../helpers/projectSwallows.js'
+import { copyContentSwal, copyConfirmSwal, getCodeSwal } from '../../helpers/mapAndTaskPlayerSwallows.js.js'
 
 export default {
   components: {
