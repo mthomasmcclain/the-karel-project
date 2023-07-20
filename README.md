@@ -1,4 +1,4 @@
-# the-karel-project
+# The Karel Project
 
 ## Project setup
 ```
