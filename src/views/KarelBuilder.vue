@@ -66,8 +66,9 @@ export default {
     MapPlayer
   },
   data() {
+    const urlParams = new URLSearchParams(window.location.search);
     return {
-      mode: 'tasks',
+      mode: urlParams.get('mode') === 'maps' ? 'maps' : 'tasks',
       modalContent: null,
       editing: false,
     }
