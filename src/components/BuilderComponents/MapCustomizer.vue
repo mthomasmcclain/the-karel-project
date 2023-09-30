@@ -70,9 +70,9 @@
 </template>
 
 <script>
-import MapGraph from '@/components/MapPlayer/MapGraph'
-import { renameMapSwal, howToUseMapCustomizerSwal } from '@/helpers/projectSwallows'
-import defaultNewMapState from '@/store/defaultNewMapState'
+import MapGraph from '../MapPlayer/MapGraph/index.vue'
+import { renameMapSwal, howToUseMapCustomizerSwal } from '../../helpers/projectSwallows.js'
+import defaultNewMapState from '../../store/defaultNewMapState.js'
 const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {

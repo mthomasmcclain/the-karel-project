@@ -77,17 +77,17 @@
 </template>
 
 <script>
-import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls'
-import KarelWorldRenderer from '@/components/KarelWorldRenderer'
-import KarelBlockly from '@/components/KarelBlockly'
-import worldsMatch from './karelWorldsMatch'
+import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls/index.vue'
+import KarelWorldRenderer from '../KarelWorldRenderer.vue'
+import KarelBlockly from '../KarelBlockly/index.vue'
+import worldsMatch from './karelWorldsMatch.js'
 import {
   taskSuccessSwal,
   taskPartialSuccessSwal,
   taskIncorrectSwal,
   taskTooManyBlocksSwal,
   taskHintSwal
-} from '@/helpers/projectSwallows'
+} from '../../helpers/projectSwallows.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 

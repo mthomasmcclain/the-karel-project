@@ -52,10 +52,10 @@
 
 <script>
 import { v4 as uuid } from 'uuid'
-import SvgArrow from '@/components/SvgArrowStuff/SvgArrow'
-import SvgArrowDrawer from '@/components/SvgArrowStuff/SvgArrowDrawer'
+import SvgArrow from '../../SvgArrowStuff/SvgArrow.vue'
+import SvgArrowDrawer from '../../SvgArrowStuff/SvgArrowDrawer.vue'
 import Swal from 'sweetalert2'
-import IconAndName from './IconAndNameForMap'
+import IconAndName from './IconAndNameForMap.vue'
 
 const isUUID = x => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x)
 const distanceSq = (a, b) => Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)

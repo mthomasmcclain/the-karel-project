@@ -2,8 +2,8 @@
 import Blockly from 'blockly/browser'
 import * as en from 'blockly/msg/en'
 import initializeKarelBlocklyGenerators from './initializeKarelBlocklyGenerators'
-import enTranslations from '@/helpers/karelTranslationsEN'
-import initializeKarelBlocks from '@/helpers/initializeKarelBlocks'
+import enTranslations from '../../../../helpers/karelTranslationsEN'
+import initializeKarelBlocks from '../../../../helpers/initializeKarelBlocks'
 
 import KarelWorld from "./KarelWorld"
 

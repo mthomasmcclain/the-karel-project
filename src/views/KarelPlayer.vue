@@ -3,7 +3,7 @@
 
     <div class="student-display" v-if="!activeMap">
       <div class="student-header">
-        <img src="@/assets/karelSide.png" />
+        <img src="../assets/karelSide.png" />
         <h2>Your Karel Maps</h2>
       </div>
 
@@ -64,10 +64,10 @@
 </template>
 
 <script>
-import MapPlayer from '@/components/MapPlayer'
-import PilaLogoVueSvg from '@/assets/PilaLogoVueSvg'
-import MapCorrectSvgIcon from "@/components/MapCorrectSvgIcon"
-import { confirmDeleteSwal, importMapSwal, mapNotFoundSwal } from '@/helpers/projectSwallows'
+import MapPlayer from '../components/MapPlayer/index.vue'
+import PilaLogoVueSvg from '../assets/PilaLogoVueSvg.vue'
+import MapCorrectSvgIcon from "../components/MapCorrectSvgIcon.vue"
+import { confirmDeleteSwal, importMapSwal, mapNotFoundSwal } from '../helpers/projectSwallows.js'
 
 export default {
   name: 'KarelPlayer',

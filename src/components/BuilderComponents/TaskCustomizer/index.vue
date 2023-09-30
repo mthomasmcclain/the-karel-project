@@ -136,12 +136,12 @@
 <script>
 
 import _ from 'lodash'
-import KarelWorldRendererAndEditor from './KarelWorldRendererAndEditor'
-import KarelBlockly from '@/components/KarelBlockly'
-import KarelTagSelector from './KarelTagSelector'
-import KarelBlocklySettingsEditor from './KarelBlocklySettingsEditor' 
-import defaultNewTaskState from '@/store/defaultNewTaskState'
-import { invalidResizeWallsSwal, invalidResizeKarelSwal, invalidResizeStonesSwal } from '@/helpers/projectSwallows'
+import KarelWorldRendererAndEditor from './KarelWorldRendererAndEditor/index.vue'
+import KarelBlockly from '../../KarelBlockly/index.vue'
+import KarelTagSelector from './KarelTagSelector.vue'
+import KarelBlocklySettingsEditor from './KarelBlocklySettingsEditor.vue' 
+import defaultNewTaskState from '../../../store/defaultNewTaskState.js'
+import { invalidResizeWallsSwal, invalidResizeKarelSwal, invalidResizeStonesSwal } from '../../../helpers/projectSwallows.js'
 
 
 const copy = (val)  => JSON.parse(JSON.stringify(val))

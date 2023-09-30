@@ -196,11 +196,11 @@
 </template>
 
 <script>
-import SvgPositioner from '@/components/SvgPositioner'
+import SvgPositioner from '../../../SvgPositioner.vue'
 import PlusMinusBox from './PlusMinusBoxVueSvg.vue'
-import RotationIconBox from './RotationIconVueSvg'
-import StoneAndNumber from './StoneAndNumberVueSvg'
-import KarelVueSvg from '@/assets/KarelVueSvg'
+import RotationIconBox from './RotationIconVueSvg.vue'
+import StoneAndNumber from './StoneAndNumberVueSvg.vue'
+import KarelVueSvg from '../../../../assets/KarelVueSvg.vue'
 export default {
   components: {
     SvgPositioner,

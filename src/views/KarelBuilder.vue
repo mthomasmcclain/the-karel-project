@@ -45,14 +45,14 @@
 </template>
 
 <script>
-import Modal from '@/helpers/VueModal'
-import Navbar from '@/components/BuilderComponents/Navbar'
-import ContentCard from '@/components/BuilderComponents/ContentCard'
-import { confirmDeleteSwal, confirmCloseWithoutSaveSwal } from '@/helpers/projectSwallows'
-import TaskCustomizer from '@/components/BuilderComponents/TaskCustomizer'
-import TaskPlayer from '@/components/TaskPlayer'
-import MapCustomizer from '@/components/BuilderComponents/MapCustomizer'
-import MapPlayer from '@/components/MapPlayer'
+import Modal from '../helpers/VueModal.vue'
+import Navbar from '../components/BuilderComponents/Navbar.vue'
+import ContentCard from '../components/BuilderComponents/ContentCard.vue'
+import { confirmDeleteSwal, confirmCloseWithoutSaveSwal } from '../helpers/projectSwallows.js'
+import TaskCustomizer from '../components/BuilderComponents/TaskCustomizer/index.vue'
+import TaskPlayer from '../components/TaskPlayer/index.vue'
+import MapCustomizer from '../components/BuilderComponents/MapCustomizer.vue'
+import MapPlayer from '../components/MapPlayer/index.vue'
 
 export default {
   name: 'karel-builder',

@@ -10,8 +10,8 @@
 <script>
 import Blockly from 'blockly'
 import * as en from 'blockly/msg/en'
-import enTranslations from '@/helpers/karelTranslationsEN'
-import initializeKarelBlocks from '@/helpers/initializeKarelBlocks'
+import enTranslations from '../../helpers/karelTranslationsEN.js'
+import initializeKarelBlocks from '../../helpers/initializeKarelBlocks.js'
   
 Object.assign(en, enTranslations)
 Blockly.setLocale(en)

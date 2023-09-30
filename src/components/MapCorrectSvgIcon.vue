@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import SvgPositioner from '@/components/SvgPositioner'
-import Karel from '@/assets/KarelVueSvg'
+import SvgPositioner from './SvgPositioner.vue'
+import Karel from '../assets/KarelVueSvg.vue'
 
 export default {
   name: 'map-correct-svg-icon',
