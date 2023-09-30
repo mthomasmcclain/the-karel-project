@@ -7,8 +7,7 @@ import initializeKarelBlocks from '../../../../helpers/initializeKarelBlocks'
 
 import KarelWorld from "./KarelWorld"
 
-Object.assign(en, enTranslations)
-Blockly.setLocale(en)
+Blockly.setLocale({ ...en, ...enTranslations })
 initializeKarelBlocks(Blockly)
 initializeKarelBlocklyGenerators(Blockly)
 
