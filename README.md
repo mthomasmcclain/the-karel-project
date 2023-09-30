@@ -1,24 +1,17 @@
-# The Karel Project
+# Installation and Development server
 
-## Project setup
-```
-npm install
-```
+```sh
+# Make sure pnpm is installed (pnpm is a better package manage than npm)
+sudo npm install -g pnpm
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+# useful commands (must be executed from within this folder)
+# install basic requirements
+pnpm install
 
-### Compiles and minifies for production
-```
-npm run build
-```
+# start the dev server
+npm run dev
 
-### Lints and fixes files
+# go to the localhost link in the printed message
+# it will be https, so you will need to accept the "insecure" development certificate
+# in your browser in order to see the app
 ```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
