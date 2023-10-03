@@ -1,21 +1,28 @@
 <template>
 	<MapPlayer
-	  :id="id"
-	  @exit="exit"
+		v-if="loaded"
+		:id="id"
+		@exit="exit"
 	/>
 </template>
 
 <script>
 import MapPlayer from '../components/MapPlayer/index.vue'
+import { vuePersistentComponent } from '@knowlearning/agents/vue.js'
 
 export default {
 	components: {
-		MapPlayer
+		MapPlayer: vuePersistentComponent(MapPlayer, 'woopdiedoo')
 	},
 	data() {
 		return {
+			loaded: false,
 			id: this.$route.params.id
 		}
+	},
+	async created() {
+		await this.$store.dispatch('loadMapAndEmbedded', this.id)
+		this.loaded = true
 	},
 	methods: {
 		exit() {
