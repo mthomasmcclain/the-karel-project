@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import KarelPlayer from '../views/KarelPlayer.vue'
 import KarelBuilder from '../views/KarelBuilder.vue'
 import WorldFromJson from '../views/WorldFromJson.vue'
+import MapPlayer from '../views/MapPlayer.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/world-from-json',
     name: 'WorldFromJson',
     component: WorldFromJson
+  },
+  {
+    path: '/:id',
+    name: 'MapPlayer',
+    component: MapPlayer
   }
 ]
 
