@@ -1,14 +1,22 @@
+import { browserAgent } from '@knowlearning/agents'
+import { vuePersistentStore } from '@knowlearning/agents/vue.js'
 import { createApp } from 'vue'
+import { createStore } from 'vuex'
 import App from './App.vue'
-import router from './router'
-import store from './store'
+import router from './router/index.js'
+import storeDef from './store/index.js'
 import './main.css'
 
 import './helpers/vue3DragEvents'
 
-createApp(App).use(store).use(router).mount('#app')
+window.Agent = browserAgent()
 
 const initialLoad = async () => {
+    const store = createStore(await vuePersistentStore(storeDef, window.location.host))
+    createApp(App)
+        .use(store)
+        .use(router)
+        .mount('#app')
     store.dispatch('setLoading', true)
     await store.dispatch('loadContent')
     store.dispatch('setLoading', false)

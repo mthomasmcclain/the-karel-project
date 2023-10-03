@@ -22,7 +22,7 @@ const vuexLocal = new VuexPersistence({
   }),
 })
 
-export default createStore({
+export default {
   state: {
     loading: true,
     loadedContent: {},
@@ -205,4 +205,4 @@ export default createStore({
 
   },
   plugins: [vuexLocal.plugin]
-})
+}
