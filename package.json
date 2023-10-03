@@ -13,7 +13,6 @@
     "@vitejs/plugin-basic-ssl": "^1.0.1",
     "blockly": "^5.20210325.1",
     "core-js": "^3.32.2",
-    "firebase": "^9.23.0",
     "lodash": "^4.17.21",
     "sweetalert2": "^11.7.31",
     "uuid": "^8.3.2",
