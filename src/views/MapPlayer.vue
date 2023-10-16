@@ -1,5 +1,5 @@
 <template>
-	<MapPlayer
+	<component :is="ActualMapPlayer"
 		v-if="loaded"
 		:id="id"
 		@exit="exit"
@@ -11,14 +11,18 @@ import MapPlayer from '../components/MapPlayer/index.vue'
 import { vuePersistentComponent } from '@knowlearning/agents/vue.js'
 
 export default {
-	components: {
-		MapPlayer: vuePersistentComponent(MapPlayer, 'woopdiedoo')
-	},
 	data() {
-		console.log('map player', this.$route.params)
 		return {
-			loaded: false,
-			id: this.$route.params.id
+			loaded: false
+		}
+	},
+	computed: {
+		id() {
+			console.log('route id', this.$route.params.id)
+			return this.$route.params.id
+		},
+		ActualMapPlayer() {
+			return vuePersistentComponent(MapPlayer, `map-run-state-${this.id}`)
 		}
 	},
 	async created() {

@@ -12,7 +12,7 @@ import './helpers/vue3DragEvents'
 window.Agent = browserAgent()
 
 const initialLoad = async () => {
-    const store = createStore(await vuePersistentStore(storeDef, window.location.host))
+    const store = createStore(await vuePersistentStore(storeDef))
     createApp(App)
         .use(store)
         .use(router)
