@@ -15,6 +15,7 @@ export default {
 		MapPlayer: vuePersistentComponent(MapPlayer, 'woopdiedoo')
 	},
 	data() {
+		console.log('map player', this.$route.params)
 		return {
 			loaded: false,
 			id: this.$route.params.id
