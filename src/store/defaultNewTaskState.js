@@ -49,6 +49,10 @@ export default {
                     "active": false,
                     "limit": -1
                 },
+                "karel_ifelse": {
+                    "active": false,
+                    "limit": -1
+                },
                 "karel_repeat": {
                     "active": false,
                     "limit": -1

@@ -70,6 +70,32 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
         return code;
     };
 
+    Blockly.JavaScript['karel_ifelse'] = function (block) {
+        var if_condition = CONDITIONS_TO_KAREL_JS[block.getFieldValue('IF0')];
+        var if_statement = Blockly.JavaScript.statementToCode(block, 'THEN0');
+        var code = 'if (' + if_condition + ') { await step();\n';
+        code += if_statement
+        code += '}\n'
+        
+        var i = 1;
+        while(block.getInput('IF' + i)) {
+            var elseif_condition = CONDITIONS_TO_KAREL_JS[block.getFieldValue('IF' + i)]
+            var elseif_statement = Blockly.JavaScript.statementToCode(block, 'THEN' + i);
+            code += 'else if (' + elseif_condition + ') { await step();\n';
+            code += elseif_statement
+            code += '}\n'
+        }
+
+        if (block.getInput('ELSE')) {
+            var else_statement = Blockly.JavaScript.statementToCode(block, 'ELSE');
+            code += 'else { await step()\n';
+            code += else_statement
+            code += '}\n'
+        }
+
+        return code;
+    };
+
     Blockly.JavaScript['karel_while_dropdown'] = function (block) {
         var dropdown_condition = CONDITIONS_TO_KAREL_JS[block.getFieldValue('CONDITION')];
         var statements_loop = Blockly.JavaScript.statementToCode(block, 'LOOP');

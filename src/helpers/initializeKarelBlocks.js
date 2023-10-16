@@ -1,3 +1,5 @@
+import en from "./karelTranslationsEN";
+
 export default function initializeKarelBlocklyBlocks(Blockly) {
 
     // Style Blockly Main function definition to look like other function definitions
@@ -214,6 +216,247 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
         init: function () {
             this.jsonInit(karelIfDropdown);
             this.setStyle('logic_blocks');
+        }
+    };
+
+    var karelIfelseIf = {
+        "type": "karel_ifelse_if",
+        "message0": "%{BKY_KAREL_IFELSE_IF}",
+        "nextStatement": null
+    };
+    Blockly.Blocks['karel_ifelse_if'] = {
+        init: function () {
+            this.jsonInit(karelIfelseIf);
+            this.setStyle('logic_blocks');
+        }
+    };
+
+    var karelIfelseElseif = {
+        "type": "karel_ifelse_elseif",
+        "message0": "%{BKY_KAREL_IFELSE_ELSEIF}",
+        "previousStatement": null,
+        "nextStatement": null,
+        "tooltip": "else if"
+    };
+    Blockly.Blocks['karel_ifelse_elseif'] = {
+        init: function () {
+            this.jsonInit(karelIfelseElseif);
+            this.setStyle('logic_blocks');
+        }
+    }
+
+    var karelIfelseElse = {
+        "type": "karel_ifelse_else",
+        "message0": "%{BKY_KAREL_IFELSE_ELSE}",
+        "previousStatement": null,
+        "tooltip": "else"
+    };
+    Blockly.Blocks['karel_ifelse_else'] = {
+        init: function () {
+            this.jsonInit(karelIfelseElse);
+            this.setStyle('logic_blocks');
+        }
+    };
+
+    var karelIfElse = {
+        "type": "karel_ifelse",
+        "message0": "%{BKY_KAREL_IFELSE_IF} %1 %2",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "IF0",
+                "options": [
+                    [
+                        "%{BKY_KAREL_FRONT_IS_CLEAR}",
+                        "FRONT_CLEAR"
+                    ],
+                    [
+                        "%{BKY_KAREL_FRONT_IS_BLOCKED}",
+                        "FRONT_BLOCKED"
+                    ],
+                    [
+                        "%{BKY_KAREL_STONES_PRESENT}",
+                        "STONES_PRESENT"
+                    ],
+                    [
+                        "%{BKY_KAREL_STONES_NOT_PRESENT}",
+                        "STONES_NOT_PRESENT"
+                    ]
+                ]
+            },
+            {
+                "type": "input_statement",
+                "name": "THEN0"
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "tooltip": "Do something based on conditions"
+    };
+
+    Blockly.Blocks['karel_ifelse'] = {
+        init: function () {
+            this.jsonInit(karelIfElse);
+            this.setStyle('logic_blocks');
+            this.setMutator(new Blockly.Mutator(['karel_ifelse_elseif', 'karel_ifelse_else']));
+        },
+
+        elseIfCount: 0,
+        hasElse: false,
+
+        mutationToDom: function () {
+            var container = Blockly.utils.xml.createElement('mutation');
+            container.setAttribute('elseIfCount', this.elseIfCount);
+            container.setAttribute('hasElse', this.hasElse);
+
+            return container;
+        },
+
+        domToMutation: function (xmlElement) {
+            this.elseIfCount = parseInt(xmlElement.getAttribute('elseIfCount'), 10);
+            this.hasElse = xmlElement.getAttribute('hasElse') === 'true';
+
+            this.updateShape();
+        },
+
+        decompose: function (workspace) {
+            var ifBlock = workspace.newBlock('karel_ifelse_if');
+            ifBlock.initSvg();
+
+            var connection = ifBlock.nextConnection;
+
+            for (var elseifIndex = 1; elseifIndex <= this.elseIfCount; elseifIndex++) {
+                var elseifBlock = workspace.newBlock('karel_ifelse_elseif');
+                elseifBlock.initSvg();
+
+                connection.connect(elseifBlock.previousConnection);
+                connection = elseifBlock.nextConnection;
+            }
+
+            if (this.hasElse) {
+                var elseBlock = workspace.newBlock('karel_ifelse_else');
+                elseBlock.initSvg();
+
+                connection.connect(elseBlock.previousConnection);
+            }
+
+            return ifBlock;
+        },
+
+        compose: function (ifBlock) {
+            var block = ifBlock.nextConnection.targetBlock();
+
+            this.elseIfCount = 0;
+            this.hasElse = false;
+
+            var elseifStatementConnections = [null];
+            var elseStatementConnection = null;
+
+            while (block && !block.isInsertionMarker()) {
+                switch (block.type) {
+                    case 'karel_ifelse_elseif':
+                        this.elseIfCount++;
+                        elseifStatementConnections.push(block.statementConnection_);
+
+                        break;
+
+                    case 'karel_ifelse_else':
+                        this.hasElse = true;
+                        elseStatementConnection = block.statementConnection_;
+
+                        break;
+
+                    default:
+                        throw TypeError('Unknown block type: ' + block.type);
+                }
+
+                block = block.nextConnection && block.nextConnection.targetBlock();
+            }
+
+            this.updateShape();
+            this.reconnectChildBlocks(elseifStatementConnections, elseStatementConnection);
+        },
+
+        saveConnections: function (ifBlock) {
+            var block = ifBlock.nextConnection.targetBlock();
+
+            var elseifCount = 1;
+
+            while (block) {
+                switch (block.type) {
+                    case 'karel_ifelse_elseif': {
+                        var inputThen = this.getInput('THEN' + elseifCount);
+                        block.statementConnection_ = inputThen && inputThen.connection.targetConnection;
+
+                        elseifCount++;
+
+                        break;
+                    }
+
+                    case 'karel_ifelse_else': {
+                        var inputThen = this.getInput('ELSE');
+                        block.statementConnection_ = inputThen && inputThen.connection.targetConnection;
+
+                        break;
+                    }
+
+                    default:
+                        throw TypeError('Unknown block type: ' + block.type);
+                }
+
+                block = block.nextConnection && block.nextConnection.targetBlock();
+            }
+        },
+
+        updateShape: function () {
+            if (this.getInput('ELSE')) {
+                this.removeInput('ELSE');
+            }
+
+            for (var elseifIndex = 1; this.getInput('IF' + elseifIndex); elseifIndex++) {
+                this.removeInput('IF' + elseifIndex);
+                this.removeInput('THEN' + elseifIndex);
+            }
+
+            for (var elseifIndex = 1; elseifIndex <= this.elseIfCount; elseifIndex++) {
+                this.appendDummyInput('IF' + elseifIndex).appendField('%{BKY_KAREL_IFELSE_ELSEIF}').appendField(
+                    new Blockly.FieldDropdown(
+                        function () {
+                            return [
+                                [
+                                    en.KAREL_FRONT_IS_CLEAR,
+                                    "FRONT_CLEAR"
+                                ],
+                                [
+                                    en.KAREL_FRONT_IS_BLOCKED,
+                                    "FRONT_BLOCKED"
+                                ],
+                                [
+                                    en.KAREL_STONES_PRESENT,
+                                    "STONES_PRESENT"
+                                ],
+                                [
+                                    en.KAREL_STONES_NOT_PRESENT,
+                                    "STONES_NOT_PRESENT"
+                                ]
+                            ];
+                        }
+                    )
+                );
+                this.appendStatementInput('THEN' + elseifIndex);
+            }
+
+            if (this.hasElse) {
+                this.appendStatementInput('ELSE').appendField('%{BKY_KAREL_IFELSE_ELSE}');
+            }
+        },
+
+        reconnectChildBlocks: function (elseifStatementConnections, elseStatementConnection) {
+            for (var elseifIndex = 1; elseifIndex <= this.elseIfCount; elseifIndex++) {
+                Blockly.Mutator.reconnect(elseifStatementConnections[elseifIndex], this, 'THEN' + elseifIndex);
+            }
+            
+            Blockly.Mutator.reconnect(elseStatementConnection, this, 'ELSE');
         }
     };
 
