@@ -70,8 +70,29 @@ export default {
     return {
       graph: copy(graph),
       name,
-      selected: null
+      selected: null,
+      taskTimes: {}
     }
+  },
+  created() {
+    let lastUpdate = Date.now()
+    let elapsed = 0
+
+    const updateTaskTime = () => {
+      const now = Date.now()
+      elapsed += now - lastUpdate
+      lastUpdate = now
+
+      const key = this.selected || "map"
+      while (elapsed >= 1000) {
+        if (!this.taskTimes[key]) this.taskTimes[key] = 0
+        this.taskTimes[key] += 1
+        elapsed -= 1000
+      }
+      setTimeout(updateTaskTime, 100)
+    }
+
+    setTimeout(updateTaskTime, 100)
   },
   computed: {
     taskIsActive() {
