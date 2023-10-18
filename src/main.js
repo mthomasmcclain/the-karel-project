@@ -7,6 +7,7 @@ import App from './App.vue'
 import router from './router/index.js'
 import storeDef from './store/index.js'
 import MapPlayer from './components/MapPlayer/index.vue'
+import TaskPlayer from './components/TaskPlayer/index.vue'
 import './main.css'
 
 import './helpers/vue3DragEvents'
@@ -27,8 +28,9 @@ const initialLoad = async () => {
         const id = pathname.slice(1)
 
         if (isUUID(id) && Agent.embedded) {
-            console.log('got in here...', id)
-            const player = vuePersistentComponent(MapPlayer)
+            //  TODO: use type...
+            const data = await Agent.state(id)
+            const player = vuePersistentComponent( data.graph ? MapPlayer : TaskPlayer )
             createApp(player, { id }).mount('#app')
         }
         else {

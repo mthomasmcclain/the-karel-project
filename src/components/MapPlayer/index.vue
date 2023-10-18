@@ -30,9 +30,15 @@
     </div>
     
     <div class="content-wrapper" style="flex-grow: 1;">
-      <TaskPlayer v-if="taskIsActive"
+      <!--<TaskPlayer v-if="taskIsActive"
         :key="`task-player-in-map-${selected}`"
         @taskCorrect="handleTaskCorrect"
+        :id="activeTask"
+      />-->
+
+      <vueEmbedComponent
+        v-if="taskIsActive"
+        :key="activeTask"
         :id="activeTask"
       />
 
@@ -51,13 +57,14 @@
 </template>
 
 <script>
+import { vueEmbedComponent } from '@knowlearning/agents/vue.js'
 import MapGraph from './MapGraph/index.vue'
-import TaskPlayer from '../TaskPlayer/index.vue'
 import { mapCompleteSwal } from '../../helpers/projectSwallows.js'
+
 const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
-  components: { MapGraph, TaskPlayer },
+  components: { MapGraph, vueEmbedComponent },
   props: {
     id: {
       type: String,
@@ -111,6 +118,9 @@ export default {
     activeTask() {
         if (!this.taskIsActive) return null
         else return this.graph.nodes[this.selected].taskId
+    },
+    PersistentSelectedTaskComponent() {
+      return new vuePer
     }
   },
   methods: {

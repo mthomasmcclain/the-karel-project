@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="task">
     <div class="left-col">
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
@@ -74,6 +74,7 @@
       />
     </div>
   </div>
+  <div v-else>loading...</div>
 </template>
 
 <script>
@@ -102,16 +103,23 @@ export default {
     }
   },
   data() {
-    const task = copy(this.$store.getters.content(this.id))
-    const { karelBlockly } = task
-    karelBlockly.settings.customizerMode = false
     return {
-      karelBlockly,
+      task: null,
+      karelBlockly: null,
       currentStepData: null,
       playing: false,
       stepSpeed: 5,
       activeScenarioIndex: 0,
-      correctScenarios: new Array(task.worlds.length).fill(null),
+      correctScenarios: null ,
+    }
+  },
+  async created() {
+    if (!this.task) {
+      const task = await Agent.state(this.id)
+      this.karelBlockly = copy(task.karelBlockly)
+      this.task = copy(task)
+      this.karelBlockly.settings.customizerMode = false
+      this.correctScenarios = new Array(task.worlds.length).fill(null)
     }
   },
   watch: {
@@ -165,7 +173,6 @@ export default {
     }
   },
   computed: {
-    task() { return this.$store.getters.content(this.id) },
     blocksUsed() { return (this.karelBlockly.workspace.match(/block /g) || []).length },
     activePreWorld() {
       return this.task.worlds[this.activeScenarioIndex].preWorld
