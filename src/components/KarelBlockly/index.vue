@@ -22,6 +22,7 @@ const generateToolbox = ({
   karel_place=true,
   karel_pickup=true,
   karel_if=true,
+  karel_ifelse=true,
   karel_repeat=true,
   karel_while=true,
   karel_define=true,
@@ -34,6 +35,7 @@ const generateToolbox = ({
     ${ karel_place ? `<Block type="karel_place_stone" id="karel_place" />` : '' }
     ${ karel_pickup ? `<Block type="karel_pickup_stone" id="karel_pickup" />` : '' }
     ${ karel_if ? `<Block type="karel_if_dropdown" id="karel_if" />` : '' }
+    ${ karel_ifelse ? `<Block type="karel_ifelse" id="karel_ifelse" />` : '' }
     ${ karel_repeat ? `
         <Block type="controls_repeat_ext" id="karel_repeat">
           <Value name="TIMES">
@@ -55,6 +57,7 @@ const settingNameToTypeName = {
   karel_place: 'karel_place_stone',
   karel_pickup: 'karel_pickup_stone',
   karel_if: 'karel_if_dropdown',
+  karel_ifelse: 'karel_ifelse',
   karel_repeat: 'controls_repeat_ext',
   karel_while: 'karel_while_dropdown',
   karel_define: 'procedures_defnoreturn'
@@ -310,9 +313,14 @@ export default {
     padding: 10px;
     color: #666;
   }
-  
-g .blocklyIconGroup,
-g .blocklyIconGroup + g {
-    display: none;
-}
+
+/*
+ * Hides the "cog" for blocks with mutator
+ * Wanted for the function block
+ * Not wanted for the ifelse block
+ * g .blocklyIconGroup,
+ * g .blocklyIconGroup + g {
+ *   display: none;
+ * }
+ */
 </style>
