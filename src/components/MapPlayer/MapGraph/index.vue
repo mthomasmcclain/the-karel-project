@@ -96,6 +96,10 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    taskSuccess: {
+      type: Object,
+      required: true
     }
   },
   data() {
@@ -132,7 +136,7 @@ export default {
     },
     taskAtNodeIsCorrect(nodeId) {
       const taskId = this.graph.nodes[nodeId].taskId
-      return this.$store.getters.taskIsComplete(taskId)
+      return !!this.taskSuccess[taskId]
     },
     handleResize() {
       this.height = this.$refs.wrapper.clientHeight
@@ -188,11 +192,12 @@ export default {
       const existingReference = Object.values(this.nodes).find(ref => ref.taskId === taskId)
       if (existingReference) Object.assign(existingReference, {x,y})
       else {
+        const { name } = await Agent.state(taskId)
         this.nodes[uuid()] = {
           taskId, x, y,
           w: 0, h: 0,
           visited: false,
-          label: this.$store.getters.name(taskId)
+          label: name
         }
       }
       this.emitChange()

@@ -1,6 +1,6 @@
 <template>
 
-  <div class="karel-map-wrapper">
+  <div class="karel-map-wrapper" v-if="graph">
     
     <div class="navbar">
       <div v-if="taskIsActive"
@@ -39,10 +39,14 @@
       <MapGraph v-else class="map-body"
         :graph="graph"
         :selected="selected"
+        :taskSuccess="taskSuccess"
         @selectId="handleNodeSelected"
         :previewMode="previewMode"
       />
     </div>
+  </div>
+  <div v-else>
+    loading...
   </div>
 </template>
 
@@ -66,15 +70,15 @@ export default {
     }
   },
   data() {
-    const { graph, name } = this.$store.getters.content(this.id)
     return {
-      graph: copy(graph),
-      name,
+      graph: null,
+      name: null,
       selected: null,
-      taskTimes: {}
+      taskTimes: {},
+      taskSuccess: {}
     }
   },
-  created() {
+  async created() {
     let lastUpdate = Date.now()
     let elapsed = 0
 
@@ -93,6 +97,12 @@ export default {
     }
 
     setTimeout(updateTaskTime, 100)
+
+    if (!this.graph) {
+      const { graph, name } = await Agent.state(this.id)
+      this.name = name
+      this.graph = copy(graph)
+    }
   },
   computed: {
     taskIsActive() {
@@ -108,10 +118,16 @@ export default {
       this.selected = id
       if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
     },
+    allTasksSuccessful() {
+      return (
+        Object
+          .values(this.graph.nodes)
+          .every(({ taskId }) => this.taskSuccess[taskId])
+      )
+    },
     async handleTaskCorrect() {
-      this.$store.dispatch('taskComplete', this.activeTask)
       this.selected = null
-      if (this.$store.getters.mapIsComplete(this.id)) {
+      if (this.allTasksSuccessful) {
         await new Promise( res => setTimeout(res, 1000))
         await mapCompleteSwal()
         this.$emit('exit')
