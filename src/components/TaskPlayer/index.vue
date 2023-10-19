@@ -149,10 +149,7 @@ export default {
       this.correctScenarios = new Array(this.task.worlds.length).fill(null)
     },
     'currentStepData.activeBlocks'(blocks) {
-      this.karelBlockly = {
-        ...this.karelBlockly,
-        highlight: JSON.parse(JSON.stringify(blocks || []))
-      }
+      this.karelBlockly.highlight = JSON.parse(JSON.stringify(blocks || []))
     },
     activeScenarioIndex() {
       this.playing = false
