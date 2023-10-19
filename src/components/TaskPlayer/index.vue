@@ -54,7 +54,7 @@
           :stepSpeed="stepSpeed"
           :preWorld="activePreWorld"
           :playing="playing"
-          @play="playing = true"
+          @play="startPlaying"
           @pause="playing = false"
           @step="currentStepData = $event"
           @setStepSpeed="stepSpeed = $event"
@@ -206,6 +206,10 @@ export default {
       if (this.correctScenarios[i]) end = 'Solved'
       else if (this.correctScenarios[i] === false) end = 'Not Solved'
       return start + end
+    },
+    startPlaying() {
+      this.playing = true
+      this.correctScenarios[this.activeScenarioIndex] = null
     },
     showHint() { taskHintSwal(this.task.hint) },
     resetTask() {
