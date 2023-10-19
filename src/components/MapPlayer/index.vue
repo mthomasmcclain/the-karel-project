@@ -91,15 +91,17 @@ export default {
     let elapsed = 0
 
     const updateTaskTime = () => {
-      const now = Date.now()
-      elapsed += now - lastUpdate
-      lastUpdate = now
+      if (this.graph) {
+        const now = Date.now()
+        elapsed += now - lastUpdate
+        lastUpdate = now
 
-      const key = this.selected || "map"
-      while (elapsed >= 1000) {
-        if (!this.taskTimes[key]) this.taskTimes[key] = 0
-        this.taskTimes[key] += 1
-        elapsed -= 1000
+        const taskId = this.selected ? this.graph.nodes[this.selected].taskId  : "map"
+        while (elapsed >= 1000) {
+          if (!this.taskTimes[taskId]) this.taskTimes[taskId] = 0
+          this.taskTimes[taskId] += 1
+          elapsed -= 1000
+        }
       }
       setTimeout(updateTaskTime, 100)
     }
