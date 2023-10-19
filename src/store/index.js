@@ -143,7 +143,9 @@ export default {
     addToLocalContent: ({ commit }, payload) => commit('addToLocalContent', payload),
     saveToKnowFireCore: async (_context, {id, data}) => {
       try {
-        await Agent.create({ id, active: data })
+        const active_type = data.graph ? 'application/json;type=karel-map&version=1.0.1'
+                                       : 'application/json;type=karel-task&version=1.0.1'
+        await Agent.create({ id, active: data, active_type })
       } catch (e) {
         console.warn('Error in writeAll', e)
       }
