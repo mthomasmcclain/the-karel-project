@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="task">
     <div class="left-col">
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
@@ -54,7 +54,7 @@
           :stepSpeed="stepSpeed"
           :preWorld="activePreWorld"
           :playing="playing"
-          @play="playing = true"
+          @play="startPlaying"
           @pause="playing = false"
           @step="currentStepData = $event"
           @setStepSpeed="stepSpeed = $event"
@@ -74,6 +74,7 @@
       />
     </div>
   </div>
+  <div v-else>loading...</div>
 </template>
 
 <script>
@@ -102,16 +103,23 @@ export default {
     }
   },
   data() {
-    const task = copy(this.$store.getters.content(this.id))
-    const { karelBlockly } = task
-    karelBlockly.settings.customizerMode = false
     return {
-      karelBlockly,
+      task: null,
+      karelBlockly: null,
       currentStepData: null,
       playing: false,
       stepSpeed: 5,
       activeScenarioIndex: 0,
-      correctScenarios: new Array(task.worlds.length).fill(null),
+      correctScenarios: null ,
+    }
+  },
+  async created() {
+    if (!this.task) {
+      const task = await Agent.state(this.id)
+      this.karelBlockly = copy(task.karelBlockly)
+      this.task = copy(task)
+      this.karelBlockly.settings.customizerMode = false
+      this.correctScenarios = new Array(task.worlds.length).fill(null)
     }
   },
   watch: {
@@ -159,13 +167,12 @@ export default {
           // which is needed because of sweetaltert using
           // a body style !important to get its transition to work
           await new Promise( res => setTimeout(res, 260))
-          this.$emit('taskCorrect')
+          Agent.close({ success: true })
         }
       }
     }
   },
   computed: {
-    task() { return this.$store.getters.content(this.id) },
     blocksUsed() { return (this.karelBlockly.workspace.match(/block /g) || []).length },
     activePreWorld() {
       return this.task.worlds[this.activeScenarioIndex].preWorld
@@ -199,6 +206,10 @@ export default {
       if (this.correctScenarios[i]) end = 'Solved'
       else if (this.correctScenarios[i] === false) end = 'Not Solved'
       return start + end
+    },
+    startPlaying() {
+      this.playing = true
+      this.correctScenarios[this.activeScenarioIndex] = null
     },
     showHint() { taskHintSwal(this.task.hint) },
     resetTask() {

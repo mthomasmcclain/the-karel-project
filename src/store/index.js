@@ -1,28 +1,12 @@
 import { createStore } from 'vuex'
-import VuexPersistence from 'vuex-persist'
-import { v4 as uuid } from 'uuid'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { db } from '../firebase/config.js'
+import { v4 as uuid, validate as isUUID } from 'uuid'
 import expertTaskIds from './taskIds.js'
 import expertMapIds from './mapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
-const vuexLocal = new VuexPersistence({
-  storage: window.localStorage,
-  key: 'the-karel-project-2.5',
-  reducer: state => ({
-    favorites: state.favorites,
-    completed: state.completed,
-    expertIds: state.expertIds,
-    loadedContent: state.loadedContent,
-    mapIds: state.mapIds,
-    taskIds: state.taskIds
-  }),
-})
-
-export default createStore({
+export default {
   state: {
     loading: true,
     loadedContent: {},
@@ -91,12 +75,12 @@ export default createStore({
     addToMapIds: (state, id) => !state.mapIds.includes(id) && state.mapIds.push(id), 
     addToLocalContent: (state, { data, id, type }) => {
       // action has already pushed optimistic save to firestore
-      state.loadedContent[id] = data
-      state.loadedContent = { ...state.loadedContent }
+      state.loadedContent[id] = copy(data)
+      //state.loadedContent = { ...state.loadedContent }
       if (type === 'map' && !state.mapIds.includes(id)) state.mapIds.push(id)
       if (type === 'task' && !state.taskIds.includes(id)) state.taskIds.push(id)
     },
-    updateCustomizerState: (state, data) => state.customizerState = data,
+    updateCustomizerState: (state, data) => state.customizerState = copy(data),
     addToExpertIds: (state, id) => {
       if (!state.expertIds.includes(id)) state.expertIds.push(id)
     },
@@ -104,7 +88,7 @@ export default createStore({
       state.mapIds  = state.mapIds.filter(mapId => mapId !== id)
       state.taskIds = state.taskIds.filter(taskId => taskId !== id)
       delete state.loadedContent[id]
-      state.loadedContent = { ...state.loadedContent }
+      //state.loadedContent = { ...state.loadedContent }
     },
     toggleFavorite: (state, id) => {
       const index = state.favorites.indexOf(id)
@@ -131,15 +115,15 @@ export default createStore({
       if (!neededIds.length) return
       
       try {
-        const docRefs = neededIds.map(id => doc(db, 'contentv2', id) )
-        const docPromises = docRefs.map(ref => getDoc(ref))
+        const docPromises = neededIds.map(async id => [id, await Agent.state(id)])
         const docs = await Promise.all(docPromises)
-        docs.forEach(doc => {
-          const id = doc.id
-          const contentData = JSON.parse(doc.data().src)
-          if (doc.data().isExpert) dispatch('addToExpertIds', id)
-          dispatch('addToLocalContent', { id, data: contentData })
-        })
+        docs
+          .forEach(([id, data]) => {
+            //  TODO: deal with dispatching expert id add...
+            // dispatch('addToExpertIds', id)
+            //  TODO: loadedContent should be in an ephemeral module
+            dispatch('addToLocalContent', { id, data: copy(data) })
+          })
         return dispatch('loadContent')
       } catch (e) {
         console.warn('Error in getItems', e)
@@ -152,16 +136,16 @@ export default createStore({
       const newId = uuid()
       const payload = { type, id: newId, data: copy(getters.customizerState()) }
       commit('addToLocalContent', payload)
-      dispatch('saveToFirestore', payload)
+      dispatch('saveToKnowFireCore', payload)
       if (swapId) commit('delete', swapId)
       return newId
     },
     addToLocalContent: ({ commit }, payload) => commit('addToLocalContent', payload),
-    saveToFirestore: async (_context, {id, data}) => {
+    saveToKnowFireCore: async (_context, {id, data}) => {
       try {
-        const jsonData = JSON.stringify(data)
-        const docRef = doc(db, 'contentv2', id)
-        await setDoc(docRef, { src: jsonData })     
+        const active_type = data.graph ? 'application/json;type=karel-map&version=1.0.1'
+                                       : 'application/json;type=karel-task&version=1.0.1'
+        await Agent.create({ id, active: data, active_type })
       } catch (e) {
         console.warn('Error in writeAll', e)
       }
@@ -172,23 +156,16 @@ export default createStore({
       const newId = uuid()
       const type = getters.type(id)
       commit('addToLocalContent', { type, data, id: newId })
-      dispatch('saveToFirestore', { data, id: newId })
+      dispatch('saveToKnowFireCore', { data, id: newId })
       return newId
     },
     loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
       // verify it loads and is a map
-      if (!id) return Promise.reject(new Error('cannot load map with falsey id'))
+      if (!isUUID(id)) return Promise.reject(new Error('Cannot load map'))
 
-
-      const ref = doc(db, 'contentv2', id)
-      const r = await getDoc(ref)
-      if (!r
-        || !r.data()
-        || !r.data().src
-        || !JSON.parse(r.data().src)
-        || !JSON.parse(r.data().src).graph
-      ) {
-        return Promise.reject(new Error('map not found or result failed map schema test'))
+      const state = await Agent.state(id)
+      if (!state.graph) {
+        return Promise.reject(new Error('Cannot load map'))
       } else {
         commit('addToMapIds', id)
         await dispatch('loadContent')
@@ -202,7 +179,5 @@ export default createStore({
     toggleFavorite: ({ commit }, id) => commit('toggleFavorite', id),
 
     taskComplete: ({ commit }, id) => commit('taskComplete', id)
-
-  },
-  plugins: [vuexLocal.plugin]
-})
+  }
+}
