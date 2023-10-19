@@ -15,7 +15,7 @@
       </div>
       <div v-else
         class="back-button"
-        @click="$emit('exit')"
+        @click="close"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="map-icon" viewBox="0 0 576 512">
             <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
@@ -39,6 +39,7 @@
       <vueEmbedComponent
         v-if="taskIsActive"
         :key="activeTask"
+        @close="e => handleTaskClose(activeTask, e)"
         :id="activeTask"
       />
 
@@ -121,6 +122,10 @@ export default {
     }
   },
   methods: {
+    close() {
+      if (Agent.embedded) Agent.close()
+      else this.$emit('exit')
+    },
     handleNodeSelected(id) {
       this.selected = id
       if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
@@ -132,8 +137,12 @@ export default {
           .every(({ taskId }) => this.taskSuccess[taskId])
       )
     },
-    async handleTaskCorrect() {
+    handleTaskClose(id, info) {
       this.selected = null
+      if (info?.success) this.handleTaskCorrect(id)
+    },
+    async handleTaskCorrect(id) {
+      this.taskSuccess[id] = true
       if (this.allTasksSuccessful) {
         await new Promise( res => setTimeout(res, 1000))
         await mapCompleteSwal()

@@ -167,7 +167,7 @@ export default {
           // which is needed because of sweetaltert using
           // a body style !important to get its transition to work
           await new Promise( res => setTimeout(res, 260))
-          this.$emit('taskCorrect')
+          Agent.close({ success: true })
         }
       }
     }
