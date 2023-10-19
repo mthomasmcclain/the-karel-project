@@ -118,9 +118,6 @@ export default {
     activeTask() {
         if (!this.taskIsActive) return null
         else return this.graph.nodes[this.selected].taskId
-    },
-    PersistentSelectedTaskComponent() {
-      return new vuePer
     }
   },
   methods: {
