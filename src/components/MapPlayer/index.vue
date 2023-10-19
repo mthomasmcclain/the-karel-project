@@ -1,6 +1,6 @@
 <template>
 
-  <div class="karel-map-wrapper">
+  <div class="karel-map-wrapper" v-if="graph">
     
     <div class="navbar">
       <div v-if="taskIsActive"
@@ -30,30 +30,41 @@
     </div>
     
     <div class="content-wrapper" style="flex-grow: 1;">
-      <TaskPlayer v-if="taskIsActive"
+      <!--<TaskPlayer v-if="taskIsActive"
         :key="`task-player-in-map-${selected}`"
         @taskCorrect="handleTaskCorrect"
+        :id="activeTask"
+      />-->
+
+      <vueEmbedComponent
+        v-if="taskIsActive"
+        :key="activeTask"
         :id="activeTask"
       />
 
       <MapGraph v-else class="map-body"
         :graph="graph"
         :selected="selected"
+        :taskSuccess="taskSuccess"
         @selectId="handleNodeSelected"
         :previewMode="previewMode"
       />
     </div>
   </div>
+  <div v-else>
+    loading...
+  </div>
 </template>
 
 <script>
+import { vueEmbedComponent } from '@knowlearning/agents/vue.js'
 import MapGraph from './MapGraph/index.vue'
-import TaskPlayer from '../TaskPlayer/index.vue'
 import { mapCompleteSwal } from '../../helpers/projectSwallows.js'
+
 const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
-  components: { MapGraph, TaskPlayer },
+  components: { MapGraph, vueEmbedComponent },
   props: {
     id: {
       type: String,
@@ -66,15 +77,15 @@ export default {
     }
   },
   data() {
-    const { graph, name } = this.$store.getters.content(this.id)
     return {
-      graph: copy(graph),
-      name,
+      graph: null,
+      name: null,
       selected: null,
-      taskTimes: {}
+      taskTimes: {},
+      taskSuccess: {}
     }
   },
-  created() {
+  async created() {
     let lastUpdate = Date.now()
     let elapsed = 0
 
@@ -93,6 +104,12 @@ export default {
     }
 
     setTimeout(updateTaskTime, 100)
+
+    if (!this.graph) {
+      const { graph, name } = await Agent.state(this.id)
+      this.name = name
+      this.graph = copy(graph)
+    }
   },
   computed: {
     taskIsActive() {
@@ -108,10 +125,16 @@ export default {
       this.selected = id
       if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
     },
+    allTasksSuccessful() {
+      return (
+        Object
+          .values(this.graph.nodes)
+          .every(({ taskId }) => this.taskSuccess[taskId])
+      )
+    },
     async handleTaskCorrect() {
-      this.$store.dispatch('taskComplete', this.activeTask)
       this.selected = null
-      if (this.$store.getters.mapIsComplete(this.id)) {
+      if (this.allTasksSuccessful) {
         await new Promise( res => setTimeout(res, 1000))
         await mapCompleteSwal()
         this.$emit('exit')
