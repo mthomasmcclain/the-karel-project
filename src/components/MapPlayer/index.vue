@@ -121,6 +121,13 @@ export default {
     activeTask() {
         if (!this.taskIsActive) return null
         else return this.graph.nodes[this.selected].taskId
+    },
+    allTasksSuccessful() {
+      return (
+        Object
+          .values(this.graph.nodes)
+          .every(({ taskId }) => this.taskSuccess[taskId])
+      )
     }
   },
   methods: {
@@ -131,13 +138,6 @@ export default {
     handleNodeSelected(id) {
       this.selected = id
       if (this.graph.nodes[id]) this.graph.nodes[id].visited = true
-    },
-    allTasksSuccessful() {
-      return (
-        Object
-          .values(this.graph.nodes)
-          .every(({ taskId }) => this.taskSuccess[taskId])
-      )
     },
     handleTaskClose(id, info) {
       this.selected = null
