@@ -26,7 +26,14 @@ export default {
 		}
 	},
 	async created() {
-		await this.$store.dispatch('loadMapAndEmbedded', this.id)
+		const { active_type } = await Agent.metadata(this.id)
+		if (active_type === 'application/json;type=dashboard-config') {
+			alert('dashboard!')
+			return
+		}
+		else {
+			await this.$store.dispatch('loadMapAndEmbedded', this.id)
+		}
 		this.loaded = true
 	},
 	methods: {

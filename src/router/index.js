@@ -3,7 +3,7 @@ import Home from '../views/Home.vue'
 import KarelPlayer from '../views/KarelPlayer.vue'
 import KarelBuilder from '../views/KarelBuilder.vue'
 import WorldFromJson from '../views/WorldFromJson.vue'
-import MapPlayer from '../views/MapPlayer.vue'
+import UUIDPlayer from '../views/UUIDPlayer.vue'
 
 const routes = [
   {
@@ -28,8 +28,8 @@ const routes = [
   },
   {
     path: '/:id',
-    name: 'MapPlayer',
-    component: MapPlayer
+    name: 'Player',
+    component: UUIDPlayer
   }
 ]
 
