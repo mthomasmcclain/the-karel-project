@@ -8,7 +8,7 @@
             Solve the challenge using <b>{{task.maxBlocks}}</b> or fewer blocks. The current code uses <b :style="`color: ${blocksUsed > task.maxBlocks ? 'red' : 'green'};`">{{ blocksUsed }}</b> blocks.
           </p>
         </div>
-        <button v-if="!karelBlockly.settings.disabled" class="karel-button reset" @click="resetTask">Reset Code</button>
+        <button v-if="!karelBlockly?.settings.disabled" class="karel-button reset" @click="resetTask">Reset Code</button>
       </div>
 
       <div class="worlds-wrapper">
