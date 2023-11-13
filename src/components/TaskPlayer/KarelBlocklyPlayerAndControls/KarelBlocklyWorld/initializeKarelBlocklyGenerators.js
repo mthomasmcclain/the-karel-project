@@ -44,9 +44,18 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
 
     //  Monkeypatch callnoreturn so we can make the await
     // TODO Fix Bug when Learner Defins Fn Name that Starts with a Number
-    Blockly.JavaScript['procedures_callnoreturn'] = function (block) {
+    Blockly.JavaScript['procedures_callreturn'] = function (block) {
         let funcName = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
-        return `await ${funcName}();\n`
+        let args = [];
+        let variables = block.getVars();
+        for (let i = 0; i < variables.length; i++) {
+            args[i] = Blockly.JavaScript.valueToCode(block, 'ARG' + i, Blockly.JavaScript.ORDER_NONE) || 'null';
+        }
+        var code = `await ${funcName}(${args.join(',')})`;
+        return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+    };
+    Blockly.JavaScript['procedures_callnoreturn'] = function (block) {
+        return Blockly.JavaScript['procedures_callreturn'](block)[0] + ';\n';
     };
 
     Blockly.JavaScript['karel_turn_left'] = function () {
@@ -96,12 +105,32 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
         return code;
     };
 
+    var while_count = 0;
     Blockly.JavaScript['karel_while_dropdown'] = function (block) {
         var dropdown_condition = CONDITIONS_TO_KAREL_JS[block.getFieldValue('CONDITION')];
         var statements_loop = Blockly.JavaScript.statementToCode(block, 'LOOP');
-        var code = 'while (' + dropdown_condition + ') { await step();\n';
+        var code = 'var while_counter_' + while_count + ' = 100;\n';
+        code += 'while (' + dropdown_condition + ') { await step();\n'
+        code += 'if (--while_counter_' + while_count + ' === 0) karel.error = "Infinite loop!";\n'
         code += statements_loop + '\n'
         code += '}\n'
+        ++while_count;
+        return code;
+    };
+    Blockly.JavaScript['controls_whileUntil'] = function(block)  {
+        var mode = block.getFieldValue('MODE');
+        var condition = Blockly.JavaScript.valueToCode(
+            block,
+            'BOOL',
+            mode === 'UNTIL' ? Blockly.JavaScript.ORDER_LOGICAL_NOT : Blockly.JavaScript.ORDER_NONE
+        );
+        var statements = Blockly.JavaScript.statementToCode(block, 'DO');
+        var code = 'var while_counter_' + while_count + ' = 100;\n';
+        code += 'while (' + condition + ') { await step();\n'
+        code += 'if (--while_counter_' + while_count + ' === 0) karel.error = "Infinite loop!";\n'
+        code += statements + '\n'
+        code += '}\n'
+        ++while_count;
         return code;
     };
 }

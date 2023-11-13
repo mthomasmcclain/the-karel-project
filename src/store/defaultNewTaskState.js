@@ -53,6 +53,10 @@ export default {
                     "active": false,
                     "limit": -1
                 },
+                "karel_variable": {
+                    "active": false,
+                    "limit": -1
+                },
                 "karel_repeat": {
                     "active": false,
                     "limit": -1

@@ -23,6 +23,7 @@ const generateToolbox = ({
   karel_pickup=true,
   karel_if=true,
   karel_ifelse=true,
+  karel_variable=true,
   karel_repeat=true,
   karel_while=true,
   karel_define=true,
@@ -36,6 +37,19 @@ const generateToolbox = ({
     ${ karel_pickup ? `<Block type="karel_pickup_stone" id="karel_pickup" />` : '' }
     ${ karel_if ? `<Block type="karel_if_dropdown" id="karel_if" />` : '' }
     ${ karel_ifelse ? `<Block type="karel_ifelse" id="karel_ifelse" />` : '' }
+  ${
+    // From https://github.com/google/blockly/tree/master/blocks
+    karel_variable ? `
+    <Block type="variables_get" id="karel_variableget" />
+    <Block type="variables_set" id="karel_variableset" />
+    <Block type="logic_compare" id="karel_compare" />
+    <Block type="logic_operation" id="karel_logicop" />
+    <Block type="logic_negate" id="karel_neg" />
+    <Block type="math_number" id="karel_number" />
+    <Block type="math_arithmetic" id="karel_arithmetic" />
+    <Block type="controls_whileUntil" id="karel_nativewhile" />
+    ` : ''
+  }
     ${ karel_repeat ? `
         <Block type="controls_repeat_ext" id="karel_repeat">
           <Value name="TIMES">
@@ -47,7 +61,10 @@ const generateToolbox = ({
         ` : ''
     }
     ${ karel_while ? `<Block type="karel_while_dropdown" id="karel_while" />` : '' }
-    ${ karel_define ? `<Block type="procedures_defnoreturn" id="karel_define" />` : '' }
+    ${ karel_define ? `
+    <Block type="procedures_defnoreturn" id="karel_define" />
+    <Block type="procedures_defreturn" id="karel_definereturn" />
+    ` : '' }
   </xml>
 `
 //  map for convenience so we can have friendly names in settings
@@ -58,6 +75,7 @@ const settingNameToTypeName = {
   karel_pickup: 'karel_pickup_stone',
   karel_if: 'karel_if_dropdown',
   karel_ifelse: 'karel_ifelse',
+  karel_variable: 'karel_variable',
   karel_repeat: 'controls_repeat_ext',
   karel_while: 'karel_while_dropdown',
   karel_define: 'procedures_defnoreturn'
@@ -216,7 +234,7 @@ export default {
       const previousToDelete = document.querySelectorAll('.custom-lock-icon')
       previousToDelete.forEach(el => el.parentNode.removeChild(el) )
       
-      const allFnBlocks = this.workspaceInstance.getAllBlocks().filter(block => block.type === 'procedures_defnoreturn')
+      const allFnBlocks = this.workspaceInstance.getAllBlocks().filter(block => block.type === 'procedures_defnoreturn' || block.type === 'procedures_defreturn')
 
       if (this.settings.customizerMode) {
         allFnBlocks
@@ -281,13 +299,18 @@ export default {
       })
     },
     updateToolbox() {
-      const custom = (
-        Blockly
-          .Procedures
-          .allProcedures(this.workspaceInstance)[0]
-          .map(([name]) => `<Block type="procedures_callnoreturn"><mutation name="${name}" /></Block>`)
-          .join('')
-      )
+      const procedures = Blockly.Procedures.allProcedures(this.workspaceInstance)
+      const noreturnProcedures = procedures[0].map(
+        ([name, parameters]) => `<Block type="procedures_callnoreturn"><mutation name="${name}">${
+          parameters.map((parameter) => `<arg name="${parameter}" />`).join('')
+        }</mutation></Block>`
+      ).join('')
+      const returnProcedures = procedures[1].map(
+        ([name, parameters]) => `<Block type="procedures_callreturn"><mutation name="${name}">${
+          parameters.map((parameter) => `<arg name="${parameter}" />`).join('')
+        }</mutation></Block>`
+      ).join('')
+      const custom = noreturnProcedures.concat(returnProcedures)
       this.$emit('update:toolbox', generateToolbox({ ...this.activeBlocks, custom }))
     },
   }
