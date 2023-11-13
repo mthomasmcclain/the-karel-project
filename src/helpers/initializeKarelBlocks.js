@@ -92,7 +92,23 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
 
     var karelPlaceStone = {
         "type": "karel_place_stone",
-        "message0": "%{BKY_KAREL_PLACE_STONE}",
+        "message0": "%{BKY_KAREL_PLACE_STONE} %1",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "COLOR",
+                "options": [
+                    [
+                        "%{BKY_KAREL_STONE_BLUE}",
+                        "blue"
+                    ],
+                    [
+                        "%{BKY_KAREL_STONE_RED}",
+                        "red"
+                    ]
+                ]
+            }
+        ],
         "previousStatement": null,
         "nextStatement": null,
         "colour": 160
@@ -132,7 +148,23 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
 
     var karelPickupStone = {
         "type": "karel_pickup_stone",
-        "message0": "%{BKY_KAREL_PICKUP_STONE}",
+        "message0": "%{BKY_KAREL_PICKUP_STONE} %1",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "COLOR",
+                "options": [
+                    [
+                        "%{BKY_KAREL_STONE_BLUE}",
+                        "blue"
+                    ],
+                    [
+                        "%{BKY_KAREL_STONE_RED}",
+                        "red"
+                    ]
+                ]
+            }
+        ],
         "previousStatement": null,
         "nextStatement": null,
         "colour": 160

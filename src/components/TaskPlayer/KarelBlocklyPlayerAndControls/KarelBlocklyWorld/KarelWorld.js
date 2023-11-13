@@ -6,7 +6,7 @@ function Karel(world) {
     world = copy(world)
     this.world = world
 
-    const stonesAtLocation = (r, c) => world.stones.find(s => s.r === r && s.c === c)
+    const stonesAtLocation = (r, c, color) => world.stones.find(s => s.r === r && s.c === c && (s.color ? s.color === color : color === "blue"))
     const wallAtLocation = (r, c, d) => world.walls.find(w => {
         //  equivalent wall location, but with West and South transformed to North and East
         const eq = {
@@ -16,7 +16,7 @@ function Karel(world) {
         }
         return w.r === eq.r && w.c === eq.c && w.d === eq.d
     })
-    const stonesUnderKarel = () => stonesAtLocation(world.karelRow, world.karelCol)
+    const stonesUnderKarel = (color) => stonesAtLocation(world.karelRow, world.karelCol, color)
 
     this.move = () => {
         if (!this.frontIsClear()) this.error = 'Front is blocked!'
@@ -28,22 +28,22 @@ function Karel(world) {
 
     this.turnLeft = () => world.karelDir = { North: 'West', West: 'South', South: 'East', East: 'North' }[world.karelDir]
 
-    this.pickStone = () => {
-        if (!this.stonesPresent()) this.error = 'No stones to pick!'
+    this.pickStone = (color) => {
+        if (!this.stonesPresent(color)) this.error = 'No ' + color + ' stones to pick!'
         else {
             world.pickedStones += 1
-            stonesUnderKarel().n -= 1
+            stonesUnderKarel(color).n -= 1
             // don't allow stones when n < 1
             world.stones = world.stones.filter(s => s.n > 0)
         }
     }
 
-    this.placeStone = () => {
-        if (world.pickedStones === 0) this.error = 'Karel has no stones to place!'
+    this.placeStone = (color) => {
+        if (world.pickedStones === 0) this.error = 'Karel has no ' + color + ' stones to place!'
         else {
             if (world.pickedStones) world.pickedStones -= 1
-            const stones = stonesUnderKarel()
-            if (!stones) world.stones.push({ r: world.karelRow, c: world.karelCol, n: 1 })
+            const stones = stonesUnderKarel(color)
+            if (!stones) world.stones.push({ r: world.karelRow, c: world.karelCol, n: 1, color })
             else stones.n += 1
         }
     }
@@ -56,7 +56,7 @@ function Karel(world) {
         return !wallAtLocation(world.karelRow, world.karelCol, world.karelDir)
     }
 
-    this.stonesPresent = () => !!stonesUnderKarel()
+    this.stonesPresent = (color) => !!stonesUnderKarel(color)
 
     this.error = null
 

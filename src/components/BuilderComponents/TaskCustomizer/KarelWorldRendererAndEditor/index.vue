@@ -119,14 +119,14 @@
 
     <!-- STONES -->
     <SvgPositioner v-for="stone in finalStones"
-      :key="`stones-${stone.r}-${stone.c}`"
+      :key="`stones-${stone.r}-${stone.c}-${stone.color}`"
       anchor="center center"
-      :xPos="5 + 10*stone.c"
-      :yPos="5 + 10*stone.r"
-      :w="7.5"
+      :xPos="5 + 10*stone.c + (stone.multi ? (stone.color === 'red' ? 2.5 : -2.5) : 0)"
+      :yPos="5 + 10*stone.r - (stone.multi ? 2.5 : 0)"
+      :w="stone.multi ? 5 : 7.5"
       @mousemove="editRow=stone.r+1; editCol=stone.c+1; editWallR=null; editWallC=null; editWallD=null;"
     >
-      <StoneAndNumber :n="stone.n" :obj="stone.obj" />
+      <StoneAndNumber :n="stone.n" :obj="stone.obj" :color="stone.color" :numPosition="stone.multi ? 'middle' : 'top'" />
     </SvgPositioner>
       
     <!-- KAREL -->
@@ -162,6 +162,27 @@
           v-if="x===editRow && y===editCol"
           :transform="`translate(${c * 10}, ${r * 10})`"
         >
+          <!-- Karel Ghost (if karel not in square) -->
+          <SvgPositioner
+            v-if="!(r === karelRow && c === karelCol) && editCell === 'KAREL'"
+            :xPos="5" :yPos="5" w="5"
+            :rotation="rotation"
+            anchor="center center"
+            style="opacity: 0.35;"
+          >
+            <KarelVueSvg />
+          </SvgPositioner>
+
+          <!-- Stone Ghost -->
+          <SvgPositioner
+            v-if="editCell === 'STONE'"
+            :xPos="5" :yPos="5" w="7.5"
+            anchor="center center"
+            style="opacity: 0.35;"
+          >
+            <StoneAndNumber :n="0" :obj="0" :color="activeColor" />
+          </SvgPositioner>
+
           <!-- Cell edit switch -->
           <SvgPositioner
             v-if="editCell === 'KAREL'"
@@ -169,7 +190,7 @@
             anchor="center top"
             @click="toggleCellEdit()"
           >
-            <StoneBoxVueSvg />
+            <StoneBoxVueSvg :color="activeColor" />
           </SvgPositioner>
           <SvgPositioner
             v-else
@@ -178,17 +199,6 @@
             @click="toggleCellEdit()"
           >
             <KarelBoxVueSvg />
-          </SvgPositioner>
-
-          <!-- Karel Ghost (if karel not in square) -->
-          <SvgPositioner
-            v-if="!(r === karelRow && c === karelCol) && editCell === 'KAREL'"
-            :xPos="5" :yPos="5" w="5"
-            :rotation="rotation"
-            anchor="center center"
-            style="opacity: 0.35;"
-            >
-            <KarelVueSvg />
           </SvgPositioner>
 
           <!-- Karel Icon -->
@@ -200,7 +210,7 @@
           >
             <KarelBoxVueSvg />
           </SvgPositioner>
-          
+
           <!-- Objective Karel Icon -->
           <SvgPositioner
             v-if="editCell === 'KAREL'"
@@ -210,6 +220,16 @@
           >
             <KarelBoxVueSvg :opacity="0.5" />
           </SvgPositioner>
+
+          <!-- Change Color Icon -->
+          <SvgPositioner
+            v-if="editCell === 'STONE'"
+            :xPos="5+1.6" :yPos="2" h="2"
+            anchor="center top"
+            @click="changeActiveColor()"
+          >
+            <ColorBoxVueSvg :color="nextColor" />
+          </SvgPositioner>
           
           <!-- minus button -->
           <SvgPositioner
@@ -217,8 +237,8 @@
             :xPos="5-1.6" :yPos="8" h="2"
             anchor="center bottom"
             @click="decrementStones(r, c)"
-            >
-            <PlusMinusBox symbol="minus" />
+          >
+            <PlusMinusBox symbol="minus" :color="activeColor" />
           </SvgPositioner>
           
           <!-- plus button -->
@@ -227,8 +247,8 @@
             :xPos="5+1.6"  :yPos="8" h="2"
             anchor="center bottom"
             @click="incrementStones(r, c)"
-            >
-            <PlusMinusBox symbol="plus" />
+          >
+            <PlusMinusBox symbol="plus" :color="activeColor" />
           </SvgPositioner>
 
           <!-- minus objective button -->
@@ -238,7 +258,7 @@
             anchor="center bottom"
             @click="decrementObjectiveStones(r, c)"
           >
-            <PlusMinusBox symbol="minus" :opacity="0.5" />
+            <PlusMinusBox symbol="minus" :opacity="0.5" :color="activeColor" />
           </SvgPositioner>
 
           <!-- plus objective button -->
@@ -248,7 +268,7 @@
             anchor="center bottom"
             @click="incrementObjectiveStones(r, c)"
           >
-            <PlusMinusBox symbol="plus" :opacity="0.5" />
+            <PlusMinusBox symbol="plus" :opacity="0.5" :color="activeColor" />
           </SvgPositioner>
         </g>
       </template>
@@ -265,6 +285,7 @@ import StoneAndNumber from './StoneAndNumberVueSvg.vue'
 import KarelVueSvg from '../../../../assets/KarelVueSvg.vue'
 import KarelBoxVueSvg from './KarelBoxVueSvg.vue'
 import StoneBoxVueSvg from './StoneBoxVueSvg.vue'
+import ColorBoxVueSvg from './ColorBoxVueSvg.vue'
 export default {
   components: {
     SvgPositioner,
@@ -273,7 +294,8 @@ export default {
     StoneAndNumber,
     KarelVueSvg,
     KarelBoxVueSvg,
-    StoneBoxVueSvg
+    StoneBoxVueSvg,
+    ColorBoxVueSvg
 },
   props: {
     borderWidth: {
@@ -301,7 +323,8 @@ export default {
       editWallR: null,
       editWallC: null,
       editWallD: null,
-      editCell: "KAREL"
+      editCell: "KAREL",
+      activeColor: "blue"
     }
   },
   watch: {
@@ -315,7 +338,7 @@ export default {
         this.karelCol = karelCol
         this.karelDir = karelDir
         this.walls = walls
-        this.stones = stones
+        this.stones = stones.map(stone => ({ ...stone, color: stone.color ? stone.color : "blue" }))
       }
     },
     objective: {
@@ -325,7 +348,7 @@ export default {
         this.objKarelRow = karelRow
         this.objKarelCol = karelCol
         this.objKarelDir = karelDir
-        this.objStones = stones
+        this.objStones = stones.map(stone => ({ ...stone, color: stone.color ? stone.color : "blue" }))
       }
     }
   },
@@ -353,7 +376,7 @@ export default {
       else return 0
     },
     decrementStones(r, c) {
-      const index = this.stones.findIndex(stone => stone.r === r && stone.c === c)
+      const index = this.stones.findIndex(stone => stone.r === r && stone.c === c && stone.color === this.activeColor)
       if (index > -1) {
         this.stones[index].n -= 1
         if (this.stones[index].n === 0) this.stones.splice(index, 1)
@@ -361,13 +384,13 @@ export default {
       }
     },
     incrementStones(r, c) {
-      const index = this.stones.findIndex(stone => stone.r === r && stone.c === c)
+      const index = this.stones.findIndex(stone => stone.r === r && stone.c === c && stone.color === this.activeColor)
       if (index > -1) this.stones[index].n += 1
-      else this.stones.push({ r, c, n: 1 })
+      else this.stones.push({ r, c, n: 1, color: this.activeColor })
       this.emitChange()
     },
     decrementObjectiveStones(r, c) {
-      const index = this.objStones.findIndex(stone => stone.r === r && stone.c === c)
+      const index = this.objStones.findIndex(stone => stone.r === r && stone.c === c && stone.color === this.activeColor)
       if (index > -1) {
         this.objStones[index].n -= 1
         if (this.objStones[index].n === 0) this.objStones.splice(index, 1)
@@ -375,9 +398,9 @@ export default {
       }
     },
     incrementObjectiveStones(r, c) {
-      const index = this.objStones.findIndex(stone => stone.r === r && stone.c === c)
+      const index = this.objStones.findIndex(stone => stone.r === r && stone.c === c && stone.color === this.activeColor)
       if (index > -1) this.objStones[index].n += 1
-      else this.objStones.push({ r, c, n: 1 })
+      else this.objStones.push({ r, c, n: 1, color: this.activeColor })
       this.emitChange()
     },
     toggleKarel(r, c) {
@@ -416,6 +439,13 @@ export default {
       } else {
         this.editCell = "KAREL"
       }
+    },
+    changeActiveColor() {
+      if (this.activeColor === "blue") {
+        this.activeColor = "red"
+      } else {
+        this.activeColor = "blue"
+      }
     }
   },
   computed: {
@@ -448,20 +478,38 @@ export default {
             r: stone.r,
             c: stone.c,
             n: stone.n,
-            obj: this.objStones.find(obj => obj.r === stone.r && obj.c === stone.c)?.n ?? 0
+            obj: this.objStones.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color)?.n ?? 0,
+            color: stone.color
           })
         );
         this.objStones.forEach(stone => {
-          if (!arr.find(obj => obj.r === stone.r && obj.c === stone.c)) {
+          if (!arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color)) {
             arr.push({
               r: stone.r,
               c: stone.c,
               n: 0,
-              obj: stone.n
+              obj: stone.n,
+              color: stone.color
             });
           }
         });
-        return arr;
+        return arr.map(stone => {
+          if (arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color !== stone.color)) {
+            return {
+              ...stone,
+              multi: true
+            }
+          } else {
+            return stone
+          }
+        });
+      },
+      nextColor() {
+        if (this.activeColor === "blue") {
+          return "red"
+        } else {
+          return "blue"
+        }
       }
   }, // end computed
 };

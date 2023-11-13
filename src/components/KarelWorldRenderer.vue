@@ -32,16 +32,22 @@
             v-for="stone in finalStones"
             :key="`stones-${stone.r}-${stone.c}`"
             :style="`
-                transform: translate(${100*stone.c/world.nCols}%, ${100*stone.r/world.nRows}%)
+                transform: translate(${
+                    100*(stone.c + (stone.multi ? (stone.color === 'blue' ? -0.1 : 0.35) : 0))/world.nCols
+                }%, ${
+                    100*(stone.r + (stone.multi ? 0.125 : 0))/world.nRows
+                }%) ${
+                    stone.multi ? 'scale(0.75)' : ''
+                } 
             `"
         >
             <path v-if="stone.n > 0"
                 d="M 5 2 l 3 3 l -3 3 l -3 -3 z"
-                fill="blue"
+                :fill="stone.color"
             />
             <path v-else
                 d="M 5 2 l 3 3 l -3 3 l -3 -3 z"
-                stroke="blue"
+                :stroke="stone.color"
                 stroke-width="0.2"
                 stroke-dasharray="1,1"
                 fill="white"
@@ -157,7 +163,7 @@ export default {
       default: () => ({
         "nRows": 3,
         "nCols": 3,
-        "stones": [{ "r": 0, "c": 0, "n": 1 }],
+        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue" }],
         "pickedStones": null,
         "walls": [],
         "karelDir": "East",
@@ -170,7 +176,7 @@ export default {
       default: () => ({
         "nRows": 3,
         "nCols": 3,
-        "stones": [{ "r": 0, "c": 0, "n": 1 }],
+        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue" }],
         "pickedStones": null,
         "walls": [],
         "karelDir": "East",
@@ -227,25 +233,38 @@ export default {
     },
     finalStones() {
       const arr = [];
-      this.world.stones.forEach(stone =>
+      const worldStones = this.world.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue' }));
+      const objectiveStones = this.objective.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue' }));
+      worldStones.forEach(stone =>
         arr.push({
           r: stone.r,
           c: stone.c,
           n: stone.n,
-          obj: this.objective.stones.find(obj => obj.r === stone.r && obj.c === stone.c)?.n ?? 0
+          obj: this.objective.stones.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color)?.n ?? 0,
+          color: stone.color
         })
       );
-      this.objective.stones.forEach(stone => {
-        if (!arr.find(obj => obj.r === stone.r && obj.c === stone.c)) {
+      objectiveStones.forEach(stone => {
+        if (!arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color)) {
           arr.push({
             r: stone.r,
             c: stone.c,
             n: 0,
-            obj: stone.n
+            obj: stone.n,
+            color: stone.color
           });
         }
       });
-      return arr;
+      return arr.map(stone => {
+        if (arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color !== stone.color)) {
+          return {
+            ...stone,
+            multi: true
+          };
+        } else {
+          return stone;
+        }
+      });
     }
   } // end computed
 }

@@ -12,6 +12,7 @@
       stroke-dasharray="1,1"
     />
     <text class="no-select"
+      v-if="n > 0 || obj > 0"
       x="5" :y="numberYPos"
       font-size="3.5"
       fill="white"
