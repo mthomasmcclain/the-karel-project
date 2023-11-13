@@ -29,7 +29,7 @@
 
         <!-- STONES -->
         <g
-            v-for="stone in world.stones"
+            v-for="stone in finalStones"
             :key="`stones-${stone.r}-${stone.c}`"
             :style="`
                 transform: translate(${100*stone.c/world.nCols}%, ${100*stone.r/world.nRows}%)
@@ -39,14 +39,29 @@
                 d="M 5 2 l 3 3 l -3 3 l -3 -3 z"
                 fill="blue"
             />
-            <text v-if="stone.n > 1"
+            <path v-else
+                d="M 5 2 l 3 3 l -3 3 l -3 -3 z"
+                stroke="blue"
+                stroke-width="0.2"
+                stroke-dasharray="1,1"
+                fill="white"
+            />
+            <text v-if="stone.n > 0"
                 x="5" y="5"
-                font-size="2.5"
+                font-size="1.85"
                 fill="white"
                 font-family="Tahoma"
                 dominant-baseline="middle"
                 text-anchor="middle"
-            >{{ stone.n }} </text>
+            >{{ stone.n }}/{{ stone.obj }} </text>
+            <text v-else
+                x="5" y="5"
+                font-size="1.85"
+                fill="black"
+                font-family="Tahoma"
+                dominant-baseline="middle"
+                text-anchor="middle"
+            >{{ stone.n }}/{{ stone.obj }} </text>
         </g>
 
         <!-- WALLS -->
@@ -74,6 +89,18 @@
           :w="5"
           anchor="center center"
           :rotation="rotation"
+        >
+          <KarelVueSvg />
+        </SvgPositioner>
+
+        <!-- OBJECTIVE KAREL -->
+        <SvgPositioner
+          :xPos="5 + 10*objective.karelCol"
+          :yPos="5 + 10*objective.karelRow"
+          :w="5"
+          anchor="center center"
+          :rotation="objectiveRotation"
+          :opacity="0.5"
         >
           <KarelVueSvg />
         </SvgPositioner>
@@ -110,7 +137,7 @@
                 />
             </g>
         </template>
-	</svg>
+    </svg>
 
 </template>
 
@@ -126,6 +153,19 @@ export default {
       default: 0.35,
     },
     world: {
+      type: Object,
+      default: () => ({
+        "nRows": 3,
+        "nCols": 3,
+        "stones": [{ "r": 0, "c": 0, "n": 1 }],
+        "pickedStones": null,
+        "walls": [],
+        "karelDir": "East",
+        "karelRow": 2,
+        "karelCol": 0
+      })
+    },
+    objective: {
       type: Object,
       default: () => ({
         "nRows": 3,
@@ -175,6 +215,38 @@ export default {
       else if (dir === 'east') return 270
       else return 0
     },
+    objectiveRotation() {
+      const { karelDir } = this.objective
+      if (!karelDir) return 0
+      const dir = karelDir.toLowerCase();
+      if (dir === 'south') return 0
+      else if (dir === 'west') return 90
+      else if (dir === 'north') return 180
+      else if (dir === 'east') return 270
+      else return 0
+    },
+    finalStones() {
+      const arr = [];
+      this.world.stones.forEach(stone =>
+        arr.push({
+          r: stone.r,
+          c: stone.c,
+          n: stone.n,
+          obj: this.objective.stones.find(obj => obj.r === stone.r && obj.c === stone.c)?.n ?? 0
+        })
+      );
+      this.objective.stones.forEach(stone => {
+        if (!arr.find(obj => obj.r === stone.r && obj.c === stone.c)) {
+          arr.push({
+            r: stone.r,
+            c: stone.c,
+            n: 0,
+            obj: stone.n
+          });
+        }
+      });
+      return arr;
+    }
   } // end computed
 }
 </script>

@@ -13,9 +13,10 @@
     />
     <path
       d="M 5 2 l 3 3 l -3 3 l -3 -3 z"
-      fill="lightblue"
+      fill="blue"
+      :opacity="opacity"
     />
-    <g stroke="#444444" stroke-width="0.35">
+    <g stroke="white" stroke-width="0.35">
       <path d="M 5 5 l -1 0 l 2 0" />
       <!-- vertical bar shown only if 'plus' -->
       <path v-if="symbol === 'plus'" d="M 5 5 l 0 -1 l 0 2" />
@@ -32,6 +33,11 @@ export default {
       required: false,
       validator: val => [ 'plus', 'minus' ].includes(val),
       default: 'plus',
+    },
+    opacity: {
+      type: Number,
+      required: false,
+      default: 1,
     }
   }
 }

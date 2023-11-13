@@ -11,15 +11,8 @@
         <button v-if="!karelBlockly.settings.disabled" class="karel-button reset" @click="resetTask">Reset Code</button>
       </div>
 
-      <div class="worlds-wrapper">
-        <div class="world-col left">
-          <h2>Start:</h2>
-          <KarelWorldRenderer :world="world" key="active-world" />
-        </div>
-        <div class="world-col right">
-          <h2>Goal:</h2>
-          <KarelWorldRenderer :world="activePostWorld" key="goal-world"/>
-        </div>
+      <div class="world-wrapper">
+        <KarelWorldRenderer :world="world" :objective="activePostWorld" />
       </div>
 
       <!-- Scenario Selector, if More Than One -->
@@ -218,13 +211,13 @@ export default {
   height: 100%;
 }
 .left-col {
-  flex: 2 0 400px;
+  flex: 2 0 300px;
   margin: 2px 2px 0 4px;
   display: flex;
   flex-direction: column;
 }
 .right-col {
-  flex: 1 0 400px;
+  flex: 1 0 500px;
 }
 .left-col .instructions-and-reset-wrapper {
   display: flex;
@@ -272,28 +265,11 @@ export default {
   margin: 4px 0 0 0;
 }
 
-.left-col .worlds-wrapper {
+.left-col .world-wrapper {
   display: flex;
   min-height: 300px;
   max-height: 300px;
   margin: 10px 0;
-}
-.left-col .world-col {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-.left-col .world-col.left {
-  margin-right: 6px;
-}
-.left-col .world-col.right {
-  margin-left: 6px;
-}
-.left-col .world-col h2 {
-  margin: 0 0 6px 0;
-}
-.left-col .world-col > div {
-  flex-grow: 1;
 }
 .left-col .controls-wrapper {
   height: 82px;

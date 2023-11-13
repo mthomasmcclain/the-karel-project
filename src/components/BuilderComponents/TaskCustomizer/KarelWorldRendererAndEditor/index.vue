@@ -118,7 +118,7 @@
     </template>
 
     <!-- STONES -->
-    <SvgPositioner v-for="stone in stones"
+    <SvgPositioner v-for="stone in finalStones"
       :key="`stones-${stone.r}-${stone.c}`"
       anchor="center center"
       :xPos="5 + 10*stone.c"
@@ -126,7 +126,7 @@
       :w="7.5"
       @mousemove="editRow=stone.r+1; editCol=stone.c+1; editWallR=null; editWallC=null; editWallD=null;"
     >
-      <StoneAndNumber :n="stone.n > 1 ? stone.n : null" />
+      <StoneAndNumber :n="stone.n" :obj="stone.obj" />
     </SvgPositioner>
       
     <!-- KAREL -->
@@ -140,6 +140,19 @@
     >
       <KarelVueSvg />
     </SvgPositioner>
+
+    <!-- OBJECTIVE KAREL -->
+    <SvgPositioner
+      :w="5"
+      anchor="center center"
+      :xPos="5 + objKarelCol*10"
+      :yPos="5 + objKarelRow*10"
+      :rotation="objectiveRotation"
+      :opacity="0.5"
+      @click="toggleKarel(objKarelRow, objKarelCol)"
+    >
+      <KarelVueSvg />
+    </SvgPositioner>
                       
     <!-- EDIT CONTROLS -->
     <template v-for="(x,r) in nRows">
@@ -149,29 +162,58 @@
           v-if="x===editRow && y===editCol"
           :transform="`translate(${c * 10}, ${r * 10})`"
         >
+          <!-- Cell edit switch -->
+          <SvgPositioner
+            v-if="editCell === 'KAREL'"
+            :xPos="5-1.6" :yPos="2" h="2"
+            anchor="center top"
+            @click="toggleCellEdit()"
+          >
+            <StoneBoxVueSvg />
+          </SvgPositioner>
+          <SvgPositioner
+            v-else
+            :xPos="5-1.6" :yPos="2" h="2"
+            anchor="center top"
+            @click="toggleCellEdit()"
+          >
+            <KarelBoxVueSvg />
+          </SvgPositioner>
+
           <!-- Karel Ghost (if karel not in square) -->
           <SvgPositioner
-            v-if="!(r === karelRow && c === karelCol)"
+            v-if="!(r === karelRow && c === karelCol) && editCell === 'KAREL'"
             :xPos="5" :yPos="5" w="5"
             :rotation="rotation"
             anchor="center center"
             style="opacity: 0.35;"
-            @click="toggleKarel(r, c)"
             >
             <KarelVueSvg />
           </SvgPositioner>
 
-          <!-- Rotation Icon on Karel if in Square -->
+          <!-- Karel Icon -->
           <SvgPositioner
-            :xPos="5" :yPos="5" h="1.75"
-            anchor="center center"
+            v-if="editCell === 'KAREL'"
+            :xPos="5-1.6" :yPos="8" h="2"
+            anchor="center bottom"
             @click="toggleKarel(r, c)"
           >
-            <RotationIconBox />
+            <KarelBoxVueSvg />
+          </SvgPositioner>
+          
+          <!-- Objective Karel Icon -->
+          <SvgPositioner
+            v-if="editCell === 'KAREL'"
+            :xPos="5+1.6" :yPos="8" h="2"
+            anchor="center bottom"
+            @click="toggleObjectiveKarel(r, c)"
+          >
+            <KarelBoxVueSvg :opacity="0.5" />
           </SvgPositioner>
           
           <!-- minus button -->
           <SvgPositioner
+            v-if="editCell === 'STONE'"
             :xPos="5-1.6" :yPos="8" h="2"
             anchor="center bottom"
             @click="decrementStones(r, c)"
@@ -181,13 +223,33 @@
           
           <!-- plus button -->
           <SvgPositioner
-            :xPos="5 + 1.6"  :yPos="8" h="2"
+            v-if="editCell === 'STONE'"
+            :xPos="5+1.6"  :yPos="8" h="2"
             anchor="center bottom"
             @click="incrementStones(r, c)"
             >
             <PlusMinusBox symbol="plus" />
           </SvgPositioner>
-          
+
+          <!-- minus objective button -->
+          <SvgPositioner
+            v-if="editCell === 'STONE'"
+            :xPos="5-1.6" :yPos="10" h="2"
+            anchor="center bottom"
+            @click="decrementObjectiveStones(r, c)"
+          >
+            <PlusMinusBox symbol="minus" :opacity="0.5" />
+          </SvgPositioner>
+
+          <!-- plus objective button -->
+          <SvgPositioner
+            v-if="editCell === 'STONE'"
+            :xPos="5+1.6" :yPos="10" h="2"
+            anchor="center bottom"
+            @click="incrementObjectiveStones(r, c)"
+          >
+            <PlusMinusBox symbol="plus" :opacity="0.5" />
+          </SvgPositioner>
         </g>
       </template>
     </template>
@@ -201,6 +263,8 @@ import PlusMinusBox from './PlusMinusBoxVueSvg.vue'
 import RotationIconBox from './RotationIconVueSvg.vue'
 import StoneAndNumber from './StoneAndNumberVueSvg.vue'
 import KarelVueSvg from '../../../../assets/KarelVueSvg.vue'
+import KarelBoxVueSvg from './KarelBoxVueSvg.vue'
+import StoneBoxVueSvg from './StoneBoxVueSvg.vue'
 export default {
   components: {
     SvgPositioner,
@@ -208,7 +272,9 @@ export default {
     RotationIconBox,
     StoneAndNumber,
     KarelVueSvg,
-  },
+    KarelBoxVueSvg,
+    StoneBoxVueSvg
+},
   props: {
     borderWidth: {
       type: Number,
@@ -218,17 +284,24 @@ export default {
     world: {
       type: Object,
       required: true
+    },
+    objective: {
+      type: Object,
+      required: true
     }
   },
   data() {
     const { nCols, nRows, karelRow, karelCol, karelDir, walls, stones } = this.world
+    const { karelRow: objKarelRow, karelCol: objKarelCol, karelDir: objKarelDir, stones: objStones } = this.objective
     return {
       nCols, nRows, karelRow, karelCol, karelDir, walls, stones,
+      objKarelRow, objKarelCol, objKarelDir, objStones,
       editRow: null,
       editCol: null,
       editWallR: null,
       editWallC: null,
       editWallD: null,
+      editCell: "KAREL"
     }
   },
   watch: {
@@ -244,12 +317,28 @@ export default {
         this.walls = walls
         this.stones = stones
       }
+    },
+    objective: {
+      deep: true,
+      handler(val) {
+        const { karelRow, karelCol, karelDir, stones } = val
+        this.objKarelRow = karelRow
+        this.objKarelCol = karelCol
+        this.objKarelDir = karelDir
+        this.objStones = stones
+      }
     }
   },
   methods: {
     emitChange() {
-      const { nCols, nRows, karelRow, karelCol, karelDir, walls, stones } = this
-      this.$emit('change', { nCols, nRows, karelRow, karelCol, karelDir, walls, stones })
+      const {
+        nCols, nRows, karelRow, karelCol, karelDir, walls, stones,
+        objKarelRow, objKarelCol, objKarelDir, objStones
+      } = this
+      this.$emit('change', {
+        nCols, nRows, karelRow, karelCol, karelDir, walls, stones,
+        objKarelRow, objKarelCol, objKarelDir, objStones
+      })
     },
     resetEditModes() {
       this.editRow = null
@@ -277,6 +366,20 @@ export default {
       else this.stones.push({ r, c, n: 1 })
       this.emitChange()
     },
+    decrementObjectiveStones(r, c) {
+      const index = this.objStones.findIndex(stone => stone.r === r && stone.c === c)
+      if (index > -1) {
+        this.objStones[index].n -= 1
+        if (this.objStones[index].n === 0) this.objStones.splice(index, 1)
+        this.emitChange()
+      }
+    },
+    incrementObjectiveStones(r, c) {
+      const index = this.objStones.findIndex(stone => stone.r === r && stone.c === c)
+      if (index > -1) this.objStones[index].n += 1
+      else this.objStones.push({ r, c, n: 1 })
+      this.emitChange()
+    },
     toggleKarel(r, c) {
       const nextDirectionMap = { North: 'East', East: 'South', South: 'West', West: 'North' }
       if (this.karelRow === r && this.karelCol === c) {
@@ -284,6 +387,16 @@ export default {
       } else {
         this.karelRow = r
         this.karelCol = c
+      }
+      this.emitChange()
+    },
+    toggleObjectiveKarel(r, c) {
+      const nextDirectionMap = { North: 'East', East: 'South', South: 'West', West: 'North' }
+      if (this.objKarelRow === r && this.objKarelCol === c) {
+        this.objKarelDir = nextDirectionMap[this.objKarelDir]
+      } else {
+        this.objKarelRow = r
+        this.objKarelCol = c
       }
       this.emitChange()
     },
@@ -296,6 +409,13 @@ export default {
         this.walls.push({ r, c, d })
       }
       this.emitChange()
+    },
+    toggleCellEdit() {
+      if (this.editCell === "KAREL") {
+        this.editCell = "STONE"
+      } else {
+        this.editCell = "KAREL"
+      }
     }
   },
   computed: {
@@ -312,6 +432,37 @@ export default {
           else if (dir === 'east') return 270
           else return 0
       },
+      objectiveRotation() {
+        if (!this.objKarelDir) return 0
+        const dir = this.objKarelDir.toLowerCase();
+        if (dir === 'south') return 0
+        else if (dir === 'west') return 90
+        else if (dir === 'north') return 180
+        else if (dir === 'east') return 270
+        else return 0
+      },
+      finalStones() {
+        const arr = [];
+        this.stones.forEach(stone =>
+          arr.push({
+            r: stone.r,
+            c: stone.c,
+            n: stone.n,
+            obj: this.objStones.find(obj => obj.r === stone.r && obj.c === stone.c)?.n ?? 0
+          })
+        );
+        this.objStones.forEach(stone => {
+          if (!arr.find(obj => obj.r === stone.r && obj.c === stone.c)) {
+            arr.push({
+              r: stone.r,
+              c: stone.c,
+              n: 0,
+              obj: stone.n
+            });
+          }
+        });
+        return arr;
+      }
   }, // end computed
 };
 </script>
