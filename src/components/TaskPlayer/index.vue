@@ -67,6 +67,7 @@
 
     <div class="right-col">
       <KarelBlockly
+        v-if="karelBlockly"
         v-model:toolbox="karelBlockly.toolbox"
         v-model:workspace="karelBlockly.workspace"
         v-model:settings="karelBlockly.settings"
