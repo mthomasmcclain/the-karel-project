@@ -1,5 +1,12 @@
 <template>
-	<div class="task-cell">
+	<div
+		:class="{
+			'task-cell': true,
+			'correct': correct === true,
+			'incorrect': correct === false,
+			'unknown-correctness': correct !== false && correct !== true
+	  	}"
+	>
 		<div v-if="this.loading">loading</div>
 		<component
 			v-else
@@ -29,7 +36,7 @@ export default {
 		FreeResponseCell,
 		DefaultCellType
 	},
-	props: [ 'task', 'scope', 'timeOnTask' ],
+	props: [ 'task', 'scope', 'timeOnTask', 'correct' ],
 	async created() {
 		this.taskData = await Agent.state(this.task)
 		this.taskMetadata = await Agent.metadata(this.task)
@@ -67,5 +74,17 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+	.correct
+	{
+		background: chartreuse;
+	}
+	.incorrect
+	{
+		background: tomato;
+	}
+	.unknown-correctness
+	{
+		background: #EEEEEE;
+	}
 </style>

@@ -8,6 +8,7 @@ import router from './router/index.js'
 import storeDef from './store/index.js'
 import MapPlayer from './components/MapPlayer/index.vue'
 import TaskPlayer from './components/TaskPlayer/index.vue'
+import Dashboard from './components/dashboard/index.vue'
 import './main.css'
 
 import './helpers/vue3DragEvents'
@@ -33,7 +34,7 @@ const initialLoad = async () => {
             console.log(metadata, data)
             let app
             if (metadata.active_type === 'application/json;type=dashboard-config') {
-                app = createApp(vueScopeComponent, { id })
+                app = createApp(Dashboard, { id })
             }
             else {
                 //  TODO: use type...

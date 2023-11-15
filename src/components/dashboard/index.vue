@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading">...</div>
+  <div v-if="dashboardConfig === null">...</div>
 
   <div v-else>
     <table>
@@ -9,8 +9,8 @@
             user
           </th>
           <th></th><!--placeholder for active -->
-          <th v-for="{ name } in orderedTaskData">
-            {{ name }}
+          <th v-for="id in orderedTasks">
+            <vueScopeComponent :id="id" :path="['name']" />
           </th>
         </tr>
       </thead>
@@ -36,15 +36,15 @@
             <TaskCell
               v-if="assigneeMapScopeStates[assignee]?.taskTimes?.[task]"
               :task="task"
-              :scope="assigneeTasksToScopes[assignee][task]"
-              :timeOnTask="assigneeMapScopeStates[assignee].taskTimes[task]"
+              :scope="dashboardConfig[mapId].embedded[task].states[assignee]"
+              :timeOnTask="assigneeMapScopeStates[assignee]?.taskTimes[task]"
+              :correct="assigneeMapScopeStates[assignee]?.taskSuccess?.[task]"
             />
             <span v-else> - </span>
           </td>
         </tr>
       </tbody>
     </table>
-    <pre><vueScopeComponent v-if="dashboardConfigId" :id="dashboardConfigId" /></pre>
   </div>
 </template>
 
@@ -54,7 +54,7 @@
 
   export default {
     props: {
-      assignmentId: String
+      id: String
     },
     components: {
       TaskCell,
@@ -62,60 +62,28 @@
     },
     data() {
       return {
-        loading: true,
-        assignment: null,
-        mutatedScopesInContext: [],
-        map: null,
-        taskData: {},
-        users: [],
-        now: Date.now(),
+        dashboardConfig: null,
+        mapId: null,
         lastAssigneeInteractionTimes: {},
         assigneeMapScopeStates: {},
-        dashboardConfigId: null
+        users: [],
+        tasks: [],
+        now: Date.now()
       }
     },
     async created() {
-      console.log('assignmentId', this.assignmentId)
-      const updateNow = () => {
+      const nowLoop = () => {
         this.now = Date.now()
-        setTimeout(updateNow, 1000)
+        this.nowLoopTimeout = setTimeout(nowLoop, 1000)
       }
-      updateNow()
+      nowLoop()
 
-      Agent
-        .query('mutated-in-context', [this.assignmentId])
-        .then(results => this.mutatedScopesInContext = results)
-        .then(() => console.log('mmmm', this.mutatedScopesInContext))
-
-      this.assignment = await Agent.state(this.assignmentId)
-      this.map = await Agent.state(this.assignment.content)
-      this.loading = false
-
-      Object
-        .values(this.map.graph.nodes)
-        .forEach(async ({ taskId }) => {
-          this.taskData[taskId] = await Agent.state(taskId)
-        })
-
-      //  construct dashboard data acording to https://docs.knowlearning.systems/embedding/recommended-dashboard-scaffold/
-      this.dashboardConfigId = `dashboard-config-for-${this.assignmentId}`
-      const dashboardConfig = await Agent.state(this.dashboardConfigId)
-      const dcMeta = await Agent.metadata(this.dashboardConfigId)
-      if (dcMeta.active_type !== 'application/json;type=dashboard-config') dcMeta.active_type = 'application/json;type=dashboard-config'
-
-      if (!dashboardConfig[this.assignment.content]) {
-        dashboardConfig[this.assignment.content] = {
-          states: {},
-          embedded: {}
-        }
-      }
-
-      //  initialize states for all assigned students
-      this
-        .$store
-        .getters['assignments/assignedStudents'](this.assignmentId, 'teacher-to-student')
-        .filter(user => !dashboardConfig[this.assignment.content].states[user])
-        .filter(user => dashboardConfig[this.assignment.content].states[user] = null)
+      const dashboardConfig = await Agent.state(this.id)
+      Agent.watch(this.id, async ({ state }) => {
+        this.mapId = Object.keys(state)[0] //  TODO: validation
+        this.map = await Agent.state(this.mapId)
+        this.dashboardConfig = state
+      })
 
       Agent
         .query('mutated-in-context', [this.assignmentId])
@@ -125,7 +93,7 @@
             .forEach(({ context, owner, target }) => {
               let embeddedReference = dashboardConfig
               context
-                .slice(1) // start after referene to assignment
+                .slice(1) // start after reference to assignment
                 .forEach((contentId, index) => {
                   if (!embeddedReference[contentId]) embeddedReference[contentId] = { states: {}, embedded: {} }
                   if (index < context.length - 2) embeddedReference = embeddedReference[contentId].embedded
@@ -136,12 +104,16 @@
         })
 
     },
+    beforeUnmount() {
+      clearTimeout(this.nowLoopTimeout)
+    },
     watch: {
-      assigneeMapScopes() {
+      assigneeMapScopes(a, b) {
+        console.log('assignee map scopes?', this.assigneeMapScopes, a, b)
         // Watch map scope for each user to get last interaction time.
         // This works since the map implements a heartbeat.
         Object
-          .entries(this.assigneeMapScopes)
+          .entries(this.assigneeMapScopes || {})
           .forEach(async ([assignee, scope]) => {
             if (this.lastAssigneeInteractionTimes[assignee] === undefined) {
               this.lastAssigneeInteractionTimes[assignee] = null
@@ -163,52 +135,11 @@
       orderedTasks() {
         return this.map ? Object.values(this.map.graph.nodes).map(({ taskId }) => taskId) : []
       },
-      orderedTaskData() {
-        if(this.map) return (
-            this.orderedTasks.map(taskId => this.taskData[taskId] || { name: '...' })
-        )
-        else return []
-      },
       assignees() {
-        return Array.from(new Set(
-          this
-            .mutatedScopesInContext
-            .map(({ owner }) => owner)
-        ))
+        return this.dashboardConfig ? Object.keys(this.assigneeMapScopes) : []
       },
       assigneeMapScopes() {
-        if (!this.assignment?.content) return {}
-
-        const assigneeMapScopes = {}
-        const { content } = this.assignment
-
-        this
-          .mutatedScopesInContext
-          .forEach(({ owner, target, context }) => {
-            if (context.length === 2 && context[1] === content) {
-              const map = context[1]
-              assigneeMapScopes[owner] = target
-            }
-          })
-
-        return assigneeMapScopes
-      },
-      assigneeTasksToScopes() {
-        const assigneeTasksToScopes = {}
-        this
-          .assignees
-          .forEach(id => assigneeTasksToScopes[id] = {})
-
-        this
-          .mutatedScopesInContext
-          .forEach(({ owner, target, context }) => {
-            if (context.length === 3) {
-              const task = context[2]
-              assigneeTasksToScopes[owner][task] = target
-            }
-          })
-
-        return assigneeTasksToScopes
+        return this.dashboardConfig ? this.dashboardConfig[this.mapId].states : {}
       }
 
     },
