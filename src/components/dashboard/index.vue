@@ -34,7 +34,8 @@
 
           >
             <TaskCell
-              v-if="assigneeMapScopeStates[assignee]?.taskTimes?.[task]"
+              v-if="assigneeMapScopeStates[assignee]?.taskTimes?.[task] && dashboardConfig[mapId]?.embedded[task]?.states[assignee]"
+              :key="dashboardConfig[mapId].embedded[task].states[assignee]"
               :task="task"
               :scope="dashboardConfig[mapId].embedded[task].states[assignee]"
               :timeOnTask="assigneeMapScopeStates[assignee]?.taskTimes[task]"
@@ -109,7 +110,6 @@
     },
     watch: {
       assigneeMapScopes(a, b) {
-        console.log('assignee map scopes?', this.assigneeMapScopes, a, b)
         // Watch map scope for each user to get last interaction time.
         // This works since the map implements a heartbeat.
         Object
