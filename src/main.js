@@ -9,6 +9,7 @@ import storeDef from './store/index.js'
 import MapPlayer from './components/MapPlayer/index.vue'
 import TaskPlayer from './components/TaskPlayer/index.vue'
 import Dashboard from './components/dashboard/index.vue'
+import ContentCard from './components/BuilderComponents/ContentCard.vue'
 import './main.css'
 
 import './helpers/vue3DragEvents'
@@ -16,13 +17,14 @@ import './helpers/vue3DragEvents'
 window.Agent = browserAgent()
 
 const initialLoad = async () => {
-    const { auth: { user, provider } } = await Agent.environment()
+    const { auth: { user, provider }, mode } = await Agent.environment()
 
     if (provider === 'anonymous') {
         // TODO: render login page
         Agent.login()
     }
     else {
+
         const url = new URL(window.location.href)
         const { pathname } = url
 
@@ -31,9 +33,12 @@ const initialLoad = async () => {
         if (isUUID(id) && Agent.embedded) {
             const metadata = await Agent.metadata(id)
             const data = await Agent.state(id)
-            console.log(metadata, data)
             let app
-            if (metadata.active_type === 'application/json;type=dashboard-config') {
+
+            if (mode === 'card') {
+                app = createApp(ContentCard, { id })
+            }
+            else if (metadata.active_type === 'application/json;type=dashboard-config') {
                 app = createApp(Dashboard, { id })
             }
             else {

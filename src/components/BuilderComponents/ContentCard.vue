@@ -83,18 +83,13 @@ export default {
     id: {
       type: String,
       required: true
-    }
+    },
+    favorite: Boolean,
+    contentType: String,
+    content: Object,
+    isExpert: Boolean
   },
   computed: {
-    favorite() {
-      return this.$store.getters.isFavorite(this.id)
-    },
-    contentType() {
-      return this.$store.getters.type(this.id)
-    },
-    content() {
-      return this.$store.getters.content(this.id)
-    },
     preWorld() { return this.content.worlds[0].preWorld },
     postWorld() { return this.content.worlds[0].postWorld },
     tags() {
@@ -107,8 +102,7 @@ export default {
       getCodeSwal(this.id)
     },
     async handleEditRequest(id) {
-      const isExpert = this.$store.getters.isExpert(id)
-      if (!isExpert) this.$emit('edit', id)
+      if (!this.isExpert) this.$emit('edit', id)
       else {
         const { isConfirmed } = await copyContentSwal()
         if (!isConfirmed) return
