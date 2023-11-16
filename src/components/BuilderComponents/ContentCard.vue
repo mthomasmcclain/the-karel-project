@@ -9,7 +9,7 @@
 
     <div class="author">
       <PILALogo
-        v-if="$store.getters.isExpert(id)"
+        v-if="isExpert"
         class="pila-svg"
       />
       <UserIcon v-else class="user-svg" color="salmon" />

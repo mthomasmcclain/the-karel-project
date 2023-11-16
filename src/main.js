@@ -36,7 +36,11 @@ const initialLoad = async () => {
             let app
 
             if (mode === 'card') {
-                app = createApp(ContentCard, { id })
+                const favorite = false
+                const contentType = metadata.active_type.startsWith('application/json;type=karel-map') ? 'map' : 'task'
+                const content = data
+                const isExpert = false
+                app = createApp(ContentCard, { id, favorite, contentType, content, isExpert })
             }
             else if (metadata.active_type === 'application/json;type=dashboard-config') {
                 app = createApp(Dashboard, { id })
