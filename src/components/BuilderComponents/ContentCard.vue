@@ -1,6 +1,9 @@
 <template>
   <div
-    class="task-card"
+    :class="{
+      'task-card': true,
+      'not-embedded': !embedded
+    }"
     draggable="true"
     @dragstart="event => event.dataTransfer.setData('text/plain', id)"
   >
@@ -87,7 +90,11 @@ export default {
     favorite: Boolean,
     contentType: String,
     content: Object,
-    isExpert: Boolean
+    isExpert: Boolean,
+    embedded: {
+      type: Boolean,
+      required: false
+    }
   },
   computed: {
     preWorld() { return this.content.worlds[0].preWorld },

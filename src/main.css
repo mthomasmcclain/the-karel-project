@@ -16,7 +16,15 @@
 .karel-button:hover {
   opacity: 1;
 }
-.task-card,
+
+.task-card {
+  width: calc(100vw - 16px);
+  height: calc(100vh - 16px);
+  padding: 8px;
+
+}
+
+.task-card.not-embedded,
 .add-card {
   width: 300px;
   height: 220px;
