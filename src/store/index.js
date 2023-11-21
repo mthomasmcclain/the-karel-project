@@ -8,6 +8,7 @@ const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
   state: {
+    language: null,
     loading: true,
     loadedContent: {},
     mapIds: [ ...expertMapIds ],
@@ -20,6 +21,7 @@ export default {
   },
   getters: {
     loading: state => () => state.loading,
+    language: state => () => state.language,
     loadedContent: state => () => state.loadedContent,
     mapIds: state => () => state.mapIds,
     mapIdsByDifficulty: state => difficulty => {
@@ -72,6 +74,7 @@ export default {
   },
   mutations: {
     setLoading: (state, bool) => state.loading = bool,
+    language: (state, value) => state.language = value,
     addToMapIds: (state, id) => !state.mapIds.includes(id) && state.mapIds.push(id), 
     addToLocalContent: (state, { data, id, type }) => {
       // action has already pushed optimistic save to firestore
@@ -102,6 +105,8 @@ export default {
   },
   actions: {
     setLoading: ({ commit }, bool) => commit('setLoading', bool),
+
+    language: ({ commit }, value) => commit('language', value),
 
     loadContent: async ({ getters, dispatch }) => {
       const allMapIds = getters.mapIds()
@@ -134,7 +139,11 @@ export default {
     addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
     save: async ({ commit, dispatch, getters }, { swapId, type })  => {
       const newId = uuid()
-      const payload = { type, id: newId, data: copy(getters.customizerState()) }
+      const payload = {
+        type,
+        id: newId,
+        data: copy(getters.customizerState())
+      }
       commit('addToLocalContent', payload)
       dispatch('saveToKnowFireCore', payload)
       if (swapId) commit('delete', swapId)

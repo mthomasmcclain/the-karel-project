@@ -94,7 +94,8 @@ export default {
       nameFilter: '',
       favoritesFilter: false,
       userTasksOnlyFilter: false,
-      selected: null
+      selected: null,
+      sourceLanguage: this.$store.getters.language()
     }
   },
   watch: {
@@ -115,11 +116,8 @@ export default {
       }
     },
     edit() {
-      const data = {
-        graph: this.graph,
-        name: this.name
-      }
-      this.$store.dispatch('updateCustomizerState', copy(data) )
+      const { graph, name, sourceLanguage } = this
+      this.$store.dispatch('updateCustomizerState', copy({ graph, name, sourceLanguage }) )
     },
     removeFilters() {
         this.nameFilter = ''
