@@ -219,6 +219,8 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
         }
     };
 
+    // If-else block
+    // Based on https://developers.google.com/blockly/guides/create-custom-blocks/extensions
     var karelIfelseIf = {
         "type": "karel_ifelse_if",
         "message0": "%{BKY_KAREL_IFELSE_IF}",

@@ -77,6 +77,7 @@ export default {
         karel_pickup: 'Pickup Stone',
         karel_if: "'If' Block",
         karel_ifelse: "'If-Else' block",
+        karel_variable: "Variable blocks",
         karel_repeat: "'Repeat' Block",
         karel_while: "'While' Block",
         karel_define: "Define Function"

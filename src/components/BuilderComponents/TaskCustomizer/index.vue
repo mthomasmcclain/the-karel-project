@@ -249,10 +249,11 @@ export default {
       if (!settings) return []
       let systemTags = []
       // destrusture all blocks from settings.blocks
-      const { karel_move, karel_turn, karel_place, karel_pickup, karel_repeat, karel_if, karel_ifelse, karel_while, karel_define } = settings.blocks
+      const { karel_move, karel_turn, karel_place, karel_pickup, karel_repeat, karel_if, karel_ifelse, karel_variable, karel_while, karel_define } = settings.blocks
       if (karel_repeat.active) systemTags.push("Has 'Repeat'")
       if (karel_if.active || karel_ifelse.active) systemTags.push("Has 'If'")
       if (karel_while.active) systemTags.push("Has 'While'")
+      if (karel_variable.active) systemTags.push("Has Variable")
       if (karel_define.active) systemTags.push("Has Function")
       if ( karel_move.active && karel_turn.active && karel_place.active  && karel_pickup.active &&
         !karel_repeat.active && !karel_if.active && !karel_ifelse.active && !karel_while.active && !karel_define.active ) {

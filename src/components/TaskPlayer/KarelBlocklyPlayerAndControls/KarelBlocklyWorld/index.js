@@ -32,10 +32,10 @@ const KarelBlocklyWorld = (world, { toolbox, workspace }) => {
 
     // TODO:  Instead of requiring the stable identifier "main", get/use first block of type "karel_main"
     const functions = {
-        main: `async function main() {${Blockly.JavaScript.blockToCode(blocklyInstance.getBlockById('main'))}}`
+        main: `async function main() {\ntry {\n${Blockly.JavaScript.blockToCode(blocklyInstance.getBlockById('main'))}\n} catch (e) {\nkarel.error = e.message;\n}\n}`
     }
 
-    const procedureNames = Blockly.Procedures.allProcedures(blocklyInstance)[0].map(([name]) => name)
+    const procedureNames = Blockly.Procedures.allProcedures(blocklyInstance).map(proc => proc.map(([name]) => name)).flat();
     // Blockly internals and externals are jank: https://groups.google.com/g/blockly/c/C5MMgkU48S8
     procedureNames.forEach(name => {
         const block = Blockly.Procedures.getDefinition(name, blocklyInstance)
@@ -56,7 +56,7 @@ const KarelBlocklyWorld = (world, { toolbox, workspace }) => {
                 functions[name.substring(1)] = `async ${source}`
             }
         })
-
+        
     const source = Object.values(functions).join(';') + '; main().then(done);'
     return new KarelWorld(world, source)
 }
