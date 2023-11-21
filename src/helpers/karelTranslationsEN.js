@@ -6,6 +6,8 @@ export default {
     KAREL_TURN_LEFT: "turn left",
     KAREL_PLACE_STONE: "place stone",
     KAREL_PICKUP_STONE: "pickup stone",
+    KAREL_STONE_BLUE: "blue",
+    KAREL_STONE_RED: "red",
     KAREL_FRONT_IS_CLEAR: "front is clear",
     KAREL_FRONT_IS_BLOCKED: "front is blocked",
     KAREL_STONES_PRESENT: "stones present",

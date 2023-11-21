@@ -9,23 +9,19 @@
       stroke="grey"
       rx="1"
       ry="1"
-      fill="white"
-    />
-    <path
-      d="M 5 0 l 5 5 l -5 5 l -5 -5 z"
       :fill="color"
     />
   </svg>
 </template>
-
+  
 <script>
 export default {
-  name: "stone-box",
+  name: 'karel-button',
   props: {
     color: {
-      type: String,
       required: false,
-      default: "blue"
+      type: String,
+      default: "blue",
     }
   }
 }

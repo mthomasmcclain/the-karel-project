@@ -13,7 +13,7 @@
     />
     <path
       d="M 5 2 l 3 3 l -3 3 l -3 -3 z"
-      fill="blue"
+      :fill="color"
       :opacity="opacity"
     />
     <g stroke="white" stroke-width="0.35">
@@ -38,6 +38,11 @@ export default {
       type: Number,
       required: false,
       default: 1,
+    },
+    color: {
+      type: String,
+      required: false,
+      default: "blue"
     }
   }
 }

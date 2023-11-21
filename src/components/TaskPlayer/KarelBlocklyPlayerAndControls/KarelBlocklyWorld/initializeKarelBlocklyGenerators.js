@@ -62,12 +62,14 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
         return 'karel.turnLeft();\n'
     };
 
-    Blockly.JavaScript['karel_place_stone'] = function () {
-        return 'karel.placeStone();\n'
+    Blockly.JavaScript['karel_place_stone'] = function (block) {
+        var color = block.getFieldValue('COLOR');
+        return 'karel.placeStone("' + color + '");\n'
     };
 
-    Blockly.JavaScript['karel_pickup_stone'] = function () {
-        return 'karel.pickStone();\n'
+    Blockly.JavaScript['karel_pickup_stone'] = function (block) {
+        var color = block.getFieldValue('COLOR');
+        return 'karel.pickStone("' + color + '");\n'
     };
 
     Blockly.JavaScript['karel_if_dropdown'] = function (block) {
