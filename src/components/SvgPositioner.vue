@@ -49,6 +49,11 @@ export default {
       type: String,
       validator: validateAnchor
     },
+    opacity: {
+      required: false,
+      type: Number,
+      default: 1,
+    }
   },
   mounted() { this.setSvg() },
   watch: {
@@ -101,6 +106,7 @@ export default {
       innerSvg.setAttribute('y', this.yPos + offsets.y)
       innerSvg.setAttribute('width', this.finalWidth)
       innerSvg.setAttribute('height', this.finalHeight)
+      innerSvg.setAttribute('opacity', this.opacity)
 
       // set rotation on wrapping <g>, not inner <svg>
       let diffBtwOffsets

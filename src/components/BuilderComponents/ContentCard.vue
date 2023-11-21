@@ -16,14 +16,7 @@
     </div>
 
     <div v-if="contentType === 'task'" class="preview-area">
-      <div class="preview-col-wrapper">
-        <div class="col-title">Start:</div>
-        <karel-world-renderer :world="preWorld" />
-      </div>
-      <div class="preview-col-wrapper">
-        <div class="col-title">Goal:</div>
-        <karel-world-renderer :world="postWorld" />
-      </div>
+      <karel-world-renderer :world="preWorld" :objective="postWorld" />
     </div>
     <div v-else class="preview-area">
       <GraphPreview :graph="content.graph" />

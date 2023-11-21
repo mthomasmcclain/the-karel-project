@@ -3,20 +3,11 @@
     <div id="worlds-and-workspace">
       
       <div class="start-world-area">
-        <h4>Start World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-start-world"
           :world="activeWorld.preWorld"
-          @change="activeWorld.preWorld = $event"
-        />
-      </div>
-      
-      <div class="end-world-area">
-        <h4>Goal World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
-        <KarelWorldRendererAndEditor
-          class="edit-post-world"
-          :world="activeWorld.postWorld"
-          @change="activeWorld.postWorld = $event"
+          :objective="activeWorld.postWorld"
+          @change="updateWorld($event)"
         />
       </div>
       
@@ -236,6 +227,18 @@ export default {
     removeWorld(i) {
       this.activeWorldIndex = 0
       this.worlds.splice(i,1)
+    },
+    updateWorld(world) {
+      const {
+        nCols, nRows, karelRow, karelCol, karelDir, walls, stones,
+        objKarelRow, objKarelCol, objKarelDir, objStones
+      } = world;
+      this.activeWorld.preWorld = {
+        nCols, nRows, karelRow, karelCol, karelDir, walls, stones
+      };
+      this.activeWorld.postWorld = {
+        nCols, nRows, karelRow: objKarelRow, karelCol: objKarelCol, karelDir: objKarelDir, walls, stones: objStones
+      };
     },
     update() {
       const { name, instructions, maxBlocks, hint, worlds, tags } = this

@@ -1,18 +1,27 @@
 <template> 
   <svg viewBox="0 0 10 10">
-    <path
+    <path v-if="n > 0"
       d="M 5 0 l 5 5 l -5 5 l -5 -5 z"
       :fill="color"
     />
-    <text v-if="n" class="no-select"
+    <path v-else
+      d="M 5 0 l 5 5 l -5 5 l -5 -5 z"
+      fill="white"
+      :stroke="color"
+      stroke-width="0.2"
+      stroke-dasharray="1,1"
+    />
+    <text class="no-select"
       x="5" :y="numberYPos"
       font-size="3.5"
       fill="white"
+      stroke="black"
+      stroke-width="0.1"
       font-family="Tahoma"
       text-anchor="middle"
       alignment-baseline="middle"
       user-select="none"
-    >{{ n }} </text>
+    >{{ n }}/{{ obj }}</text>
   </svg>
 </template>
 
@@ -21,6 +30,11 @@ export default {
   name: 'stone-and-number',
   props: {
     n: {
+      type: [ Number, String ],
+      required: false,
+      default: 5,
+    },
+    obj: {
       type: [ Number, String ],
       required: false,
       default: 5,
