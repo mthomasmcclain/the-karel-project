@@ -3,12 +3,11 @@ postgres:
     translatable_targets:
       type: application/json;type=translatable_target
       columns:
-        target: TEXT
         language: TEXT
         value: TEXT
         parent_item: TEXT
   scopes:
-    translatable_targets: SELECT * FROM 
+    translatable_targets: SELECT * FROM translatable_targets
     parent_items: SELECT DISTINCT parent_item FROM translatable_targets
     targets_for_parent: SELECT * FROM translatable_targets WHERE parent_item = $1;
   crossDomainQueries:

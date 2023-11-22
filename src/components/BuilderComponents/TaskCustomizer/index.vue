@@ -185,8 +185,7 @@ export default {
       hint,
       worlds,
       karelBlockly,
-      tags,
-      sourceLanguage: this.$store.getters.language()
+      tags
     }
   },
   computed: {
@@ -239,7 +238,7 @@ export default {
       this.worlds.splice(i,1)
     },
     update() {
-      const { name, instructions, maxBlocks, hint, worlds, tags, sourceLanguage } = this
+      const { name, instructions, maxBlocks, hint, worlds, tags } = this
       // karelBlockly pulled separately, customizerMode false for save
       const karelBlockly = copy(this.karelBlockly)
       karelBlockly.settings.customizerMode = false
@@ -250,8 +249,7 @@ export default {
         hint,
         worlds,
         karelBlockly,
-        tags,
-        sourceLanguage
+        tags
       })
       this.$store.dispatch('updateCustomizerState', customizerStateData )
     },

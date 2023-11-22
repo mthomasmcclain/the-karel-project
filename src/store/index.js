@@ -1,5 +1,9 @@
 import { createStore } from 'vuex'
 import { v4 as uuid, validate as isUUID } from 'uuid'
+import {
+  karelBlocklyUserMethodsToUUID,
+  karelBlocklyTranslateUUIDs
+} from './karelBlocklyUserMethodsToUUID.js'
 import expertTaskIds from './taskIds.js'
 import expertMapIds from './mapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
@@ -139,11 +143,20 @@ export default {
     addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
     save: async ({ commit, dispatch, getters }, { swapId, type })  => {
       const newId = uuid()
-      const payload = {
-        type,
-        id: newId,
-        data: copy(getters.customizerState())
+      const data = copy(getters.customizerState())
+
+      if (type === 'task') {
+        // replace workspace and toolbox user methods with uuids
+        const {
+          karelBlockly,
+          targets
+        } = await karelBlocklyUserMethodsToUUID(data.karelBlockly)
+        data.karelBlockly = karelBlockly
+        // TODO: Commit those translations from the targets map
+        // TRANSLATE BACK JUST FOR FUN
+        data.karelBlockly = await karelBlocklyTranslateUUIDs(data.karelBlockly, targets)
       }
+      const payload = { type, data, id: newId }
       commit('addToLocalContent', payload)
       dispatch('saveToKnowFireCore', payload)
       if (swapId) commit('delete', swapId)
@@ -152,6 +165,7 @@ export default {
     addToLocalContent: ({ commit }, payload) => commit('addToLocalContent', payload),
     saveToKnowFireCore: async (_context, {id, data}) => {
       try {
+        // using whether it has graph as toggle task or map
         const active_type = data.graph ? 'application/json;type=karel-map&version=1.0.1'
                                        : 'application/json;type=karel-task&version=1.0.1'
         await Agent.create({ id, active: data, active_type })
