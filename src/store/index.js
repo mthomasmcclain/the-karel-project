@@ -146,16 +146,50 @@ export default {
       const data = copy(getters.customizerState())
 
       if (type === 'task') {
+        let trans_breadcrumbs = {} // new uuid => string
+
+        // replace task's instructions, name, and hint with uuid.
+        // add to translatable-items obj to write all together at end
+
+        const fields = [ 'instructions', 'name', 'hint' ]
+        fields.forEach(field => {
+          if (!!data[field]) {
+            const crumbId = uuid()
+            trans_breadcrumbs[crumbId] = data[field]
+            data[field] = crumbId
+          }
+        })
+
         // replace workspace and toolbox user methods with uuids
+        // add to translatable-items obj to write all together at end
+
         const {
           karelBlockly,
           targets
         } = await karelBlocklyUserMethodsToUUID(data.karelBlockly)
         data.karelBlockly = karelBlockly
-        // TODO: Commit those translations from the targets map
-        // TRANSLATE BACK JUST FOR FUN
-        data.karelBlockly = await karelBlocklyTranslateUUIDs(data.karelBlockly, targets)
-      }
+
+        trans_breadcrumbs = { ...trans_breadcrumbs, ...targets }
+
+        // write translateable-item for each target
+
+        Object.entries(trans_breadcrumbs).forEach(([crumbId, source_string]) => {
+          try {
+            const active = {
+              source_string,
+              language: getters.language(),
+              parent_item: newId
+            }
+            Agent.create({
+              id: crumbId,
+              active,
+              active_type: 'application/json;type=translatable_targets&version=1.0.1'
+            })
+          } catch (e) {
+            console.warn(`Error writing translation breadcrumbb, item: ${newId}, target: ${crumbId}`, e)
+          }          
+        })
+      } // end of "if task"
       const payload = { type, data, id: newId }
       commit('addToLocalContent', payload)
       dispatch('saveToKnowFireCore', payload)

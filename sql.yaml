@@ -1,10 +1,10 @@
 postgres:
   tables:
     translatable_targets:
-      type: application/json;type=translatable_target
+      type: application/json;type=translatable_targets&version=1.0.1
       columns:
         language: TEXT
-        value: TEXT
+        source_string: TEXT
         parent_item: TEXT
   scopes:
     translatable_targets: SELECT * FROM translatable_targets

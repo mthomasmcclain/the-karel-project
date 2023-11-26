@@ -11,7 +11,6 @@ function copy(x) { return JSON.parse(JSON.stringify(x)) }
 
 
 export async function karelBlocklyUserMethodsToUUID(kb) {
-	console.log('incoming', kb.workspace, kb.toolbox)
     const targets = {} // uuid => name string
     const parser = new Parser()
     const ws = await parser.parseStringPromise(kb.workspace)
@@ -57,7 +56,6 @@ export async function karelBlocklyUserMethodsToUUID(kb) {
     const kbCopy = copy(kb)
     kbCopy.workspace = builder.buildObject(ws)
     kbCopy.toolbox = builder.buildObject(tb)
-    console.log('outgoing', kbCopy.workspace, kbCopy.toolbox)
     return { 
     	karelBlockly: kbCopy,
     	targets
