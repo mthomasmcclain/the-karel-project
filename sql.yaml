@@ -14,15 +14,15 @@ postgres:
     translatable_targets:
       domains:
         - translate-karel-alpha.netlify.app
-        - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:9895
+        - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
       body: SELECT * FROM translatable_targets
     parent_items:
       domains:
         - translate-karel-alpha.netlify.app
-        - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:9895
+        - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
       body: SELECT DISTINCT parent_item FROM translatable_targets
     targets_for_parent:
       domains:
         - translate-karel-alpha.netlify.app
-        - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:9895
+        - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
       body: SELECT * FROM translatable_targets WHERE parent_item = $1

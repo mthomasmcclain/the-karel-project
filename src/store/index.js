@@ -1,9 +1,7 @@
 import { createStore } from 'vuex'
 import { v4 as uuid, validate as isUUID } from 'uuid'
-import {
-  karelBlocklyUserMethodsToUUID,
-  karelBlocklyTranslateUUIDs
-} from './karelBlocklyUserMethodsToUUID.js'
+import { karelBlocklyUserMethodsToUUID } from './karelBlocklyUserMethodsToUUID.js'
+import translationSlugMap from './translationSlugMap.js'
 import expertTaskIds from './taskIds.js'
 import expertMapIds from './mapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
@@ -15,15 +13,24 @@ export default {
     language: null,
     loading: true,
     loadedContent: {},
+    translations: {}, // TODO... maybe not use... different pattern?
     mapIds: [ ...expertMapIds ],
     taskIds: [ ...expertTaskIds ],
     favorites: [ ],
     completed: [ ],
     expertIds: [ ],
     mapIdToDifficulty,
-    customizerState: null
+    customizerState: null,
   },
   getters: {
+    t: state => slug => {
+      const target = translationSlugMap[slug]
+      const lang = state.language
+      if (!target) return `no slug ${slug}`
+      if (!state.translations?.[lang]) return `no translations for ${lang}`
+      if (!state.translations[lang][target]) return `${lang} ${slug}`
+      else return state.translations[lang][target]
+    },
     loading: state => () => state.loading,
     language: state => () => state.language,
     loadedContent: state => () => state.loadedContent,

@@ -3,7 +3,7 @@
     <div id="worlds-and-workspace">
       
       <div class="start-world-area">
-        <h4>Start World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
+        <h4>{{ t('start-world') }}{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-start-world"
           :world="activeWorld.preWorld"
@@ -12,7 +12,7 @@
       </div>
       
       <div class="end-world-area">
-        <h4>Goal World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
+        <h4>{{ t('goal-world') }}{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-post-world"
           :world="activeWorld.postWorld"
@@ -251,6 +251,7 @@ export default {
     }
   },
   methods: {
+    t(slug) { return this.$store.getters.t(slug) },
     addWorld() {
       const copyLastWorld = copy(this.worlds[this.worlds.length - 1])
       this.worlds.push(copyLastWorld)
