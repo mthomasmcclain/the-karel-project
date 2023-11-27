@@ -64,6 +64,7 @@ const initialLoad = async () => {
             store.dispatch('setLoading', true)
             await store.dispatch('loadContent')
             await store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt']))
+            await store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
             store.dispatch('setLoading', false)
         }
     }

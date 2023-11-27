@@ -7,13 +7,14 @@ import expertMapIds from './mapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
+const TRANS_DOMAIN = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
 
 export default {
   state: {
     language: null,
     loading: true,
     loadedContent: {},
-    translations: {}, // TODO... maybe not use... different pattern?
+    translations: {},
     mapIds: [ ...expertMapIds ],
     taskIds: [ ...expertTaskIds ],
     favorites: [ ],
@@ -94,6 +95,11 @@ export default {
       if (type === 'map' && !state.mapIds.includes(id)) state.mapIds.push(id)
       if (type === 'task' && !state.taskIds.includes(id)) state.taskIds.push(id)
     },
+    addTranslation(state, { target, value, language }) {
+      if (!state.translations) state.translations = {}
+      if (!state.translations[language]) state.translations[language] = {}
+      state.translations[language][target] = value
+    },
     updateCustomizerState: (state, data) => state.customizerState = copy(data),
     addToExpertIds: (state, id) => {
       if (!state.expertIds.includes(id)) state.expertIds.push(id)
@@ -146,7 +152,19 @@ export default {
       }
 
     },
-    
+    loadTranslationsForSlugMap: async ({ getters, commit }) => {
+      const promiseArray = Object.values(translationSlugMap).map(getTranslation)
+      const translationResults = await Promise.all(promiseArray)
+      translationResults.forEach((res,i) => {
+        if (res[0]) commit('addTranslation', res[0])
+        else console.warn(`no translation for ${Object.keys(translationSlugMap)[i]} in ${getters.language()}`)
+      })
+
+      async function getTranslation(id) {
+        return Agent.query('translate', [ id, getters.language() ], TRANS_DOMAIN)
+      }
+
+    },
     addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
     save: async ({ commit, dispatch, getters }, { swapId, type })  => {
       const newId = uuid()
