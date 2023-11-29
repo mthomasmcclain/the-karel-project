@@ -4,6 +4,7 @@
 			'task-cell': true,
 			'correct': correct === true,
 			'incorrect': correct === false,
+			active,
 			'unknown-correctness': correct !== false && correct !== true
 	  	}"
 	>
@@ -36,7 +37,7 @@ export default {
 		FreeResponseCell,
 		DefaultCellType
 	},
-	props: [ 'task', 'scope', 'timeOnTask', 'correct' ],
+	props: [ 'task', 'scope', 'timeOnTask', 'correct', 'active' ],
 	async created() {
 		this.taskData = await Agent.state(this.task)
 		this.taskMetadata = await Agent.metadata(this.task)
@@ -86,5 +87,20 @@ export default {
 	.unknown-correctness
 	{
 		background: #EEEEEE;
+	}
+	.task-cell
+	{
+		width: 100%;
+		height: 100%;
+		min-width: 128px;
+		min-height:24px;
+		border-radius: 4px;
+	}
+
+	.task-cell {
+		border: 2px solid transparent;
+	}
+	.task-cell.active {
+		border: 2px solid orange;
 	}
 </style>

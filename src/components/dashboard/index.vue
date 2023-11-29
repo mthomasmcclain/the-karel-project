@@ -27,21 +27,18 @@
           </td>
           <td
             v-for="task in orderedTasks"
-            :class="{
-              'item-cell' : true,
-              'active' : userIsActive(assignee) && taskIdForNode(assigneeMapScopeStates[assignee]?.selected) === task
-            }"
-
+            class="item-cell"
           >
             <TaskCell
               v-if="assigneeMapScopeStates[assignee]?.taskTimes?.[task] && dashboardConfig[mapId]?.embedded[task]?.states[assignee]"
               :key="dashboardConfig[mapId].embedded[task].states[assignee]"
               :task="task"
+              :active="userIsActive(assignee) && taskIdForNode(assigneeMapScopeStates[assignee]?.selected) === task"
               :scope="dashboardConfig[mapId].embedded[task].states[assignee]"
               :timeOnTask="assigneeMapScopeStates[assignee]?.taskTimes[task]"
               :correct="assigneeMapScopeStates[assignee]?.taskSuccess?.[task]"
             />
-            <span v-else> - </span>
+            <div v-else class="cell-placeholder"></div>
           </td>
         </tr>
       </tbody>
@@ -173,14 +170,27 @@
   margin: 0 10px;
   background: lightgrey;
 }
-.active-status.active {
-  background: #adff2f;
-}
 .item-cell {
   border: 2px solid transparent;
 }
 .item-cell.active {
   border: 2px solid orange;
+}
+.cell-placeholder
+{
+  width: 100%;
+  min-width: 128px;
+  min-height: 24px;
+  height: 100%;
+  text-align: center;
+  background: #EEEEEE;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+table
+{
+  margin: auto;
 }
 </style>
 

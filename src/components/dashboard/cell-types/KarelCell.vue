@@ -4,7 +4,6 @@
 			v-if="timeOnTask"
 			:rawTime="timeOnTask"
 		/>
-		<p>{{ userState.stepSpeed > 25 ? '🏃' : '🐢' }}</p>
 	</div>
 </template>
 
@@ -33,3 +32,10 @@ export default {
 	}
 }
 </script>
+
+<style scoped>
+	.karel-type-cell
+	{
+		padding: 4px;
+	}
+</style>
