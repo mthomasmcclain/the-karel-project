@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar">
+  <div class="navbar" @click="maybeCycleLanguage">
     <div
       :class="{selector: true, selected: mode === 'tasks' }"
       @click="$emit('setMode', 'tasks')"
@@ -25,6 +25,11 @@
 export default {
   name: 'navbar',
   props: [ 'mode' ],
+  methods: {
+    maybeCycleLanguage(e) {
+      if (e.shiftKey && e.key === 'a') this.$store.dispatch('cycleLanguage')
+    }
+  }
 }
 </script>
 

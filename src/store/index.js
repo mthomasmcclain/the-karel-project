@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 import { v4 as uuid, validate as isUUID } from 'uuid'
 import { karelBlocklyUserMethodsToUUID } from './karelBlocklyUserMethodsToUUID.js'
 import translationSlugMap from './translationSlugMap.js'
+import languageChoices from './languageChoices.js'
 import expertTaskIds from './taskIds.js'
 import expertMapIds from './mapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
@@ -91,6 +92,10 @@ export default {
     setLoading: (state, bool) => state.loading = bool,
     language: (state, value) => state.language = value,
     addToMapIds: (state, id) => !state.mapIds.includes(id) && state.mapIds.push(id), 
+    cycleLanguage(state) {
+      const i = languageChoices.indexOf(state.language)
+      state.language = (i === -1) ? 'en' : languageChoices[(i + 1) % languageChoices.length]
+    },
     addToLocalContent: (state, { data, id, type }) => {
       // action has already pushed optimistic save to firestore
       state.loadedContent[id] = copy(data)
@@ -127,6 +132,11 @@ export default {
     setLoading: ({ commit }, bool) => commit('setLoading', bool),
 
     language: ({ commit }, value) => commit('language', value),
+
+    async cycleLanguageAndRefetch({ commit, dispatch }) {
+      await dispatch('loadTranslationsForSlugMap')
+      commit('cycleLanguage')
+    }, 
 
     loadContent: async ({ getters, dispatch }) => {
       const allMapIds = getters.mapIds()
