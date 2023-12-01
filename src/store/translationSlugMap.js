@@ -1,7 +1,6 @@
 export default {
-    "start-world": "1c9ab441-fab0-4bde-99fa-87d257b5516f",
-    "new-map": "36cc310b-4966-4cb3-a433-be15c9a83c73",
-    "en-test-test-test": "617fcd83-79aa-41d6-865f-0ab5e0c72f88",
-    "new-task": "94897676-d6b2-48b5-a879-8be0c5111f7d",
-    "goal-world": "be09ce98-75b0-4b65-9e0d-cdf770fe7434"
+    "new-task": "287d53ef-b180-40ee-9468-30e16cb9f605",
+    "goal-world": "905b8481-5968-4b0e-936a-3f773d691308",
+    "new-map": "9d56eb64-b0d0-4030-92e2-fdcd14271c32",
+    "start-world": "f2f9ca3d-d0ef-41ad-9581-425f849a6d31"
 }
