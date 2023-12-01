@@ -27,7 +27,7 @@ export default {
   props: [ 'mode' ],
   methods: {
     maybeCycleLanguage(e) {
-      if (e.shiftKey && e.key === 'a') this.$store.dispatch('cycleLanguage')
+      if (e.key === 'A') this.$store.dispatch('cycleLanguageAndRefetch')
     }
   }
 }
