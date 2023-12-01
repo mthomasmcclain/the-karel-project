@@ -7,7 +7,10 @@ import expertMapIds from './mapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
-const TRANS_DOMAIN = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
+
+const TRANS_DOMAIN = 'translate-karel-alpha.netlify.app'
+// DEV DOMAIN FOR TESTING
+// const TRANS_DOMAIN = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
 
 export default {
   state: {

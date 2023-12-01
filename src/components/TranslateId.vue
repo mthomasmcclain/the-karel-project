@@ -6,7 +6,9 @@
 <script>
 import matchNavigatorLanguage from '../matchNavigatorLanguage.js'
 const LOCAL_LANGUAGE = matchNavigatorLanguage(['en', 'th', 'pt'])
-const DOMAIN_DEFAULT = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
+const DOMAIN_DEFAULT = 'translate-karel-alpha.netlify.app'
+// DEV DOMAIN FOR TESTING
+// const DOMAIN_DEFAULT = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
 
 export default {
 	name: "translate-id",
