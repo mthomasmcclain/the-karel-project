@@ -4,6 +4,7 @@ import { validate as isUUID } from 'uuid'
 import { createApp } from 'vue'
 import { createStore } from 'vuex'
 import App from './App.vue'
+import matchNavigatorLanguage from './matchNavigatorLanguage.js'
 import router from './router/index.js'
 import storeDef from './store/index.js'
 import MapPlayer from './components/MapPlayer/index.vue'
@@ -62,6 +63,8 @@ const initialLoad = async () => {
                 .mount('#app')
             store.dispatch('setLoading', true)
             await store.dispatch('loadContent')
+            await store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt']))
+            await store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
             store.dispatch('setLoading', false)
         }
     }

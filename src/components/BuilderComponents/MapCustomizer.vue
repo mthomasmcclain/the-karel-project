@@ -115,11 +115,8 @@ export default {
       }
     },
     edit() {
-      const data = {
-        graph: this.graph,
-        name: this.name
-      }
-      this.$store.dispatch('updateCustomizerState', copy(data) )
+      const { graph, name } = this
+      this.$store.dispatch('updateCustomizerState', copy({ graph, name }) )
     },
     removeFilters() {
         this.nameFilter = ''

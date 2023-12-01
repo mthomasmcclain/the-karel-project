@@ -3,7 +3,7 @@
     <div id="worlds-and-workspace">
       
       <div class="start-world-area">
-        <h4>Start World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
+        <h4>{{ t('start-world') }}{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-start-world"
           :world="activeWorld.preWorld"
@@ -12,7 +12,7 @@
       </div>
       
       <div class="end-world-area">
-        <h4>Goal World{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
+        <h4>{{ t('goal-world') }}{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-post-world"
           :world="activeWorld.postWorld"
@@ -136,6 +136,8 @@
 <script>
 
 import _ from 'lodash'
+import { validate as isUuid } from 'uuid'
+import { karelBlocklyTranslateUUIDs } from '../../../store/karelBlocklyUserMethodsToUUID.js'
 import KarelWorldRendererAndEditor from './KarelWorldRendererAndEditor/index.vue'
 import KarelBlockly from '../../KarelBlockly/index.vue'
 import KarelTagSelector from './KarelTagSelector.vue'
@@ -160,9 +162,30 @@ export default {
     KarelTagSelector,
     KarelBlocklySettingsEditor
   },
+  async created() {
+    // TODO:  look for translations
+    const translationsForIdInLanguage = false
+    if (translationsForIdInLanguage) {
+      // TODO inject translations for instructions, hint, name, and methods
+    } else { 
+      // fallback, get and inject initial strings for uuid translation breadcrumbs
+      const source_string_map = (await Agent.query('targets_for_parent', [this.id]))
+        .reduce((acc,{id, source_string}) => {
+          return { ...acc, [id]: source_string }
+        }, {})
+      const fields = ['instructions', 'name', 'hint']
+      fields
+        .filter(field => isUuid(this[field]) && !!source_string_map[this[field]])
+        .forEach(field => this[field] = source_string_map[this[field]])
+      this.karelBlockly = await karelBlocklyTranslateUUIDs(this.karelBlockly, source_string_map)
+    }
+    
+  },
   data() {
     const taskAtId = this.$store.getters.content(this.id)
+
     const taskToStartCustomizingFrom = taskAtId ? copy(taskAtId) : copy(defaultNewTaskState)
+
     const {
       name,
       instructions,
@@ -228,6 +251,7 @@ export default {
     }
   },
   methods: {
+    t(slug) { return this.$store.getters.t(slug) },
     addWorld() {
       const copyLastWorld = copy(this.worlds[this.worlds.length - 1])
       this.worlds.push(copyLastWorld)
@@ -242,7 +266,15 @@ export default {
       // karelBlockly pulled separately, customizerMode false for save
       const karelBlockly = copy(this.karelBlockly)
       karelBlockly.settings.customizerMode = false
-      const customizerStateData = copy({ name, instructions, maxBlocks, hint, worlds, karelBlockly, tags })
+      const customizerStateData = copy({
+        name,
+        instructions,
+        maxBlocks,
+        hint,
+        worlds,
+        karelBlockly,
+        tags
+      })
       this.$store.dispatch('updateCustomizerState', customizerStateData )
     },
     getSystemTags(settings) {

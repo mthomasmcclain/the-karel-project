@@ -8,7 +8,9 @@
     @dragstart="event => event.dataTransfer.setData('text/plain', id)"
   >
 
-    <div class="title">{{ content.name }}</div>
+    <div class="title">
+      <TranslateId :id="content.name" />
+    </div>
 
     <div class="author">
       <PILALogo
@@ -20,11 +22,15 @@
 
     <div v-if="contentType === 'task'" class="preview-area">
       <div class="preview-col-wrapper">
-        <div class="col-title">Start:</div>
+        <div class="col-title">
+          <TranslateId :id="slugs['start-world']" />:
+        </div>
         <karel-world-renderer :world="preWorld" />
       </div>
       <div class="preview-col-wrapper">
-        <div class="col-title">Goal:</div>
+        <div class="col-title">
+          <TranslateId :id="slugs['goal-world']" />:
+        </div>
         <karel-world-renderer :world="postWorld" />
       </div>
     </div>
@@ -37,11 +43,13 @@
         v-for="(tag,i) in tags"
         :key="`tag-${i}`"
       >
-        {{ tag }}
+        <TranslateId :id="slugs[tag]" />
       </div>
     </div>
     <div class="tags" v-else>
-       <button class="get-code-btn" @click="getCode">Get Code</button>
+       <button class="get-code-btn" @click="getCode">
+          <TranslateId :id="slugs['get-code']" />
+       </button>
     </div>
 
     <div class="icons">
@@ -69,10 +77,12 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import GraphPreview from './GraphPreview.vue'
 import KarelWorldRenderer from '../KarelWorldRenderer.vue'
 import PILALogo from '../../assets/PilaLogoVueSvg.vue'
 import UserIcon from '../../assets/UserIconVueSvg.vue'
+import TranslateId from '../TranslateId.vue'
 import { copyContentSwal, copyConfirmSwal, getCodeSwal } from '../../helpers/projectSwallows.js'
 
 export default {
@@ -80,7 +90,8 @@ export default {
     KarelWorldRenderer,
     GraphPreview,
     PILALogo,
-    UserIcon
+    UserIcon,
+    TranslateId
   },
   props: {
     id: {
@@ -97,11 +108,30 @@ export default {
     }
   },
   computed: {
+    slugs() {
+      return {
+        "start-world": "1c9ab441-fab0-4bde-99fa-87d257b5516f",
+        "has-repeat": "2b394db7-a75d-48ac-92de-6e5c47ce56f5",
+        "parsons-problem": "44fa8a54-340e-47ed-b249-99d7ec0dcb48",
+        "intermediate": "631dfc6b-7e13-41e6-8160-156b0bb062f3",
+        "has-function": "9731d916-8542-4370-9389-504a11f53cb3",
+        "beginner": "9a4d5010-f1f0-44f9-9b6f-d3a7dea0663f",
+        "multi-world": "9a7bb2d1-22c4-4e0f-8199-116142fbe656",
+        "has-if": "9e2203f8-50a1-403d-a260-4671f1767106",
+        "limit-blocks": "a183bd7b-d4f1-4d10-969a-c7a5cb73fc01",
+        "has-while": "ab0090d0-0dd7-4e5d-8d6b-03c5378c90b4",
+        "basic-toolbox": "b0987745-fec1-401c-b42b-e2bf69aaba02",
+        "goal-world": "be09ce98-75b0-4b65-9e0d-cdf770fe7434",
+        "challenge": "c2ccad1c-6a9d-4f4d-8028-8c1d9da1a48a",
+        "full-toolbox": "d9519819-862c-4b9e-9f83-01c0cae41289",
+        "get-code": "f021794d-a4f9-4ce8-9d03-81b4cd241012"
+      }
+    },
     preWorld() { return this.content.worlds[0].preWorld },
     postWorld() { return this.content.worlds[0].postWorld },
     tags() {
       if (!this.content.tags) return []
-      else return [ ...this.content.tags.customTags, ...this.content.tags.systemTags ]
+      else return [ ...this.content.tags.customTags, ...this.content.tags.systemTags ].map(tag => _.kebabCase(tag))
     }
   },
   methods: {

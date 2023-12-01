@@ -1,4 +1,5 @@
 export default {
+    // srcLanguage added by customizer
     name: "New Karel Task",
     instructions: '',
     hint: '',

@@ -1,25 +1,42 @@
 import { createStore } from 'vuex'
 import { v4 as uuid, validate as isUUID } from 'uuid'
+import { karelBlocklyUserMethodsToUUID } from './karelBlocklyUserMethodsToUUID.js'
+import translationSlugMap from './translationSlugMap.js'
 import expertTaskIds from './taskIds.js'
 import expertMapIds from './mapIds.js'
 import mapIdToDifficulty from './mapIdToDifficulty.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
+const TRANS_DOMAIN = 'translate-karel-alpha.netlify.app'
+// DEV DOMAIN FOR TESTING
+// const TRANS_DOMAIN = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
+
 export default {
   state: {
+    language: null,
     loading: true,
     loadedContent: {},
+    translations: {},
     mapIds: [ ...expertMapIds ],
     taskIds: [ ...expertTaskIds ],
     favorites: [ ],
     completed: [ ],
     expertIds: [ ],
     mapIdToDifficulty,
-    customizerState: null
+    customizerState: null,
   },
   getters: {
+    t: state => slug => {
+      const target = translationSlugMap[slug]
+      const lang = state.language
+      if (!target) return `no slug ${slug}`
+      if (!state.translations?.[lang]) return `no translations for ${lang}`
+      if (!state.translations[lang][target]) return `${lang} ${slug}`
+      else return state.translations[lang][target]
+    },
     loading: state => () => state.loading,
+    language: state => () => state.language,
     loadedContent: state => () => state.loadedContent,
     mapIds: state => () => state.mapIds,
     mapIdsByDifficulty: state => difficulty => {
@@ -72,6 +89,7 @@ export default {
   },
   mutations: {
     setLoading: (state, bool) => state.loading = bool,
+    language: (state, value) => state.language = value,
     addToMapIds: (state, id) => !state.mapIds.includes(id) && state.mapIds.push(id), 
     addToLocalContent: (state, { data, id, type }) => {
       // action has already pushed optimistic save to firestore
@@ -79,6 +97,11 @@ export default {
       //state.loadedContent = { ...state.loadedContent }
       if (type === 'map' && !state.mapIds.includes(id)) state.mapIds.push(id)
       if (type === 'task' && !state.taskIds.includes(id)) state.taskIds.push(id)
+    },
+    addTranslation(state, { target, value, language }) {
+      if (!state.translations) state.translations = {}
+      if (!state.translations[language]) state.translations[language] = {}
+      state.translations[language][target] = value
     },
     updateCustomizerState: (state, data) => state.customizerState = copy(data),
     addToExpertIds: (state, id) => {
@@ -102,6 +125,8 @@ export default {
   },
   actions: {
     setLoading: ({ commit }, bool) => commit('setLoading', bool),
+
+    language: ({ commit }, value) => commit('language', value),
 
     loadContent: async ({ getters, dispatch }) => {
       const allMapIds = getters.mapIds()
@@ -130,11 +155,70 @@ export default {
       }
 
     },
-    
+    loadTranslationsForSlugMap: async ({ getters, commit }) => {
+      const promiseArray = Object.values(translationSlugMap).map(getTranslation)
+      const translationResults = await Promise.all(promiseArray)
+      translationResults.forEach((res,i) => {
+        if (res[0]) commit('addTranslation', res[0])
+        else console.warn(`no translation for ${Object.keys(translationSlugMap)[i]} in ${getters.language()}`)
+      })
+
+      async function getTranslation(id) {
+        return Agent.query('translate', [ id, getters.language() ], TRANS_DOMAIN)
+      }
+
+    },
     addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
     save: async ({ commit, dispatch, getters }, { swapId, type })  => {
       const newId = uuid()
-      const payload = { type, id: newId, data: copy(getters.customizerState()) }
+      const data = copy(getters.customizerState())
+
+      if (type === 'task') {
+        let trans_breadcrumbs = {} // new uuid => string
+
+        // replace task's instructions, name, and hint with uuid.
+        // add to translatable-items obj to write all together at end
+
+        const fields = [ 'instructions', 'name', 'hint' ]
+        fields.forEach(field => {
+          if (!!data[field]) {
+            const crumbId = uuid()
+            trans_breadcrumbs[crumbId] = data[field]
+            data[field] = crumbId
+          }
+        })
+
+        // replace workspace and toolbox user methods with uuids
+        // add to translatable-items obj to write all together at end
+
+        const {
+          karelBlockly,
+          targets
+        } = await karelBlocklyUserMethodsToUUID(data.karelBlockly)
+        data.karelBlockly = karelBlockly
+
+        trans_breadcrumbs = { ...trans_breadcrumbs, ...targets }
+
+        // write translateable-item for each target
+
+        Object.entries(trans_breadcrumbs).forEach(([crumbId, source_string]) => {
+          try {
+            const active = {
+              source_string,
+              language: getters.language(),
+              parent_item: newId
+            }
+            Agent.create({
+              id: crumbId,
+              active,
+              active_type: 'application/json;type=translatable_targets&version=1.0.1'
+            })
+          } catch (e) {
+            console.warn(`Error writing translation breadcrumbb, item: ${newId}, target: ${crumbId}`, e)
+          }          
+        })
+      } // end of "if task"
+      const payload = { type, data, id: newId }
       commit('addToLocalContent', payload)
       dispatch('saveToKnowFireCore', payload)
       if (swapId) commit('delete', swapId)
@@ -143,6 +227,7 @@ export default {
     addToLocalContent: ({ commit }, payload) => commit('addToLocalContent', payload),
     saveToKnowFireCore: async (_context, {id, data}) => {
       try {
+        // using whether it has graph as toggle task or map
         const active_type = data.graph ? 'application/json;type=karel-map&version=1.0.1'
                                        : 'application/json;type=karel-task&version=1.0.1'
         await Agent.create({ id, active: data, active_type })
