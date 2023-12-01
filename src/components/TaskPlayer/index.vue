@@ -110,6 +110,7 @@ export default {
       currentStepData: null,
       playing: false,
       stepSpeed: 5,
+      hintUsed: false,
       activeScenarioIndex: 0,
       correctScenarios: null ,
     }
@@ -209,7 +210,10 @@ export default {
       this.playing = true
       this.correctScenarios[this.activeScenarioIndex] = null
     },
-    showHint() { taskHintSwal(this.task.hint) },
+    showHint() {
+      this.hintUsed = true
+      taskHintSwal(this.task.hint)
+    },
     resetTask() {
       const { karelBlockly } = this.task
       this.karelBlockly = copy(karelBlockly)
