@@ -169,7 +169,7 @@ export default {
       const promiseArray = Object.values(translationSlugMap).map(getTranslation)
       const translationResults = await Promise.all(promiseArray)
       translationResults.forEach((res,i) => {
-        if (res[0]) commit('addTranslation', res[0])
+        if (res?[0]) commit('addTranslation', res[0])
         else console.warn(`no translation for ${Object.keys(translationSlugMap)[i]} in ${getters.language()}`)
       })
 
