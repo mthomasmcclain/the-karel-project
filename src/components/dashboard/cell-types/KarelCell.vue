@@ -1,11 +1,23 @@
 <template>
 	<div class="karel-type-cell">
-		<span></span> <!-- placeholder -->
+		<div class="cell-space"></div> <!-- placeholder -->
 		<DisplayTime
 			v-if="timeOnTask"
 			:rawTime="timeOnTask"
 		/>
-		<div>{{ hintDisplay }}</div>
+
+		<div
+			v-if="hasHint"
+			:class="{
+				'cell-space' : true,
+				'hint-icon-wrapper' : true,
+				'hint-used' hintUsed
+			}"
+		>
+			<span>{{ hintDisplay }}</span>
+		</div>
+		<div v-else class="cell-space"></div>
+
 	</div>
 </template>
 
@@ -54,5 +66,19 @@ export default {
 		padding: 4px;
 		justify-content: space-between;
 		text-align: center;
+	}
+	.cell-space {
+		width: 20px;
+	    height: 20px;
+	}
+	.hint-icon-wrapper {
+		font-weight: 600;
+	    background: white;
+	    border-radius: 100px;
+	    width: 20px;
+	    height: 20px;
+	}
+	.hint-icon-wrapper.hint-used {
+		color: limegreen;
 	}
 </style>
