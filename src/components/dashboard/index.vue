@@ -17,7 +17,7 @@
       <tbody>
         <tr v-for="assignee in assignees">
           <td @click="logAssigneeState(assignee)">
-            Anonymous_{{ assignee.substr(0, 4) }}
+            {{ names[assignee] || `Anon_${assignee.slice(0,4)}` }}
           </td>
           <td>
             <div :class="{
@@ -66,6 +66,7 @@
         assigneeMapScopeStates: {},
         users: [],
         tasks: [],
+        names: {},
         now: Date.now()
       }
     },
@@ -117,6 +118,9 @@
               const { updated } = await Agent.metadata(scope)
               this.lastAssigneeInteractionTimes[assignee] = updated
               let ignoreFirst = true
+              Agent
+                .environment(assignee)
+                .then( env =>  this.names[assignee] = env?.auth?.info?.name )
               Agent
                 .watch(scope, ({ state }) => {
                   if (ignoreFirst) ignoreFirst = false
