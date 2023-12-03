@@ -186,6 +186,7 @@
   background: #EEEEEE;
   border-radius: 4px;
   overflow: hidden;
+  padding: 4px;
 }
 
 table
