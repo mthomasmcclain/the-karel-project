@@ -14,7 +14,7 @@
 				'hint-used' : hintUsed
 			}"
 		>
-			<span>{{ hintDisplay }}</span>
+			<span>?</span>
 		</div>
 		<div v-else class="cell-space"></div>
 
@@ -48,13 +48,7 @@ export default {
      	},
      	hintUsed() {
      		return this.hasHint ? this.userState.hintUsed : null
-     	},
-     	hintDisplay() {
-     		if (this.hasHint) return this.hintUsed ? 'x' : '?'
-     		else return '-'
      	}
-
-
 	}
 }
 </script>
