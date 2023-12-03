@@ -4,6 +4,8 @@
 			v-if="timeOnTask"
 			:rawTime="timeOnTask"
 		/>
+		<div>{{ hintDisplay }}</div>
+
 	</div>
 </template>
 
@@ -28,7 +30,19 @@ export default {
      	},
 		isCorrect() {
 	        return true
+     	},
+     	hasHint() {
+     		return !!this.taskData.hint
+     	},
+     	hintUsed() {
+     		return this.hasHint ? this.taskData.hintUsed : null
+     	},
+     	hintDisplay() {
+     		if (this.hasHint) return this.hintUsed ? 'x' : '?'
+     		else return '-'
      	}
+
+
 	}
 }
 </script>
