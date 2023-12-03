@@ -1,11 +1,11 @@
 <template>
 	<div class="karel-type-cell">
+		<span></span> <!-- placeholder -->
 		<DisplayTime
 			v-if="timeOnTask"
 			:rawTime="timeOnTask"
 		/>
 		<div>{{ hintDisplay }}</div>
-
 	</div>
 </template>
 
@@ -35,7 +35,7 @@ export default {
      		return !!this.taskData.hint
      	},
      	hintUsed() {
-     		return this.hasHint ? this.taskData.hintUsed : null
+     		return this.hasHint ? this.userState.hintUsed : null
      	},
      	hintDisplay() {
      		if (this.hasHint) return this.hintUsed ? 'x' : '?'
@@ -50,6 +50,9 @@ export default {
 <style scoped>
 	.karel-type-cell
 	{
+		display: flex;
 		padding: 4px;
+		justify-content: space-between;
+		text-align: center;
 	}
 </style>
