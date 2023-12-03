@@ -11,7 +11,7 @@
 			:class="{
 				'cell-space' : true,
 				'hint-icon-wrapper' : true,
-				'hint-used' hintUsed
+				'hint-used' : hintUsed
 			}"
 		>
 			<span>{{ hintDisplay }}</span>
