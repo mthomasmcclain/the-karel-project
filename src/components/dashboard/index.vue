@@ -118,13 +118,9 @@
               const { updated } = await Agent.metadata(scope)
               this.lastAssigneeInteractionTimes[assignee] = updated
               let ignoreFirst = true
-              console.log('calling environment on', assignee)
               Agent
                 .environment(assignee)
-                .then( env => {
-                  console.log('RESULT OF ENV CALL?', assignee, env)
-                  this.names[assignee] = env?.auth?.info?.name
-                })
+                .then( env =>  this.names[assignee] = env?.auth?.info?.name )
               Agent
                 .watch(scope, ({ state }) => {
                   if (ignoreFirst) ignoreFirst = false
