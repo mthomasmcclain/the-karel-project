@@ -6,7 +6,61 @@ function Karel(world) {
     world = copy(world)
     this.world = world
 
-    const stonesAtLocation = (r, c, color) => world.stones.find(s => s.r === r && s.c === c && (s.color ? s.color === color : color === "blue"))
+    this.leftArrowPressed = false
+    this.rightArrowPressed = false
+    this.upArrowPressed = false
+    this.downArrowPressed = false
+    
+    this.leftNextStep = false
+    this.rightNextStep = false
+    this.upNextStep = false
+    this.downNextStep = false
+
+    this.variables = {}
+    this.eventFunctions = {}
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            if (!this.leftArrowPressed) this.leftNextStep = true
+            this.leftArrowPressed = true
+        }
+        if (e.key === 'ArrowRight') {
+            if (!this.rightArrowPressed) this.rightNextStep = true
+            this.rightArrowPressed = true
+        }
+        if (e.key === 'ArrowUp') {
+            if (!this.upArrowPressed) this.upNextStep = true
+            this.upArrowPressed = true
+        }
+        if (e.key === 'ArrowDown') {
+            if (!this.downArrowPressed) this.downNextStep = true
+            this.downArrowPressed = true
+        }
+    })
+
+    window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft') this.leftArrowPressed = false
+        if (e.key === 'ArrowRight') this.rightArrowPressed = false
+        if (e.key === 'ArrowUp') this.upArrowPressed = false
+        if (e.key === 'ArrowDown') this.downArrowPressed = false
+    })
+
+    this.isKeyPressed = (key) => {
+        switch (key) {
+            case 'ArrowLeft':
+                return this.leftArrowPressed
+            case 'ArrowRight':
+                return this.rightArrowPressed
+            case 'ArrowUp':
+                return this.upArrowPressed
+            case 'ArrowDown':
+                return this.downArrowPressed
+            default:
+                return false
+        }
+    }
+
+    const stonesAtLocation = (r, c, color) => world.stones.find(s => s.r === r && s.c === c && (s.color ? s.color === color : color === 'blue'))
     const wallAtLocation = (r, c, d) => world.walls.find(w => {
         //  equivalent wall location, but with West and South transformed to North and East
         const eq = {
@@ -79,9 +133,12 @@ export default function KarelWorld(world, source) {
     const endBlock = id => openBlocks[id] -= 1
     const done = () => finalStep = steps.length //  this is called before the last step is added to steps since our implementation looks to the step ahead
 
-    let resolveCurrentPromise = null
-    const step = () => new Promise(resolve => resolveCurrentPromise = resolve)
+    let resolveCurrentPromise = []
+    const step = () => new Promise(resolve => resolveCurrentPromise.push(resolve))
     const karel = new Karel(world)
+
+    // Expose karel for variable inspector
+    this.karel = karel
 
     //  functions is expected to be an object with keys corresponding to properly named
     //  async function definitions
@@ -108,9 +165,33 @@ export default function KarelWorld(world, source) {
         })
 
         //  resolve current promise so the next KarelWorldState is ready for next call to step
-        if (resolveCurrentPromise) resolveCurrentPromise()
+        for (const resolve of resolveCurrentPromise) resolve()
+        resolveCurrentPromise = []
 
         steps[index] = currentKarelWorldState
+        
+        if ('ArrowLeft' in karel.eventFunctions && !karel.eventFunctions.ArrowLeft.called && karel.leftNextStep) {
+            karel.eventFunctions.ArrowLeft.called = true
+            karel.eventFunctions.ArrowLeft.f()
+        }
+        if ('ArrowRight' in karel.eventFunctions && !karel.eventFunctions.ArrowRight.called && karel.rightNextStep) {
+            karel.eventFunctions.ArrowRight.called = true
+            karel.eventFunctions.ArrowRight.f()
+        }
+        if ('ArrowUp' in karel.eventFunctions && !karel.eventFunctions.ArrowUp.called && karel.upNextStep) {
+            karel.eventFunctions.ArrowUp.called = true
+            karel.eventFunctions.ArrowUp.f()
+        }
+        if ('ArrowDown' in karel.eventFunctions && !karel.eventFunctions.ArrowDown.called && karel.downNextStep) {
+            karel.eventFunctions.ArrowDown.called = true
+            karel.eventFunctions.ArrowDown.f()
+        }
+
+        karel.leftNextStep = false
+        karel.rightNextStep = false
+        karel.upNextStep = false
+        karel.downNextStep = false
+
         return currentKarelWorldState
     }
 

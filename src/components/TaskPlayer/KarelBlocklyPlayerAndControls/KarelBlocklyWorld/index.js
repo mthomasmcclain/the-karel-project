@@ -30,9 +30,25 @@ const KarelBlocklyWorld = (world, { toolbox, workspace }) => {
     // %1 is the corresponding block id
     Blockly.JavaScript.STATEMENT_SUFFIX = ';await step(); end_block(%1);'
 
+    // Event functions
+    let duplicate = false;
+    const eventFunctions = blocklyInstance.getBlocksByType('karel_on_key_press').reduce((acc, block) => {
+        const name = block.getFieldValue('KEY')
+        if (acc[name]) {
+            duplicate = true;
+        }
+        acc[name] = `async function ${name}() {\n${Blockly.JavaScript.blockToCode(block)}\nkarel.eventFunctions.${name}.called = false;\n}`
+        return acc
+    }, {})
+
     // TODO:  Instead of requiring the stable identifier "main", get/use first block of type "karel_main"
     const functions = {
-        main: `async function main() {\ntry {\n${Blockly.JavaScript.blockToCode(blocklyInstance.getBlockById('main'))}\n} catch (e) {\nkarel.error = e.message;\n}\n}`
+        main: `async function main() {${
+            duplicate ?
+            'karel.error = "Multiple functions for a single event!";\n' :
+            Object.keys(eventFunctions).map(key => `karel.eventFunctions.${key} = {called: false, f: ${key}}`).join(';\n')
+        }\ntry {\n${Blockly.JavaScript.blockToCode(blocklyInstance.getBlockById('main'))}\n} catch (e) {\nkarel.error = e.message;\n}\n}`,
+        ...eventFunctions
     }
 
     const procedureNames = Blockly.Procedures.allProcedures(blocklyInstance).map(proc => proc.map(([name]) => name)).flat();

@@ -494,6 +494,85 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
         }
     };
 
+    var karelIsKeyPressed = {
+        "type": "karel_is_key_pressed",
+        "message0": "%{BKY_KAREL_IS_KEY_PRESSED} %1",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "KEY",
+                "options": [
+                    [
+                        "up",
+                        "ArrowUp"
+                    ],
+                    [
+                        "down",
+                        "ArrowDown"
+                    ],
+                    [
+                        "left",
+                        "ArrowLeft"
+                    ],
+                    [
+                        "right",
+                        "ArrowRight"
+                    ]
+                ]
+            }
+        ],
+        "output": "Boolean",
+        "tooltip": "Check if a key is pressed"
+    };
+    
+    Blockly.Blocks['karel_is_key_pressed'] = {
+        init: function () {
+            this.jsonInit(karelIsKeyPressed);
+            this.setStyle('logic_blocks');
+        }
+    };
+
+    var karelOnKeyPress = {
+        "type": "karel_on_key_press",
+        "message0": "%{BKY_KAREL_ON_KEY_PRESS} %1 %2",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "KEY",
+                "options": [
+                    [
+                        "up",
+                        "ArrowUp"
+                    ],
+                    [
+                        "down",
+                        "ArrowDown"
+                    ],
+                    [
+                        "left",
+                        "ArrowLeft"
+                    ],
+                    [
+                        "right",
+                        "ArrowRight"
+                    ]
+                ]
+            },
+            {
+                "type": "input_statement",
+                "name": "DO"
+            }
+        ],
+        "tooltip": "Do something when a key is pressed"
+    };
+
+    Blockly.Blocks['karel_on_key_press'] = {
+        init: function () {
+            this.jsonInit(karelOnKeyPress);
+            this.setStyle('logic_blocks');
+        }
+    };
+
     var karelIfFrontDropdown = {
         "type": "karel_if_front_dropdown",
         "message0": "%{BKY_KAREL_IF_FRONT_IS} %1 %2 %3",

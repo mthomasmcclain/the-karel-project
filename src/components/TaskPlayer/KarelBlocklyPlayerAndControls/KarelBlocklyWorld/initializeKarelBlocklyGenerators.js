@@ -58,6 +58,50 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
         return Blockly.JavaScript['procedures_callreturn'](block)[0] + ';\n';
     };
 
+    Blockly.JavaScript['procedures_defreturn'] = function (block) {
+        var functionName = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('NAME'), Blockly.PROCEDURE_CATEGORY_NAME);
+
+        var codeStatements = Blockly.JavaScript.statementToCode(block, 'STACK');
+
+        for (var args = [], variables = block.getVars(), i = 0; i < variables.length; i++)
+            args[i] = Blockly.JavaScript.variableDB_.getName(variables[i], Blockly.VARIABLE_CATEGORY_NAME);
+        var argsAssignment = args.map(arg => 'karel.variables["' + arg + '"] = {value:' + arg + ', func:"' + functionName + '"};').join('\n');
+
+        var code = 'function ' + functionName + '(' + args.join(', ') + ') {\n' + argsAssignment + codeStatements + '}';
+        Blockly.JavaScript.definitions_['%' + functionName] = code;
+
+        return null;
+    };
+    Blockly.JavaScript['procedures_defreturn'] = function (block) {
+        var functionName = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('NAME'), Blockly.PROCEDURE_CATEGORY_NAME);
+
+        var codeStatements = Blockly.JavaScript.statementToCode(block, 'STACK');
+
+        var returnStatement = Blockly.JavaScript.valueToCode(block, 'RETURN', Blockly.JavaScript.ORDER_NONE) || '';
+        returnStatement && (returnStatement = Blockly.JavaScript.INDENT + "return " + returnStatement + ';\n');
+
+        for (var args = [], variables = block.getVars(), i = 0; i < variables.length; i++)
+            args[i] = Blockly.JavaScript.variableDB_.getName(variables[i], Blockly.VARIABLE_CATEGORY_NAME);
+        var argsAssignment = args.map(arg => 'karel.variables["' + arg + '"] = {value:' + arg + ', func:"' + functionName + '"};').join('\n');
+
+        var code = 'function ' + functionName + '(' + args.join(', ') + ') {\n' + argsAssignment + codeStatements + returnStatement + '}';
+        Blockly.JavaScript.definitions_['%' + functionName] = code;
+
+        return null;
+    };
+    
+    Blockly.JavaScript['variables_set'] = function (block) {
+        var value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_ASSIGNMENT) || '0';
+        var varName = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+        var code = 'if (karel.variables["' + varName + '"]) karel.variables["' + varName + '"].value = ' + value + '; else karel.variables["' + varName + '"] = {value:' + value + ', func:""};\n';
+        return code;
+    };
+    Blockly.JavaScript['variables_get'] = function (block) {
+        var varName = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.VARIABLE_CATEGORY_NAME);
+        var code = '(karel.variables["' + varName + '"] ? karel.variables["' + varName + '"].value : ((karel.error = "\\"' + varName + '\\" has not been initialized!") && 0))';
+        return [code, Blockly.JavaScript.ORDER_ATOMIC];
+    };
+
     Blockly.JavaScript['karel_turn_left'] = function () {
         return 'karel.turnLeft();\n'
     };
@@ -104,6 +148,18 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
             code += '}\n'
         }
 
+        return code;
+    };
+
+    Blockly.JavaScript['karel_is_key_pressed'] = function (block) {
+        var key = block.getFieldValue('KEY');
+        var code = 'karel.isKeyPressed("' + key + '")';
+        return [code, Blockly.JavaScript.ORDER_NONE];
+    };
+
+    Blockly.JavaScript['karel_on_key_press'] = function (block) {
+        var statements = Blockly.JavaScript.statementToCode(block, 'DO');
+        var code = statements;
         return code;
     };
 
