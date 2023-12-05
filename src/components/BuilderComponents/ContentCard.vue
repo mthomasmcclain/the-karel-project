@@ -8,7 +8,7 @@
     @dragstart="event => event.dataTransfer.setData('text/plain', id)"
   >
 
-    <div class="title">
+    <div class="title" v-if="showTitle">
       <TranslateId :id="content.name" />
     </div>
 
@@ -94,6 +94,11 @@ export default {
     TranslateId
   },
   props: {
+    showTitle: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
     id: {
       type: String,
       required: true

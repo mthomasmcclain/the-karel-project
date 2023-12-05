@@ -36,14 +36,15 @@ const initialLoad = async () => {
             const data = await Agent.state(id)
             let app
 
-            if (mode === 'card') {
+            if (mode === 'card' || mode === 'card-image') {
+                const showTitle = ( mode !== 'card-image')
                 const favorite = false
                 const contentType = metadata.active_type.startsWith('application/json;type=karel-map') ? 'map' : 'task'
                 const content = data
                 const isExpert = false
                 const embedded = true
                 document.body.style.overflow = 'hidden'
-                app = createApp(ContentCard, { id, favorite, contentType, content, isExpert, embedded })
+                app = createApp(ContentCard, { id, favorite, contentType, content, isExpert, embedded, showTitle })
             }
             else if (metadata.active_type === 'application/json;type=dashboard-config') {
                 app = createApp(Dashboard, { id })
