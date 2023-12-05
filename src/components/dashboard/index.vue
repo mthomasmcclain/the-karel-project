@@ -22,7 +22,7 @@
           <td>
             <div :class="{
               'active-status': true,
-              'active': userIsActive(assignee)
+              'active': now - lastAssigneeInteractionTimes[assignee] < 5000
             }"></div>
           </td>
           <td
@@ -33,7 +33,7 @@
               v-if="assigneeMapScopeStates[assignee]?.taskTimes?.[task] && dashboardConfig[mapId]?.embedded[task]?.states[assignee]"
               :key="dashboardConfig[mapId].embedded[task].states[assignee]"
               :task="task"
-              :active="userIsActive(assignee) && taskIdForNode(assigneeMapScopeStates[assignee]?.selected) === task"
+              :active="now - lastAssigneeInteractionTimes[assignee] < 5000 && taskIdForNode(assigneeMapScopeStates[assignee]?.selected) === task"
               :scope="dashboardConfig[mapId].embedded[task].states[assignee]"
               :timeOnTask="assigneeMapScopeStates[assignee]?.taskTimes[task]"
               :correct="assigneeMapScopeStates[assignee]?.taskSuccess?.[task]"
@@ -145,9 +145,6 @@
 
     },
     methods: {
-      userIsActive(user) {
-        return this.now - this.lastAssigneeInteractionTimes[user] < 5000
-      },
       taskIdForNode(nodeId) {
         return this.map.graph.nodes[nodeId]?.taskId
       },
@@ -177,6 +174,12 @@
 .item-cell {
   border: 2px solid transparent;
 }
+
+.active-status.active
+{
+  background: chartreuse;
+}
+
 .item-cell.active {
   border: 2px solid orange;
 }
