@@ -2,6 +2,7 @@
   <div
     :class="{
       'task-card': true,
+      'hide-title-row' : !showTitle,
       'not-embedded': !embedded
     }"
     draggable="true"
@@ -12,7 +13,7 @@
       <TranslateId :id="content.name" />
     </div>
 
-    <div class="author">
+    <div class="author" v-if="showTitle">
       <PILALogo
         v-if="isExpert"
         class="pila-svg"
@@ -165,6 +166,12 @@ export default {
   grid-gap: 5px;
   grid-template-areas:
     "title   title   title   title   title   title   title   title   title   author  author  author"
+    "preview preview preview preview preview preview preview preview preview preview preview preview"
+    "tags    tags    tags    tags    tags    tags    tags    tags    icons   icons   icons   icons";
+}
+.task-card.hide-title-row {
+  grid-template-rows: 122px 61px;
+  grid-template-areas:
     "preview preview preview preview preview preview preview preview preview preview preview preview"
     "tags    tags    tags    tags    tags    tags    tags    tags    icons   icons   icons   icons";
 }
