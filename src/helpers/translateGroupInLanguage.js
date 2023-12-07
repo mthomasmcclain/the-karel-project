@@ -11,8 +11,8 @@ export default async function translateGroupInLanguage(parentId, language) {
     
     // 2. get all translations for targets in lang
     const targets = breadcrumbs.map(bc => bc.id)
-    // const domain = 'translate-karel-alpha.netlify.app'
-    const domain = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
+    const domain = 'translate-karel-alpha.netlify.app'
+    // const domain = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
 
     const translatePromises = targets.map(t => Agent.query('translate', [t, language], domain))
     const translations = await Promise.all(translatePromises)
