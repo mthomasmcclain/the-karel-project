@@ -9,7 +9,7 @@ postgres:
   scopes:
     translatable_targets: SELECT * FROM translatable_targets
     parent_items: SELECT DISTINCT parent_item FROM translatable_targets
-    targets_for_parent: SELECT * FROM translatable_targets WHERE parent_item = $1;
+    targets_for_parent: SELECT * FROM translatable_targets WHERE parent_item = $1
   crossDomainQueries:
     translatable_targets:
       domains:
