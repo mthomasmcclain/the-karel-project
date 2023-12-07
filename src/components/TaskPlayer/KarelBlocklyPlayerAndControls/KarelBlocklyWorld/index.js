@@ -1,13 +1,20 @@
 //<script>//hack for syntax
 import Blockly from 'blockly/browser'
 import * as en from 'blockly/msg/en'
+import * as pt from 'blockly/msg/pt'
+import * as th from 'blockly/msg/th'
+import matchNavigatorLanguage from '../../../../matchNavigatorLanguage.js'
 import initializeKarelBlocklyGenerators from './initializeKarelBlocklyGenerators'
-import enTranslations from '../../../../helpers/karelTranslationsEN'
+import karelTranslations from '../../../../helpers/karelTranslations.js'
 import initializeKarelBlocks from '../../../../helpers/initializeKarelBlocks'
 
 import KarelWorld from "./KarelWorld"
 
-Blockly.setLocale({ ...en, ...enTranslations })
+const blocklyLocales = { en, pt, th } // blockly general, not karel blockly
+const langChoices = Object.keys(karelTranslations) // choices for KAREL
+const lang = matchNavigatorLanguage(langChoices)
+  
+Blockly.setLocale({ ...blocklyLocales[lang], ...karelTranslations[lang] })
 initializeKarelBlocks(Blockly)
 initializeKarelBlocklyGenerators(Blockly)
 

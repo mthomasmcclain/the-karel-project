@@ -213,7 +213,7 @@ export default {
     t(slug) { return this.$store.getters.t(slug) },
     localT(id) {
       if (isUUID(id)) {
-        return this.localTranslationMap[id] || `missing or empty ${id}`
+        return this.localTranslationMap?.[id] || `missing or empty ${id}`
       } else {
         return id
       }
