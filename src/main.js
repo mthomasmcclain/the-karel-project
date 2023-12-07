@@ -52,7 +52,16 @@ const initialLoad = async () => {
             else {
                 //  TODO: use type...
                 const player = vuePersistentComponent( data.graph ? MapPlayer : TaskPlayer )
-                app = createApp(player, { id })
+                const store = createStore(storeDef)
+
+                app = createApp(player, { id }).use(store)
+                store.dispatch('setLoading', true)
+                await Promise.all([
+                    store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt'])),
+                    store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
+                ])
+                store.dispatch('setLoading', false)
+
             }
             app.mount('#app')
         }
