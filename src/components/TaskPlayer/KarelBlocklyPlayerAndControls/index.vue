@@ -22,8 +22,8 @@
         @change="$emit('setStepSpeed', parseInt($event.target.value))"
       />
       <div class="speed-labels-row">
-        <span>({{ t('slow') }}</)</span>
-        <span>({{ t('fast') }}</)</span>
+        <span>({{ t('slow') }}) </span>
+        <span>({{ t('fast') }}) </span>
       </div>    
     </div>
 
