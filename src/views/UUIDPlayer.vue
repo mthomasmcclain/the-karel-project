@@ -19,7 +19,6 @@ export default {
 	},
 	computed: {
 		id() {
-			console.log('route id', this.$route.params.id)
 			return this.$route.params.id
 		},
 		ActualMapPlayer() {
