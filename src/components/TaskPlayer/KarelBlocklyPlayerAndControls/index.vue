@@ -4,27 +4,27 @@
       <button class="karel-button" @click="$emit('pause')">{{ t('pause') }}</button>
     </div>
     <div v-else-if="currentStepData && currentStepData.error">
-      <button class="karel-button" @click="reset">{{ t('reset') }}</</button>
+      <button class="karel-button" @click="reset">{{ t('reset') }}</button>
     </div>
     <div v-else-if="playingTerminated">
-      <button class="karel-button" @click="reset">{{ t('reset') }}</</button>
+      <button class="karel-button" @click="reset">{{ t('reset') }}</button>
     </div>
     <div v-else>
-      <button class="karel-button" @click="$emit('play')">{{ t('play') }}</</button>
-      <button class="karel-button" v-if="paused" @click="reset">{{ t('reset') }}</</button>
+      <button class="karel-button" @click="$emit('play')">{{ t('play') }}</button>
+      <button class="karel-button" v-if="paused" @click="reset">{{ t('reset') }}</button>
     </div>
 
     <div class="play-speed-wrapper">
-      <span><strong>{{ t('play-speed') }}</</strong></span>
+      <span><strong>{{ t('play-speed') }}</strong></span>
       <input
         type="range"
         min="1" max="26" step="1" :value="stepSpeed"
         @change="$emit('setStepSpeed', parseInt($event.target.value))"
       />
       <div class="speed-labels-row">
-        <span>({{ t('slow') }}) </span>
-        <span>({{ t('fast') }}) </span>
-      </div>    
+        <span>(  {{ t('slow') }}  )</span>
+        <span>(  {{ t('fast') }}  )</span>
+      </div>
     </div>
 
   </div>
