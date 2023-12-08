@@ -31,5 +31,6 @@ export default {
     "intermediate": "ed748103-6da7-4945-9110-c9a8fe9a82e5",
     "play-speed": "ee88aa56-780d-4b44-a34c-721565451413",
     "get-code": "ef70f330-c9dc-40dd-bd9c-b94944fcc795",
-    "start": "f2f9ca3d-d0ef-41ad-9581-425f849a6d31"
+    "start": "f2f9ca3d-d0ef-41ad-9581-425f849a6d31",
+    "hint": "660ab835-bfc1-463b-acb4-453cbef9af6e",
 }
