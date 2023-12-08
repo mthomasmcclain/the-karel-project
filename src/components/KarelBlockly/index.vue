@@ -10,10 +10,17 @@
 <script>
 import Blockly from 'blockly'
 import * as en from 'blockly/msg/en'
-import enTranslations from '../../helpers/karelTranslationsEN.js'
+import * as pt from 'blockly/msg/pt'
+import * as th from 'blockly/msg/th'
+import matchNavigatorLanguage from '../../matchNavigatorLanguage.js'
+import karelTranslations from '../../helpers/karelTranslations.js'
 import initializeKarelBlocks from '../../helpers/initializeKarelBlocks.js'
+
+const blocklyLocales = { en, pt, th } // blockly general, not karel blockly
+const langChoices = Object.keys(karelTranslations) // choices for KAREL
+const lang = matchNavigatorLanguage(langChoices)
   
-Blockly.setLocale({ ...en, ...enTranslations })
+Blockly.setLocale({ ...blocklyLocales[lang], ...karelTranslations[lang] })
 initializeKarelBlocks(Blockly)
 
 const generateToolbox = ({

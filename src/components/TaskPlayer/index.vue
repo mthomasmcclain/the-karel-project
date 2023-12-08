@@ -3,21 +3,21 @@
     <div class="left-col">
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
-          <b>Challenge:</b> {{ task.instructions }}
+          <b>{{ t('challenge') }}:</b> {{ localT(task.instructions) }}
           <p v-if="task.maxBlocks" class="max-blocks-p">
             Solve the challenge using <b>{{task.maxBlocks}}</b> or fewer blocks. The current code uses <b :style="`color: ${blocksUsed > task.maxBlocks ? 'red' : 'green'};`">{{ blocksUsed }}</b> blocks.
           </p>
         </div>
-        <button v-if="!karelBlockly?.settings.disabled" class="karel-button reset" @click="resetTask">Reset Code</button>
+        <button v-if="!karelBlockly?.settings.disabled" class="karel-button reset" @click="resetTask">{{ t('reset-code') }}</button>
       </div>
 
       <div class="worlds-wrapper">
         <div class="world-col left">
-          <h2>Start:</h2>
+          <h2>{{ t('start') }}:</h2>
           <KarelWorldRenderer :world="world" key="active-world" />
         </div>
         <div class="world-col right">
-          <h2>Goal:</h2>
+          <h2>{{ t('goal') }}:</h2>
           <KarelWorldRenderer :world="activePostWorld" key="goal-world"/>
         </div>
       </div>
@@ -75,14 +75,17 @@
       />
     </div>
   </div>
-  <div v-else>loading...</div>
+  <div v-else> ... {{ t('loading') }} ... </div>
 </template>
 
 <script>
+import { validate as isUUID } from 'uuid'
 import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls/index.vue'
 import KarelWorldRenderer from '../KarelWorldRenderer.vue'
 import KarelBlockly from '../KarelBlockly/index.vue'
 import worldsMatch from './karelWorldsMatch.js'
+import translateGroupInLanguage from '../../helpers/translateGroupInLanguage.js'
+import { karelBlocklyTranslateUUIDs } from '../../store/karelBlocklyUserMethodsToUUID.js'
 import {
   taskSuccessSwal,
   taskPartialSuccessSwal,
@@ -113,9 +116,12 @@ export default {
       hintUsed: false,
       activeScenarioIndex: 0,
       correctScenarios: null ,
+
+      localTranslationMap: {}
     }
   },
   async created() {
+
     if (!this.task) {
       const task = await Agent.state(this.id)
       this.karelBlockly = copy(task.karelBlockly)
@@ -123,6 +129,11 @@ export default {
       this.karelBlockly.settings.customizerMode = false
       this.correctScenarios = new Array(task.worlds.length).fill(null)
     }
+    
+    const language = this.$store.getters.language()
+    this.localTranslationMap  = await translateGroupInLanguage(this.id, language)
+    this.karelBlockly = await karelBlocklyTranslateUUIDs(this.karelBlockly, this.localTranslationMap)
+
   },
   watch: {
     async codeSolvesWorld(isCorrect) {
@@ -199,11 +210,20 @@ export default {
     }
   },
   methods: {
+    t(slug) { return this.$store.getters.t(slug) },
+    localT(id) {
+      if (isUUID(id)) {
+        return this.localTranslationMap?.[id] || `missing or empty ${id}`
+      } else {
+        return id
+      }
+    },
+
     getScenarioLabel(i) {
-      const start = `Scenario ${i+1}: `
-      let end = 'Not Tried'
-      if (this.correctScenarios[i]) end = 'Solved'
-      else if (this.correctScenarios[i] === false) end = 'Not Solved'
+      const start = `${this.t('scenario')} ${i+1}: `
+      let end = this.t('not-tried')
+      if (this.correctScenarios[i]) end = this.t('solved')
+      else if (this.correctScenarios[i] === false) end = this.t('not-solved')
       return start + end
     },
     startPlaying() {
@@ -212,7 +232,7 @@ export default {
     },
     showHint() {
       this.hintUsed = true
-      taskHintSwal(this.task.hint)
+      taskHintSwal( this.localT(this.task.hint) )
     },
     resetTask() {
       const { karelBlockly } = this.task
