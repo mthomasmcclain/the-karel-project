@@ -1,25 +1,25 @@
 import Swal from 'sweetalert2'
 
-export function howToUseMapCustomizerSwal() {
+export function howToUseMapCustomizerSwal(t) {
     return Swal.fire({
         icon: 'info',
         html:
-            '<div style="display:flex; flex-direction: column; align-items: flex-start;">' +
-                '<h3 style="margin-bottom: -10px;">To Add a Task to Your Map</h3>' +
-                '<p>Drag the task from the sidebar onto the map.</p>' +
+            `<div style="display:flex; flex-direction: column; align-items: flex-start;">` +
+                `<h3 style="margin-bottom: -10px;">${ t('to-add-a-task-to-your-map') }</h3>` +
+                `<p>${ t('drag-the-task-from-the-sidebar-onto-the-map') }</p>` +
                 
-                '<h3 style="margin-bottom: -10px;">To Remove a Task from Your Map</h3>' +
-                '<p>Click on a task and press the \'delete\' key.</p>' +
+                `<h3 style="margin-bottom: -10px;">${ t('to-remove-a-task-from-your-map') }</h3>` +
+                `<p>${ t('click-on-a-task-and-press-the-delete-key') }</p>` +
 
-                '<h3 style="margin-bottom: -10px;">To Add a Dependency Arrow</h3>' +
-                '<p>Click <em>next to</em>, but not on, a task and start dragging. Try it!</p>' +
+                `<h3 style="margin-bottom: -10px;">${ t('to-add-a-dependency-arrow') }</h3>` +
+                `<p>${ t('click-next-to-but-not-on-a-task-and-start-dragging-try-it') }</p>` +
 
-                '<h3 style="margin-bottom: -10px;">To Remove a Dependency Arrow</h3>' +
-                '<p>Click on an arrow and press the \'delete\' key.</p>' +
+                `<h3 style="margin-bottom: -10px;">${ t('to-remove-a-dependency-arrow') }</h3>` +
+                `<p>${ t('click-on-an-arrow-and-press-the-delete-key') }</p>` +
 
-            '</div>',
+            `</div>`,
 
-        confirmButtonText: 'Got It!'
+        confirmButtonText: t('got-it')
     })
 }
 
@@ -35,135 +35,163 @@ export function confirmCloseWithoutSaveSwal(t) {
     })
 }
 
-export function duplicateNameSwal(contentName) {
-    return Swal.fire(
-        'Choose a Different Name',
-        `You already have content named ${contentName}. Choose a different name to save your task. To edit '${contentName}', select it from the gallery.`,
-        'warning'
-    )
-}
-
-export function noBlankNameSwal() {
-    return Swal.fire(
-        'Content Requires a Name',
-        `You must provide a name to save.`,
-        'warning'
-    )
-}
-
-export function copyContentSwal() {
+export function copyContentSwal(t) {
     return Swal.fire({
-        title: 'Copy Expert Content?',
-        text: `You are cannot edit pre-loaded, expert content. Would you like to create a copy?`,
+        title: t('copy-expert-content'),
+        text: t('you-cannot-edit-pre-loaded-expert-content-would-you-like-to-create-a-copy'),
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Copy Task'
+        confirmButtonText: t('copy-task')
     })
 }
 
-export function copyConfirmSwal() {
+export function copyConfirmSwal(t) {
     return Swal.fire({
-        title: 'Copy Complete',
-        text: `Your can now edit your copy of this content.`,
+        title: t('copy-complete'),
+        text: t('you-can-now-edit-your-copy-of-this-content'),
         icon: 'success',
-        confirmButtonText: 'OK'
+        confirmButtonText: t('ok')
     })
 }
 
-export function invalidResizeSwal(message) {
-    return Swal.fire('Invalid World Resize', message, 'warning')
+export function invalidResizeStonesSwal(t) {
+    return Swal.fire(
+        t('invalid-world-resize'),
+        t('cant-change-world-size-stone-would-be-outside-world-boundary'),
+        'warning'
+    )
 }
-export function invalidResizeStonesSwal() { return invalidResizeSwal('Can\'t change world size. Stone would be outside world boundary.') }
-export function invalidResizeWallsSwal() { return invalidResizeSwal('Can\'t change world size. Wall would be outside world or on world edge.') }
-export function invalidResizeKarelSwal() { return invalidResizeSwal('Can\'t change world size. Karel would be outside world boundary bounds.') }
 
-export function confirmDeleteSwal(name) {
+export function invalidResizeWallsSwal(t) {
+    return Swal.fire(
+        t('invalid-world-resize'),
+        t('cant-change-world-size-wall-would-be-outside-world-or-on-world-edge'),
+        'warning'
+    )
+}
+
+export function invalidResizeKarelSwal(t) { 
+    return Swal.fire(
+        t('invalid-world-resize'),
+        t('cant-change-world-size-karel-would-be-outside-world-boundary'),
+        'warning'
+    )
+}
+
+export function confirmDeleteSwal(t) {
     return Swal.fire({
-        title: 'Are you sure?',
-        text: `Confirm deletion${name ? ` of '${name}'` : ''}. You cannot undo this.`,
+        title: t('are-you-sure'),
+        text: t('confirm-deletion-you-cannot-undo-this'),
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Delete'
+        confirmButtonText: t('delete')
     })
 }
 
-export function taskSuccessSwal() {
-    const bodyOptions = ['Good job!', 'Nice Work.', 'You did it!', 'Well Done!', 'Awesome']
+export function taskSuccessSwal(t) {
+    const bodyOptions = [
+        t('good-job'),
+        t('nice-work'),
+        t('you-did-it'),
+        t('well-done'),
+        t('awesome')
+    ]
     const body = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
     const header = ''
     return Swal.fire(header, body, 'success')
 }
-export function taskIncorrectSwal(errorMessage) {
+export function taskIncorrectSwal(t, errorMessage) {
     if (errorMessage) {
         return Swal.fire(
-            'Karel had a problem.', errorMessage, 'warning')
+            t('karel-had-a-problem'),
+            errorMessage, // TODO: Test if these errors arrive here translated
+            'warning'
+        )
     } else {
         return Swal.fire(
-            'Not quite...',
-            'Karel\'s world does not exactly match the goal state.',
+            t('not-quite'),
+            t('karels-world-does-not-exactly-match-the-goal-state'),
             'warning'
         )
     }
 }
 
-export function taskPartialSuccessSwal(numRemainingWorlds) {
-    const bodyOptions = ['Good job!', 'Nice Work.', 'You did it!', 'Well Done!', 'Awesome.']
+export function taskPartialSuccessSwal(t) {
+    const bodyOptions = [
+        t('good-job'),
+        t('nice-work'),
+        t('you-did-it'),
+        t('well-done'),
+        t('awesome')
+    ]
     var body = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
-    body += "<br> Let's see if the same code also solves the " + (numRemainingWorlds == 1 ? "other scenario." : ("remaining " + numRemainingWorlds.toString() + " scenarios."))
+    body += "<br> "
+    body += t('lets-see-if-the-code-also-solves-the-remaining-scenarios')
     const header = ''
     return Swal.fire(header, body, 'success')
 }
-export function taskTooManyBlocksSwal() {
-    var body = "You solved the task, but used too many blocks."
+export function taskTooManyBlocksSwal(t) {
+    var body = t('you-solved-the-task-but-used-too-many-blocks.')
     const header = ''
     return Swal.fire(header, body, 'warning')
 }
 
-export function mapCompleteSwal() {
-    const bodyOptions = ['Good job!', 'Nice Work!', 'You did it!', 'Well Done!', 'Awesome!']
+export function mapCompleteSwal(t) {
+    const bodyOptions = [
+        t('good-job'),
+        t('nice-work'),
+        t('you-did-it'),
+        t('well-done'),
+        t('awesome')
+    ]
     const bodyStart = bodyOptions[Math.floor(Math.random() * bodyOptions.length)]
-    const body = bodyStart + '  All tasks correctly completed.'
-    const header = 'Map Complete'
+    const body = bodyStart + ' ' + t('all-tasks-correctly-completed')
+    const header = t('map-complete')
     return Swal.fire(header, body, 'success')
 }
 
 
-export function taskHintSwal(hint) {
-    return Swal.fire('Hint:', hint, 'question')
+export function taskHintSwal(t, hint) {
+    return Swal.fire(
+        `${t('hint')}:`, // hint label
+        hint, // hint contents should alread be translated
+        'question'
+    )
 }
 
-export function renameMapSwal(incomingName = '... name your map ...') {
+export function renameMapSwal(t, incomingName) {
+    if (!incomingName) incomingName = `... ${t('name-your-map')} ...`
     return Swal.fire({
-        title: 'Update Map Name',
+        title: t('update-map-name'),
         input: 'text',
         inputValue: incomingName,
         showCancelButton: true,
-        confirmButtonText: 'Update Map Name',
+        confirmButtonText: t('update-map-name'),
     })
 }
 
-export function importMapSwal() {
+export function importMapSwal(t) {
     return Swal.fire({
-        title: 'Import Map',
-        text: 'Paste the id of the map you wish to import.',
+        title: t('import-map'),
+        text: t('paste-the-id-of-the-map-you-wish-to-import'),
         input: 'text',
         showCancelButton: true,
-        confirmButtonText: 'Import',
+        confirmButtonText: t('import'),
     })
 }
 
-export function getCodeSwal(id) {
+export function getCodeSwal(t, id) {
     return Swal.fire({
-        title: 'Share Code',
-        html: `Share this code with anyone you want. <br><br> ${id}`,
+        title: t('share-code'),
+        html: `${t('share-this-code-with-anyone-you-want')}. <br><br> ${id}`,
         type: 'success'
     })
 }
 
-export function mapNotFoundSwal() {
+export function mapNotFoundSwal(t) {
     return Swal.fire(
-        'Not Found',
-        `Unable to find a map with the provided access code.`,
+        t('not-found'),
+        t('unable-to-find-a-map-with-the-provided-access-code'),
         'warning'
     )
 }

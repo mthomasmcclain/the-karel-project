@@ -131,6 +131,7 @@ export default {
     }
   },
   methods: {
+    t(slug) { return this.$store.getters.t(slug) },
     close() {
       if (Agent.embedded) Agent.close()
       else this.$emit('exit')
@@ -147,7 +148,7 @@ export default {
       this.taskSuccess[id] = true
       if (this.allTasksSuccessful) {
         await new Promise( res => setTimeout(res, 1000))
-        await mapCompleteSwal()
+        await mapCompleteSwal(this.t)
         this.$emit('exit')
       }
     },

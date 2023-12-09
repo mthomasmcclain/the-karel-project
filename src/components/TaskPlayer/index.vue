@@ -141,23 +141,23 @@ export default {
     async codeSolvesWorld(isCorrect) {
       if (isCorrect) {
         if (this.task.maxBlocks && this.blocksUsed > this.task.maxBlocks) {
-          await taskTooManyBlocksSwal()
+          await taskTooManyBlocksSwal(this.t)
           return
         }
 
 
         this.correctScenarios[this.activeScenarioIndex] = true
         const incompleteScenarios = this.correctScenarios.filter(d => !d).length
-        if (incompleteScenarios) await taskPartialSuccessSwal(incompleteScenarios)        
+        if (incompleteScenarios) await taskPartialSuccessSwal(this.t)        
       }
       else if (this.error) {
         this.correctScenarios[this.activeScenarioIndex] = false
-        await taskIncorrectSwal(this.error)
+        await taskIncorrectSwal(this.t, this.error)
       }
       else if (isCorrect === null) { /* waiting... */ }
       else {
         this.correctScenarios[this.activeScenarioIndex] = false
-        await taskIncorrectSwal()
+        await taskIncorrectSwal(this.t)
       }
     },
     'karelBlockly.workspace'() {
@@ -174,7 +174,7 @@ export default {
       deep: true,
       async handler(val) {
         if (val.every(val => val)) {
-          await taskSuccessSwal()
+          await taskSuccessSwal(this.t)
           // TODO: Think about how to get rid of this delay haaaack
           // which is needed because of sweetaltert using
           // a body style !important to get its transition to work
@@ -234,7 +234,7 @@ export default {
     },
     showHint() {
       this.hintUsed = true
-      taskHintSwal( this.localT(this.task.hint) )
+      taskHintSwal( this.t, this.localT(this.task.hint) )
     },
     resetTask() {
       const { karelBlockly } = this.task

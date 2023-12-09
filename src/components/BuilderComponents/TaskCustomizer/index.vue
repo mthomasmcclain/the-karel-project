@@ -331,9 +331,9 @@ export default {
       }
       const wallsValid = !isAnyWallOutOfBounds && !isAnyWallOnWorldEastEdge
       
-      if (!areAllStonesInBounds) invalidResizeStonesSwal()
-      else if (!isKarelInBounds) invalidResizeKarelSwal()
-      else if (!wallsValid) invalidResizeWallsSwal()
+      if (!areAllStonesInBounds) invalidResizeStonesSwal(this.t)
+      else if (!isKarelInBounds) invalidResizeKarelSwal(this.t)
+      else if (!wallsValid) invalidResizeWallsSwal(this.t)
       else {
         this.activeWorld.preWorld[param] = newN
         this.activeWorld.postWorld[param] = newN

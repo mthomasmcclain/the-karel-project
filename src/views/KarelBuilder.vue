@@ -123,7 +123,7 @@ export default {
       this.editing = true
     },
     async confirmDeleteContent() {
-      const { isConfirmed } = await confirmDeleteSwal()
+      const { isConfirmed } = await confirmDeleteSwal(this.t)
       if (isConfirmed) {
         this.$store.dispatch('delete', this.modalContent)
         this.closeModal()

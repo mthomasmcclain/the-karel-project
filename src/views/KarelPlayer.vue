@@ -85,19 +85,20 @@ export default {
     }
   },
   methods: {
+    t(slug) { return this.$store.getters.t(slug) },
     async addMap() {
       this.$store.dispatch('setLoading', true)
-      const { value, isDismissed } = await importMapSwal()
+      const { value, isDismissed } = await importMapSwal(this.t)
       if (isDismissed) {
         this.$store.dispatch('setLoading', false)
       } else {
         this.$store.dispatch('loadMapAndEmbedded', value)
-          .catch(() => mapNotFoundSwal() )
+          .catch(() => mapNotFoundSwal(this.t) )
           .finally(() => this.$store.dispatch('setLoading', false))
       }
     },
     async confirmDelete(id) {
-      const { isConfirmed } = await confirmDeleteSwal(this.$store.getters.name(id))
+      const { isConfirmed } = await confirmDeleteSwal(this.t)
       if (isConfirmed) this.$store.dispatch('delete', id)
     }
   }

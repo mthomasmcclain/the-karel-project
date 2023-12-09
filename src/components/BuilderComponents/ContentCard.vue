@@ -114,6 +114,8 @@ export default {
     }
   },
   computed: {
+
+    // TODO IMPORTANT!  Wire Card View to Use Store, Ignore this
     slugs() {
       return {
         "start-world": "1c9ab441-fab0-4bde-99fa-87d257b5516f",
@@ -141,16 +143,17 @@ export default {
     }
   },
   methods: {
+    t(slug) { return this.$store.getters.t(slug) },
     getCode() {
-      getCodeSwal(this.id)
+      getCodeSwal(this.t, this.id)
     },
     async handleEditRequest(id) {
       if (!this.isExpert) this.$emit('edit', id)
       else {
-        const { isConfirmed } = await copyContentSwal()
+        const { isConfirmed } = await copyContentSwal(this.t)
         if (!isConfirmed) return
 
-        await copyConfirmSwal()
+        await copyConfirmSwal(this.t)
         this.$emit('copy', id)
       } 
     }
