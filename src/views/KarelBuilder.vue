@@ -132,7 +132,7 @@ export default {
     async confirmCloseModal() {
       if (!this.editing) this.closeModal()
       else {
-        const { isConfirmed } = await confirmCloseWithoutSaveSwal()
+        const { isConfirmed } = await confirmCloseWithoutSaveSwal(this.t)
         if (isConfirmed) this.closeModal()
       }
     },

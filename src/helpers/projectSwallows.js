@@ -24,13 +24,13 @@ export function howToUseMapCustomizerSwal() {
 }
 
 
-export function confirmCloseWithoutSaveSwal() {
+export function confirmCloseWithoutSaveSwal(t) {
     return Swal.fire({
-        title: 'Confirm Close',
-        text: 'Are you sure you want to close without saving? Unsaved changes will be lost.',
+        title: t('confirm-close'),
+        text: t('are-you-sure-you-want-to-close-without-saving-unsaved-changes-will-be-lost'),
         icon: 'question',
-        confirmButtonText:'Close without Saving',
-        cancelButtonText: 'Continue Editing',
+        confirmButtonText:t('close-without-saving'),
+        cancelButtonText: t('continue-editing'),
         showCancelButton: true,
     })
 }
