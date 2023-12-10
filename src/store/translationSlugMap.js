@@ -16,6 +16,8 @@ export default {
     "good-job": "2bb629d0-bedd-442b-a5b5-ad6f06fc1279",
     "beginner": "2e623bbb-9f40-442e-b861-3e214075a538",
     "unable-to-find-a-map-with-the-provided-access-code": "2ef7375c-10b9-4ca5-b563-7dad851bd472",
+    "front-is-blocked": "30b27ccb-1555-44b3-bf28-26543eb9b076",
+    "no-stones-to-pick": "367d1fe1-96b2-4acb-8660-26b4f9af0490",
     "parsons-problem": "49dc014d-d37f-4d59-9e48-a87f5eff53d7",
     "now-quite": "4b540e06-bdbd-43ee-90b0-67151840a657",
     "reset-code": "55d840b3-5175-4eb1-bd19-5b0bca2e1189",
@@ -78,5 +80,5 @@ export default {
     "start": "f2f9ca3d-d0ef-41ad-9581-425f849a6d31",
     "ok": "f96fa0ff-c4c0-4227-9061-99f7554733a4",
     "to-add-a-dependency-arrow": "fbee4d33-466f-4fd9-ae59-69e7209cf744",
-    "copy-expert-content": "ff7b2a70-33af-4d10-8330-85008c30bef0"
+    "copy-expert-content": "ff7b2a70-33af-4d10-8330-85008c30bef0",
 }

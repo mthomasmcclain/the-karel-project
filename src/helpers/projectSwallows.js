@@ -104,7 +104,7 @@ export function taskIncorrectSwal(t, errorMessage) {
     if (errorMessage) {
         return Swal.fire(
             t('karel-had-a-problem'),
-            errorMessage, // TODO: Test if these errors arrive here translated
+            t(errorMessage),
             'warning'
         )
     } else {
