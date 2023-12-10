@@ -104,11 +104,12 @@ export default {
     }
   },
   methods: {
+    t(slug) { return this.$store.getters.t(slug) },
     launchHowTo() {
-      howToUseMapCustomizerSwal()
+      howToUseMapCustomizerSwal(this.t)
     },
     async launchRenameMapSwal() {
-      const res = await renameMapSwal(this.name)
+      const res = await renameMapSwal(this.t, this.name)
       if (res.value) {
         this.name = res.value
         this.edit()
