@@ -13,16 +13,19 @@ postgres:
   crossDomainQueries:
     translatable_targets:
       domains:
+        - app.pilaproject.org
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
       body: SELECT * FROM translatable_targets
     parent_items:
       domains:
+        - app.pilaproject.org
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
       body: SELECT DISTINCT parent_item FROM translatable_targets
     targets_for_parent:
       domains:
+        - app.pilaproject.org
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
       body: SELECT * FROM translatable_targets WHERE parent_item = $1
