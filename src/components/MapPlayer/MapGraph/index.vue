@@ -45,6 +45,7 @@
         :correct="editMode || previewMode ? undefined : taskAtNodeIsCorrect(nodeId)"
         :highlighted="nodeId === newFromNode || nodeId === newToNode || selected === nodeId"
         :activeColor="visited ? 'gainsboro' : 'orange'"
+        :candli="nodeId?.startsWith('https://pila.cand.li/')"
       />
     </div>
   </div>

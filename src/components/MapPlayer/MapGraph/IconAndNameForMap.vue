@@ -16,7 +16,12 @@
       <TranslateId :id="label" el="tspan" />
     </text>
 
+    <img
+      v-if="candli"
+      src="/candli.png"
+    />
     <SvgPositioner
+      v-else
       :h="54" :xPos="60" :yPos="40"
       :rotation="-90"
       anchor="center center"
@@ -65,6 +70,11 @@ export default {
       type: String,
       default: '#f9e6e3',
     },
+    candli: {
+      type: Boolean,
+      required: false,
+      default: false,
+    }
   }
 }
 </script>
