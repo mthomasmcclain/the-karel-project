@@ -3,7 +3,7 @@
   <img
     v-if="candli"
     src="/candli.png"
-    style="position: absolute; height: 60%; top: 10%; left: 20%;"
+    style="position: absolute; height: 60%; top: 10%; left: 20%; z-index: 1;"
   />
   <svg
     class="icon-and-name"
