@@ -1,5 +1,10 @@
 <template>
 
+  <img
+    v-if="candli"
+    src="/candli.png"
+    style="position: absolute; height: 60%; top: 10%; left: 20%;"
+  />
   <svg
     class="icon-and-name"
     viewBox="0 0 120 100"
@@ -15,13 +20,8 @@
     >
       <TranslateId :id="label" el="tspan" />
     </text>
-
-    <img
-      v-if="candli"
-      src="/candli.png"
-    />
     <SvgPositioner
-      v-else
+      v-if="!candli"
       :h="54" :xPos="60" :yPos="40"
       :rotation="-90"
       anchor="center center"
