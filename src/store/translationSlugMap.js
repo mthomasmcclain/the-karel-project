@@ -1,4 +1,5 @@
 export default {
+    "not-quite": "02ced556-8edf-4ab4-b7f3-d9c80d5edb9d",
     "full-toolbox": "0810af1a-64ef-427b-a62e-396a8cc6a119",
     "not-solved": "08b31c47-9764-4a9f-a8bf-b11a0a672ca6",
     "cant-change-world-size-karel-would-be-outside-world-boundary": "0aa8c0ad-1666-4449-a0b2-681a5411247e",

@@ -3,7 +3,7 @@
     <div id="worlds-and-workspace">
       
       <div class="start-world-area">
-        <h4>{{ t('start-world') }}{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
+        <h4>{{ t('start') }}{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-start-world"
           :world="activeWorld.preWorld"
@@ -12,7 +12,7 @@
       </div>
       
       <div class="end-world-area">
-        <h4>{{ t('goal-world') }}{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
+        <h4>{{ t('goal') }}{{ worlds.length > 1 ? ` (Scenario ${activeWorldIndex + 1})`: '' }}:</h4>
         <KarelWorldRendererAndEditor
           class="edit-post-world"
           :world="activeWorld.postWorld"
