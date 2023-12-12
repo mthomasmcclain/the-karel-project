@@ -5,10 +5,7 @@
 
 <script>
 import matchNavigatorLanguage from '../matchNavigatorLanguage.js'
-const LOCAL_LANGUAGE = matchNavigatorLanguage(['en', 'th', 'pt'])
 const DOMAIN_DEFAULT = 'translate-karel-alpha.netlify.app'
-// DEV DOMAIN FOR TESTING
-// const DOMAIN_DEFAULT = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
 
 export default {
 	name: "translate-id",
@@ -20,7 +17,6 @@ export default {
 		language: {
 			type: String,
 			required: false,
-			default: LOCAL_LANGUAGE
 		},
 		translationDomain: {
 			type: String,
@@ -29,17 +25,35 @@ export default {
 		}
 	},
 	data: () => ({
+		fetchedLanguage: null,
 		displayString: null
 	}),
 	async created() {
+		if (this.language) {
+			this.fetchedLanguage = this.language
+		} else {
+			this.fetchedLanguage = await matchNavigatorLanguage(['en', 'pt', 'th'])
+		}
 
 		const res = await Agent.query(
 			'translate',
-			[ this.id, this.language ],
+			[ this.id, this.fetchedLanguage ],
 			this.translationDomain
 		)
-		if (res && res[0] && res[0].value) this.displayString = res[0].value
-		else this.displayString = `${this.language} ${this.id}`
-}
+		const translation = res?.[0]?.value
+		if (translation) {
+			this.displayString = translation
+		} else { // look for breadcrumb
+			const allBreadcrumbs = await Agent.query('translatable_targets')
+			const breadcrumb = allBreadcrumbs[this.id]
+			const breadcrumbIsDesiredLanguage = breadcrumb?.language === this.fetchedLanguage
+
+			if (breadcrumbIsDesiredLanguage) {
+				this.displayString = breadcrumb.value
+			} else { // nothing found
+				this.displayString = `${this.fetchedLanguage} ${this.id}`
+			}
+		}	
+	}
 }
 </script>
