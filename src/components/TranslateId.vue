@@ -46,10 +46,11 @@ export default {
 		} else { // look for breadcrumb
 			const allBreadcrumbs = await Agent.query('translatable_targets')
 			const breadcrumb = allBreadcrumbs.find(obj => obj.id === this.id)
+
 			const breadcrumbIsDesiredLanguage = breadcrumb?.language === this.fetchedLanguage
 
 			if (breadcrumbIsDesiredLanguage) {
-				this.displayString = breadcrumb.value
+				this.displayString = breadcrumb.source_string
 			} else { // nothing found
 				this.displayString = `${this.fetchedLanguage} ${this.id}`
 			}
