@@ -224,10 +224,29 @@ export default {
               active_type: 'application/json;type=translatable_targets&version=1.0.1'
             })
           } catch (e) {
-            console.warn(`Error writing translation breadcrumbb, item: ${newId}, target: ${crumbId}`, e)
+            console.warn(`Error writing translation breadcrumb, item: ${newId}, target: ${crumbId}`, e)
           }          
         })
-      } // end of "if task"
+      } else if (type === 'map') {
+        // add map's name as translatable_item, put it in a "translation group" with
+        // the map's id.  will be only item in group.
+        const crumbId = uuid()
+        try {
+          const active = {
+            source_string: data.name,
+            language: getters.language(),
+            parent_item: newId
+          }
+          Agent.create({
+            id: crumbId,
+            active,
+            active_type: 'application/json;type=translatable_targets&version=1.0.1'
+          })
+        } catch (e) {
+          console.warn(`Error writing translation breadcrumb, item: ${newId}, target: ${crumbId}`, e)
+        }
+        data.name = crumbId
+      }
       const payload = { type, data, id: newId }
       commit('addToLocalContent', payload)
       dispatch('saveToKnowFireCore', payload)

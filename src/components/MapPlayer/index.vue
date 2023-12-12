@@ -24,7 +24,11 @@
         <div>Back</div><div>Home</div>
       </div>
 
-      <h3>{{ taskIsActive ? graph.nodes[selected].label : name }}</h3>
+      <h3>
+        <TranslateId :id="headerId" :key="headerId" />
+        
+      </h3>
+
       <div></div>
       
     </div>
@@ -60,12 +64,13 @@
 <script>
 import { vueEmbedComponent } from '@knowlearning/agents/vue.js'
 import MapGraph from './MapGraph/index.vue'
+import TranslateId from '../TranslateId.vue'
 import { mapCompleteSwal } from '../../helpers/projectSwallows.js'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
-  components: { MapGraph, vueEmbedComponent },
+  components: { MapGraph, vueEmbedComponent, TranslateId },
   props: {
     id: {
       type: String,
@@ -121,6 +126,9 @@ export default {
     activeTask() {
         if (!this.taskIsActive) return null
         else return this.graph.nodes[this.selected].taskId
+    },
+    headerId() {
+      return this.taskIsActive ? this.graph.nodes[this.selected].label : this.name
     },
     allTasksSuccessful() {
       return (

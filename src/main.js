@@ -50,12 +50,6 @@ const initialLoad = async () => {
                 app = createApp(Dashboard, { id })
             }
             else {
-                // 1. push live
-                // 2. verify karel types
-                // change to else-if
-                // add app not found handler in final else
-                console.log('TODO, use metadata.active_type!')
-                console.log(metadata.active_type)
                 //  TODO: use type...
                 const player = vuePersistentComponent( data.graph ? MapPlayer : TaskPlayer )
                 const store = createStore(storeDef)

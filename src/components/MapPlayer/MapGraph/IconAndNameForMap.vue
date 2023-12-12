@@ -13,7 +13,7 @@
       text-anchor="middle"
       alignment-baseline="center"
     >
-      {{ label }}
+      <TranslateId :id="label" el="tspan" />
     </text>
 
     <SvgPositioner
@@ -37,10 +37,11 @@
 <script>
 import SvgPositioner from '../../SvgPositioner.vue'
 import Karel from '../../../assets/KarelVueSvg.vue'
+import TranslateId from '../../TranslateId.vue'
 
 export default {
   name: 'icon-and-name',
-  components: { SvgPositioner, Karel },
+  components: { SvgPositioner, Karel, TranslateId },
   props: {
     locked: {
       type: Boolean,

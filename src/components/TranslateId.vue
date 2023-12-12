@@ -1,5 +1,7 @@
 <template>
-	<span>{{ displayString ? displayString : id }}</span>
+	<component :is="el">
+		{{ displayString ? displayString : id }}
+	</component>
 
 </template>
 
@@ -22,7 +24,13 @@ export default {
 			type: String,
 			required: false,
 			default: DOMAIN_DEFAULT
+		},
+		el: {
+			type: String,
+			required: false,
+			default: 'span'
 		}
+
 	},
 	data: () => ({
 		fetchedLanguage: null,

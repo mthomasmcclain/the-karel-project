@@ -34,7 +34,7 @@
           draggable="true"
           @dragstart="event => event.dataTransfer.setData('text/plain', task)"
         >
-          {{ $store.getters.name(task) }}
+          <TranslateId :id="$store.getters.name(task)" />
         </div>
       </div>
 
@@ -71,16 +71,36 @@
 
 <script>
 import MapGraph from '../MapPlayer/MapGraph/index.vue'
+import TranslateId from '../TranslateId.vue'
 import { renameMapSwal, howToUseMapCustomizerSwal } from '../../helpers/projectSwallows.js'
 import defaultNewMapState from '../../store/defaultNewMapState.js'
+import { validate as isUuid } from 'uuid'
+
 const copy = x => JSON.parse(JSON.stringify(x))
 
 export default {
-  components: { MapGraph },
+  components: { MapGraph, TranslateId },
   props: {
     id: {
       type: String,
       required: true
+    }
+  },
+  async created() {
+    // TODO:  look for translations
+    const translationsForIdInLanguage = false
+    if (translationsForIdInLanguage) {
+      // TODO inject translations for instructions, hint, name, and methods
+    } else { 
+      // fallback, get and inject initial strings for uuid translation breadcrumbs
+      const source_string_map = (await Agent.query('targets_for_parent', [this.id]))
+        .reduce((acc,{id, source_string}) => {
+          return { ...acc, [id]: source_string }
+        }, {})
+      const fields = ['name']
+      fields
+        .filter(field => isUuid(this[field]) && !!source_string_map[this[field]])
+        .forEach(field => this[field] = source_string_map[this[field]])
     }
   },
   data() {

@@ -1,5 +1,5 @@
 <template>
-  <div
+  <div v-if="!loading"
     :class="{
       'task-card': true,
       'hide-title-row' : !showTitle,
@@ -10,7 +10,7 @@
   >
 
     <div class="title" v-if="showTitle">
-      <TranslateId :id="content.name" />
+      <TranslateId v-if="content?.name" :id="content.name" />
     </div>
 
     <div class="author" v-if="showTitle">
@@ -36,7 +36,7 @@
       </div>
     </div>
     <div v-else class="preview-area">
-      <GraphPreview :graph="content.graph" />
+      <GraphPreview v-if="content?.graph" :graph="content.graph" />
     </div>
 
     <div class="tags" v-if="contentType === 'task'">
@@ -123,10 +123,12 @@ export default {
   },
   async created() {
     this.translationMap = await translateSet('all')
+    this.loading = false
   },
   data() {
     return {
-      translationMap: {}
+      translationMap: {},
+      loading: true
     }
   },
   computed: {
