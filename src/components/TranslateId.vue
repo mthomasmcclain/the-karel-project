@@ -52,7 +52,7 @@ export default {
 		if (translation) {
 			this.displayString = translation
 		} else { // look for breadcrumb
-			const allBreadcrumbs = await Agent.query('translatable_targets')
+			const allBreadcrumbs = await Agent.query('translatable_targets', [], 'the-karel-project.netlify.app')
 			const breadcrumb = allBreadcrumbs.find(obj => obj.id === this.id)
 
 			const breadcrumbIsDesiredLanguage = breadcrumb?.language === this.fetchedLanguage
