@@ -236,9 +236,9 @@ export default {
       this.hintUsed = true
       taskHintSwal( this.t, this.localT(this.task.hint) )
     },
-    resetTask() {
-      const { karelBlockly } = this.task
-      this.karelBlockly = copy(karelBlockly)
+    async resetTask() {
+      const originalKarelBlockly = copy(this.task.karelBlockly)
+      this.karelBlockly = await karelBlocklyTranslateUUIDs(originalKarelBlockly, this.localTranslationMap)
       this.playing = false
       this.currentStepData = null
     }
