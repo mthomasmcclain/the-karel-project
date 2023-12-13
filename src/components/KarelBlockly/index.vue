@@ -166,12 +166,20 @@ export default {
         zoom: {
           controls: false,
           wheel: false,
-          startScale: 0.82,
-          maxScale: 0.82,
-          minScale: 0.82,
+          startScale: 0.72,
+          maxScale: 0.72,
+          minScale: 0.72,
           scaleSpeed: 1.2,
           pinch: false
         },
+        move:{
+          scrollbars: {
+            horizontal: true,
+            vertical: true
+          },
+          drag: true,
+          wheel: true
+        }
       })
       // Set Initial Workspace
       Blockly.Xml.domToWorkspace( Blockly.Xml.textToDom(this.workspace), this.workspaceInstance)
