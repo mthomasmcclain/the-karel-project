@@ -9,6 +9,26 @@ function getKeyByValue(object, value) {
 
 function copy(x) { return JSON.parse(JSON.stringify(x)) }
 
+function findElementsByProperty(parsedXml, property) {
+  const elements = []
+
+  const traverse = (obj) => {
+    if (obj instanceof Object) {
+      if (obj[property]) {
+        elements.push(obj[property])
+      }
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          traverse(obj[key])
+        }
+      }
+    }
+  }
+
+  traverse(parsedXml)
+  return elements
+}
+
 
 export async function karelBlocklyUserMethodsToUUID(kb) {
     const targets = {} // uuid => name string
@@ -16,7 +36,9 @@ export async function karelBlocklyUserMethodsToUUID(kb) {
     const ws = await parser.parseStringPromise(kb.workspace)
     const tb = await parser.parseStringPromise(kb.toolbox)
 
-    ws.xml.block.forEach(bl => {
+
+    const workspaceBlocks = findElementsByProperty(ws,'block').flat()
+    workspaceBlocks.forEach(bl => {
       if (bl.$.type === 'procedures_callnoreturn') {
         const methodName = bl.mutation[0].$.name
         let uuidKey = getKeyByValue(targets, methodName)
@@ -39,7 +61,9 @@ export async function karelBlocklyUserMethodsToUUID(kb) {
         }
       }
     })
-    tb.xml.Block.forEach(bl => {  // Achtung 'B'lock here versus 'b'lock above
+
+    const toolboxBlocks = findElementsByProperty(tb,'Block').flat()
+    toolboxBlocks.forEach(bl => {  // Achtung 'B'lock here versus 'b'lock above
       if (bl.$.type === 'procedures_callnoreturn' && bl.mutation)  { // the final one is a placeholder for new, no mutation w/name
         const methodName = bl.mutation[0].$.name
         let uuidKey = getKeyByValue(targets, methodName)
@@ -67,7 +91,10 @@ export async function karelBlocklyTranslateUUIDs(kb, map) {
     const ws = await parser.parseStringPromise(kb.workspace)
     const tb = await parser.parseStringPromise(kb.toolbox)
 
-    ws.xml.block.forEach(bl => {
+
+
+    const workspaceBlocks = findElementsByProperty(ws,'block').flat()
+    workspaceBlocks.forEach(bl => {
       if (bl.$.type === 'procedures_callnoreturn') {
         const target = bl.mutation[0].$.name
         if (isUUID(target) && map[target]) bl.mutation[0].$.name = map[target]
@@ -75,10 +102,12 @@ export async function karelBlocklyTranslateUUIDs(kb, map) {
       } else if (bl.$.type === 'procedures_defnoreturn') {
         const target = bl.field[0]._
         if (isUUID(target) && map[target]) bl.field[0]._ = map[target]
-        else console.warn(`unable to translate user method ${target}`) 
+        else  console.warn(`unable to translate user method ${target}`) 
       }
     })
-    tb.xml.Block.forEach(bl => {  // Achtung 'B'lock here versus 'b'lock above
+
+    const toolboxBlocks = findElementsByProperty(tb,'block').flat()
+    toolboxBlocks.forEach(bl => {
       if (bl.$.type === 'procedures_callnoreturn' && bl.mutation)  { // the final one is a placeholder for new, no mutation w/name
         const target = bl.mutation[0].$.name
         if (isUUID(target) && map[target]) bl.mutation[0].$.name = map[target]
