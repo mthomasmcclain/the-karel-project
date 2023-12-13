@@ -38,7 +38,7 @@ export default {
 	}),
 	async created() {
 		// for legacy content names, print the "id" if not a uuid. 
-		if !(isUUID(this.id)) {
+		if (!isUUID(this.id)) {
 			this.displayString = this.id
 			return
 		}
