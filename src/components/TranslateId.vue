@@ -7,7 +7,10 @@
 
 <script>
 import matchNavigatorLanguage from '../matchNavigatorLanguage.js'
-const DOMAIN_DEFAULT = 'translate-karel-alpha.netlify.app'
+const DOMAIN_SELF = 'the-karel-project.netlify.app'
+// const DOMAIN_SELF = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:9899'
+const TRANS_DOMAIN = 'translate-karel-alpha.netlify.app'
+// const TRANS_DOMAIN = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061'
 
 export default {
 	name: "translate-id",
@@ -20,11 +23,7 @@ export default {
 			type: String,
 			required: false,
 		},
-		translationDomain: {
-			type: String,
-			required: false,
-			default: DOMAIN_DEFAULT
-		},
+	
 		el: {
 			type: String,
 			required: false,
@@ -46,13 +45,14 @@ export default {
 		const res = await Agent.query(
 			'translate',
 			[ this.id, this.fetchedLanguage ],
-			this.translationDomain
+			TRANS_DOMAIN
 		)
 		const translation = res?.[0]?.value
 		if (translation) {
 			this.displayString = translation
 		} else { // look for breadcrumb
-			const allBreadcrumbs = await Agent.query('translatable_targets', [], 'the-karel-project.netlify.app')
+
+			const allBreadcrumbs = await Agent.query('translatable_targets', [], DOMAIN_SELF)
 			const breadcrumb = allBreadcrumbs.find(obj => obj.id === this.id)
 
 			const breadcrumbIsDesiredLanguage = breadcrumb?.language === this.fetchedLanguage
