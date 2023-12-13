@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { validate as isUUID } from 'uuid'
 import matchNavigatorLanguage from '../matchNavigatorLanguage.js'
 const DOMAIN_SELF = 'the-karel-project.netlify.app'
 // const DOMAIN_SELF = '19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:9899'
@@ -36,6 +37,13 @@ export default {
 		displayString: null
 	}),
 	async created() {
+		// for legacy content names, print the "id" if not a uuid. 
+		if !(isUUID(this.id)) {
+			this.displayString = this.id
+			return
+		}
+
+
 		if (this.language) {
 			this.fetchedLanguage = this.language
 		} else {
