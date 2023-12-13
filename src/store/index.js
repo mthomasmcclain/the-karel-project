@@ -138,9 +138,17 @@ export default {
       commit('cycleLanguage')
     }, 
 
-    loadContent: async ({ getters, dispatch }) => {
-      const allMapIds = getters.mapIds()
-      let allTaskIds = [ ...getters.taskIds() ]
+    loadContent: async ({ getters, dispatch, state }) => {
+      const allMapIds = Array.from( new Set([ ...expertMapIds, ...getters.mapIds()]) )
+      let allTaskIds = Array.from( new Set([ ...expertTaskIds, ...getters.taskIds()]) )
+      
+      // this with the above  seems like setting to itself
+      // it's a hatch for when reattaching to user store run states that
+      // do not include newly added expert content.  boo
+      state.mapIds = allMapIds
+      state.taskIds = allTaskIds
+      state.expertIds = [ ...expertMapIds, ...expertTaskIds ]
+
       getters.embeddedTaskIds().forEach(id => {
         if (!allTaskIds.includes(id)) allTaskIds.push(id)
       })
