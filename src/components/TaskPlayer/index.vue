@@ -291,6 +291,7 @@ export default {
 }
 
 .karel-button.reset {
+  white-space: nowrap;
   background: darkred;
 }
 
