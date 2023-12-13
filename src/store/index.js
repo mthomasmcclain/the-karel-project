@@ -282,6 +282,7 @@ export default {
       return newId
     },
     loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
+      console.log('in loadMapAndEmbedded', 'id => ', id)
       // verify it loads and is a map
       if (!isUUID(id)) return Promise.reject(new Error('Cannot load map'))
 
