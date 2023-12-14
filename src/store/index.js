@@ -56,9 +56,14 @@ export default {
       state.mapIds.forEach(mapId => {
         const mapContent = state.loadedContent[mapId]
         if (mapContent) {
-          const nodes = mapContent.graph.nodes
-          const taskIds = Object.values(nodes).map(nodeVal => nodeVal.taskId)
-          output = [...output, ...taskIds]
+          if (!mapContent.graph?.nodes) {
+            console.warn('Bad data for map', mapId)
+          }
+          else {
+            const nodes = mapContent.graph.nodes
+            const taskIds = Object.values(nodes).map(nodeVal => nodeVal.taskId)
+            output = [...output, ...taskIds]
+          }
         }
       })
       return output
@@ -282,7 +287,6 @@ export default {
       return newId
     },
     loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
-      console.log('in loadMapAndEmbedded', 'id => ', id)
       // verify it loads and is a map
       if (!isUUID(id)) return Promise.reject(new Error('Cannot load map'))
 
