@@ -131,7 +131,7 @@ export function taskPartialSuccessSwal(t) {
     return Swal.fire(header, body, 'success')
 }
 export function taskTooManyBlocksSwal(t) {
-    var body = t('you-solved-the-task-but-used-too-many-blocks.')
+    var body = t('you-solved-the-task-but-used-too-many-blocks')
     const header = ''
     return Swal.fire(header, body, 'warning')
 }

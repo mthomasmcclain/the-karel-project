@@ -51,7 +51,7 @@ export default {
     "has-if": "a4cfb508-0a9f-4951-a361-5e29b1c15941",
     "karels-world-does-not-exactly-match-the-goal-state": "ace82252-511a-49ef-bcd5-94040788512b",
     "to-remove-a-dependency-arrow": "ad45b6b1-e128-4762-af82-8132d748baad",
-    "challenge-alt": "b0777258-58f4-4c4f-b2c5-1aff004f803c",
+    "unused": "b0777258-58f4-4c4f-b2c5-1aff004f803c",
     "solved": "b6edc989-d28b-4ac1-acc2-21cb09aa2812",
     "reset": "b855bbcc-0c46-4941-a5a6-89b04637ae41",
     "close-without-saving": "b9912f33-d0ce-4e2b-af22-351d16ee92dc",
