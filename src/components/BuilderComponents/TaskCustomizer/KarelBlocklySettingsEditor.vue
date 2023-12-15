@@ -80,7 +80,8 @@ export default {
         karel_variable: "Variable blocks",
         karel_repeat: "'Repeat' Block",
         karel_while: "'While' Block",
-        karel_define: "Define Function"
+        karel_define: "Define Function",
+        karel_events: "Events"
       }[rawName]
     }
   }

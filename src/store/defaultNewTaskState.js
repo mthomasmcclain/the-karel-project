@@ -68,6 +68,10 @@ export default {
                 "karel_define": {
                     "active": false,
                     "limit": -1
+                },
+                "karel_events": {
+                    "active": false,
+                    "limit": -1
                 }
             },
             "showToolbox": true,

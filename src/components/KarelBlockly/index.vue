@@ -27,6 +27,7 @@ const generateToolbox = ({
   karel_repeat=true,
   karel_while=true,
   karel_define=true,
+  karel_events=true,
   custom=''
 }={}) => `
   <xml>
@@ -36,7 +37,10 @@ const generateToolbox = ({
     ${ karel_place ? `<Block type="karel_place_stone" id="karel_place" />` : '' }
     ${ karel_pickup ? `<Block type="karel_pickup_stone" id="karel_pickup" />` : '' }
     ${ karel_if ? `<Block type="karel_if_dropdown" id="karel_if" />` : '' }
-    ${ karel_ifelse ? `<Block type="karel_ifelse" id="karel_ifelse" />` : '' }
+    ${ karel_ifelse ? `
+        <Block type="karel_ifelse" id="karel_ifelse" />
+        <Block type="controls_if" id="karel_nativeifelse" />
+        ` : '' }
   ${
     // From https://github.com/google/blockly/tree/master/blocks
     karel_variable ? `
@@ -47,7 +51,6 @@ const generateToolbox = ({
     <Block type="logic_negate" id="karel_neg" />
     <Block type="math_number" id="karel_number" />
     <Block type="math_arithmetic" id="karel_arithmetic" />
-    <Block type="controls_whileUntil" id="karel_nativewhile" />
     ` : ''
   }
     ${ karel_repeat ? `
@@ -60,10 +63,17 @@ const generateToolbox = ({
           </Block>
         ` : ''
     }
-    ${ karel_while ? `<Block type="karel_while_dropdown" id="karel_while" />` : '' }
+    ${ karel_while ?`
+    <Block type="karel_while_dropdown" id="karel_while" />
+    <Block type="controls_whileUntil" id="karel_nativewhile" />
+    ` : '' }
     ${ karel_define ? `
     <Block type="procedures_defnoreturn" id="karel_define" />
     <Block type="procedures_defreturn" id="karel_definereturn" />
+    ` : '' }
+    ${ karel_events ? `
+    <Block type="karel_is_key_pressed" id="karel_is_key_pressed" />
+    <Block type="karel_on_key_press" id="karel_on_key_press" />
     ` : '' }
   </xml>
 `
@@ -78,7 +88,8 @@ const settingNameToTypeName = {
   karel_variable: 'karel_variable',
   karel_repeat: 'controls_repeat_ext',
   karel_while: 'karel_while_dropdown',
-  karel_define: 'procedures_defnoreturn'
+  karel_define: 'procedures_defnoreturn',
+  karel_events: 'karel_events'
 }
 
 // path data for lock/unlock icons from font-awesome, creative commons

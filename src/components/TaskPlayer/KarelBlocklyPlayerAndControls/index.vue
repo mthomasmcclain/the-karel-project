@@ -14,6 +14,19 @@
       <button class="karel-button" v-if="paused" @click="reset">reset</button>
     </div>
 
+    <div v-if="!playingTerminated && !playing">
+      <button class="karel-button" @click="stepByStep">step</button>
+    </div>
+
+    <div v-if="karelBlocklyWorld">
+        <table class="karel-variables">
+            <tr v-for="(varData, varName) in karelBlocklyWorld.karel.variables">
+                <td>{{ `${varData.func ? varData.func + ': ' : ''}${varName}` }}</td>
+                <td>{{ varData.value }}</td>
+            </tr>
+        </table>
+    </div>
+
     <div class="play-speed-wrapper">
       <span><strong>Play Speed</strong></span>
       <input
@@ -36,6 +49,7 @@
     props: [ 'playing', 'stepSpeed', 'preWorld', 'workspace', 'toolbox' ],
     data() {
       return {
+        karelBlocklyWorld: null,
         currentStepData: null
       }
     },
@@ -46,7 +60,8 @@
           else {
             const { preWorld, toolbox, workspace } = this
             this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace })
-            this.step()
+            this.step(this.stopOnFirstStep)
+            this.stopOnFirstStep = false
           }
         }
         else if (this.nextStep) clearTimeout(this.nextStep)
@@ -65,24 +80,32 @@
     },
     methods: {
       reset() {
+        this.stopOnFirstStep = false
         this.karelBlocklyWorld = null
         this.currentStepData = null
         this.$emit('step', null)
         this.$emit('pause')
       },
-      step() {
+      step(stepByStep = false) {
         this
           .karelBlocklyWorld
           .step(this.currentStepData ? this.currentStepData.step + 1 : 0)
           .then( stepData => {
             this.currentStepData = stepData
             this.$emit('step', stepData)
-            if (stepData.isDone || stepData.error) this.$emit('pause')
+            if (stepData.isDone || stepData.error || stepByStep) this.$emit('pause')
             else this.nextStep = setTimeout(() => this.step(), 1000/this.stepSpeed)
           })
           .catch(error => {
             console.warn(error)
           })
+      },
+      stepByStep() {
+        if (!this.karelBlocklyWorld) {
+            this.stopOnFirstStep = true;
+            this.$emit('play');
+        }
+        else this.step(true)
       }
     }
   }
@@ -116,6 +139,18 @@
     appearance: none;
     background: none;
     border: 2px solid gainsboro;
+}
+
+.karel-variables {
+    border-collapse: collapse;
+    border: 1px solid #A55B80;
+    margin-top: 10px;
+    font-size: 0.8rem;
+}
+
+.karel-variables td {
+    border: 1px solid #A55B80;
+    padding: 2px 4px;
 }
 
 </style>

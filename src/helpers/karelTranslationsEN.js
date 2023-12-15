@@ -19,6 +19,8 @@ export default {
     KAREL_IFELSE_IF: "if",
     KAREL_IFELSE_ELSEIF: "else if",
     KAREL_IFELSE_ELSE: "else",
+    KAREL_IS_KEY_PRESSED: "is key pressed",
+    KAREL_ON_KEY_PRESS: "on key press",
     KAREL_PRESENT: "present",
     KAREL_NOT_PRESENT: "not present",
     KAREL_WHILE: "while",
