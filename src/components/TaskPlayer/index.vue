@@ -15,6 +15,15 @@
         <KarelWorldRenderer :world="world" :objective="activePostWorld" />
       </div>
 
+      <div style="display: flex;">
+        <div style="width: 64px" >
+          <StoneAndNumber :n="world.pickedStones?.blue ?? 0" obj="-1" numPosition="middle" color="blue" />
+        </div>
+        <div style="width: 64px" >
+          <StoneAndNumber :n="world.pickedStones?.red ?? 0" obj="-1" numPosition="middle" color="red" />
+        </div>
+      </div>
+
       <!-- Scenario Selector, if More Than One -->
       <div v-if="task.worlds.length > 1" class="scenario-selector">
         <div
@@ -81,13 +90,14 @@ import {
   taskTooManyBlocksSwal,
   taskHintSwal
 } from '../../helpers/projectSwallows.js'
+import StoneAndNumber from '../BuilderComponents/TaskCustomizer/KarelWorldRendererAndEditor/StoneAndNumberVueSvg.vue'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
 
 export default {
   name: 'task-player',
-  components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls },
+  components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls, StoneAndNumber },
   props: {
     id: {
       type: String,

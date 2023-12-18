@@ -117,6 +117,18 @@
             >
               Remove World {{ i + 1 }}
             </button>
+            <br>
+            <div>
+              Blue starting count: {{ activeWorld.preWorld.pickedStones?.blue ?? 0 }}
+              <button @click="changeStartingCount('blue', -1)">-</button>
+              <button @click="changeStartingCount('blue', 1)">+</button>
+            </div>
+            <br>
+            <div>
+              Red starting count: {{ activeWorld.preWorld.pickedStones?.red ?? 0 }}
+              <button @click="changeStartingCount('red', -1)">-</button>
+              <button @click="changeStartingCount('red', 1)">+</button>
+            </div>
           </div>
         </div>
       </div>
@@ -227,6 +239,11 @@ export default {
     removeWorld(i) {
       this.activeWorldIndex = 0
       this.worlds.splice(i,1)
+    },
+    changeStartingCount(color, delta) {
+      if (!this.activeWorld.preWorld.pickedStones) this.activeWorld.preWorld.pickedStones = { blue: 0, red: 0 }
+      this.activeWorld.preWorld.pickedStones[color] += delta
+      if (this.activeWorld.preWorld.pickedStones[color] < 0) this.activeWorld.preWorld.pickedStones[color] = 0
     },
     updateWorld(world) {
       const {

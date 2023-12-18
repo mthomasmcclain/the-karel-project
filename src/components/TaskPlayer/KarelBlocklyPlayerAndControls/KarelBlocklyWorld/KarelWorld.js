@@ -4,6 +4,7 @@ const copy = data => _.cloneDeep(data)
 
 function Karel(world) {
     world = copy(world)
+    if(!world.pickedStones) world.pickedStones = { blue: 0, red: 0 }
     this.world = world
 
     this.leftArrowPressed = false
@@ -85,7 +86,7 @@ function Karel(world) {
     this.pickStone = (color) => {
         if (!this.stonesPresent(color)) this.error = 'No ' + color + ' stones to pick!'
         else {
-            world.pickedStones += 1
+            world.pickedStones[color] += 1
             stonesUnderKarel(color).n -= 1
             // don't allow stones when n < 1
             world.stones = world.stones.filter(s => s.n > 0)
@@ -93,9 +94,9 @@ function Karel(world) {
     }
 
     this.placeStone = (color) => {
-        if (world.pickedStones === 0) this.error = 'Karel has no ' + color + ' stones to place!'
+        if (world.pickedStones[color] === 0) this.error = 'Karel has no ' + color + ' stones to place!'
         else {
-            if (world.pickedStones) world.pickedStones -= 1
+            world.pickedStones[color] -= 1
             const stones = stonesUnderKarel(color)
             if (!stones) world.stones.push({ r: world.karelRow, c: world.karelCol, n: 1, color })
             else stones.n += 1

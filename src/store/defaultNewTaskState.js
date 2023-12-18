@@ -13,6 +13,7 @@ export default {
                 karelDir: 'East',
                 walls: [],
                 stones: [],
+                pickedStones: { blue: 0, red: 0 },
             },
             postWorld: {
                 nCols: 3,
@@ -22,6 +23,7 @@ export default {
                 karelDir: 'East',
                 walls: [],
                 stones: [ { r: 2, c: 1, n: 1} ],
+                pickedStones: { blue: 0, red: 0 },
             }
         }
     ],
