@@ -81,6 +81,7 @@ export default {
             "customizerMode": false
         },
         workspace: '<xml xmlns="https://developers.google.com/blockly/xml"><block type="karel_main" id="main" deletable="false" x="44" y="0"></block></xml>',
+        worldWorkspace: '<xml xmlns="https://developers.google.com/blockly/xml"><block type="karel_world_main" id="world_main" deletable="false" x="44" y="0"></block><block type="karel_world_end_conditions" id="world_end_conditions" deletable="false" x="44" y="100"></block></xml>',
         toolbox: `
             <xml>
               <Block type="karel_move" id="karel_move" />

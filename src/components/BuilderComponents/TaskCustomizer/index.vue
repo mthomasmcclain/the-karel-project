@@ -15,6 +15,7 @@
         <KarelBlockly
             v-model:toolbox="karelBlockly.toolbox"
             v-model:workspace="karelBlockly.workspace"
+            v-model:worldWorkspace="karelBlockly.worldWorkspace"
             v-model:settings="karelBlockly.settings"
             v-model:highlight="karelBlockly.highlight"
         />
@@ -175,6 +176,7 @@ export default {
       karelBlockly,
       tags
     } = taskToStartCustomizingFrom
+    if (!karelBlockly.worldWorkspace) karelBlockly.worldWorkspace = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="karel_world_main" id="world_main" deletable="false" x="44" y="0"></block><block type="karel_world_end_conditions" id="world_end_conditions" deletable="false" x="44" y="100"></block></xml>';
 
     // customizerMode toggles if uesr can lock/unlock fn blocks
     karelBlockly.settings.customizerMode = true

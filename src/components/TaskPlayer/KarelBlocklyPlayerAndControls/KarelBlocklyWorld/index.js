@@ -11,8 +11,7 @@ Blockly.setLocale({ ...en, ...enTranslations })
 initializeKarelBlocks(Blockly)
 initializeKarelBlocklyGenerators(Blockly)
 
-const KarelBlocklyWorld = (world, { toolbox, workspace }) => {
-
+const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
     // initialize new blockly instance with given workspace and toolbox
     // TODO find way to initialize blockly w/o DOM element
     const detachedDOMElement = document.createElement('div')
@@ -20,6 +19,11 @@ const KarelBlocklyWorld = (world, { toolbox, workspace }) => {
     document.body.appendChild(detachedDOMElement)
     const blocklyInstance = Blockly.inject(detachedDOMElement, { toolbox })
     Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(workspace), blocklyInstance)
+    let blocklyWorldInstance;
+    if (worldWorkspace) {
+        blocklyWorldInstance = Blockly.inject(detachedDOMElement, { toolbox })
+        Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(worldWorkspace), blocklyWorldInstance)
+    }
 
     Blockly.JavaScript.init(blocklyInstance) // required to use blockToCode... intuitive isn't it?
     // these workds are used internally and need to be switched out
@@ -47,8 +51,21 @@ const KarelBlocklyWorld = (world, { toolbox, workspace }) => {
             duplicate ?
             'karel.error = "Multiple functions for a single event!";\n' :
             Object.keys(eventFunctions).map(key => `karel.eventFunctions.${key} = {called: false, f: ${key}}`).join(';\n')
-        }\ntry {\n${Blockly.JavaScript.blockToCode(blocklyInstance.getBlockById('main'))}\n} catch (e) {\nkarel.error = e.message;\n}\n}`,
+        }\ntry {\n${worldWorkspace ? 'while (true) { await step(); }' : Blockly.JavaScript.blockToCode(blocklyInstance.getBlockById('main'))}\n} catch (e) {\nkarel.error = e.message;\n}\n}`,
         ...eventFunctions
+    }
+
+    if (worldWorkspace) {
+        Blockly.JavaScript.init(blocklyWorldInstance)
+
+        functions.world_main = `async function world_main() {\ntry {\nwhile (true) {\n${Blockly.JavaScript.blockToCode(blocklyWorldInstance.getBlockById('world_main'))}\n}\n} catch (e) {\nkarel.error = e.message;\n}\n}`;
+        
+        let endConditions = `try {\n${Blockly.JavaScript.blockToCode(blocklyWorldInstance.getBlockById('world_end_conditions'))}\n} catch (e) {\nkarel.error = e.message;\n}`;
+        endConditions = endConditions.replaceAll(';await step();', '');
+        endConditions = endConditions.replaceAll(/start_block\('.+?'\);/g, '')
+        endConditions = endConditions.replaceAll(/end_block\('.+?'\);/g, '')
+        endConditions = endConditions.replace('} catch (e) {', '\treturn false;\n} catch (e) {');
+        world.endConditions = new Function('karel', endConditions);
     }
 
     const procedureNames = Blockly.Procedures.allProcedures(blocklyInstance).map(proc => proc.map(([name]) => name)).flat();
@@ -62,6 +79,14 @@ const KarelBlocklyWorld = (world, { toolbox, workspace }) => {
         Blockly.JavaScript.blockToCode(block)
     })
 
+    if (worldWorkspace) {
+        const worldProcedureNames = Blockly.Procedures.allProcedures(blocklyWorldInstance).map(proc => proc.map(([name]) => name)).flat();
+        worldProcedureNames.forEach(name => {
+            const block = Blockly.Procedures.getDefinition(name, blocklyWorldInstance)
+            Blockly.JavaScript.blockToCode(block)
+        })
+    }
+
     // must access internal property... did I mention the jankness?
     // what is this % prefix you say? that is how the blockly folks decided
     // to keep user defined names from overwriting intenals... jjjjjj...ank
@@ -73,7 +98,7 @@ const KarelBlocklyWorld = (world, { toolbox, workspace }) => {
             }
         })
         
-    const source = Object.values(functions).join(';') + '; main().then(done);'
+    const source = Object.values(functions).join(';') + (worldWorkspace ? '; world_main()' : '') + '; main().then(done);'
     return new KarelWorld(world, source)
 }
 

@@ -38,6 +38,41 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
         return statements_program
     };
 
+    Blockly.JavaScript['karel_world_main'] = function (block) {
+        var statements_program = Blockly.JavaScript.statementToCode(block, 'program');
+        return statements_program
+    };
+
+    Blockly.JavaScript['karel_world_end_conditions'] = function (block) {
+        var statements_program = Blockly.JavaScript.statementToCode(block, 'end_conditions');
+        return statements_program
+    };
+
+    Blockly.JavaScript['karel_world_fail'] = function () {
+        return 'karel.error = "You failed, try again!"'
+    };
+
+    Blockly.JavaScript['karel_world_success'] = function () {
+        return 'return true'
+    };
+
+    Blockly.JavaScript['karel_stone_count'] = function (block) {
+        var color = block.getFieldValue('COLOR');
+        return ['karel.world.pickedStones.' + color, Blockly.JavaScript.ORDER_NONE];
+    };
+
+    Blockly.JavaScript['karel_world_stone_count'] = function (block) {
+        var color = block.getFieldValue('COLOR');
+        return ['karel.world.stones.filter(stone => stone.color === "' + color + '").reduce((acc, stone) => acc + stone.n, 0)', Blockly.JavaScript.ORDER_NONE];
+    };
+
+    Blockly.JavaScript['karel_world_spawn_stone'] = function (block) {
+        var color = block.getFieldValue('COLOR');
+        var row = Blockly.JavaScript.valueToCode(block, 'ROW', Blockly.JavaScript.ORDER_NONE) || '0';
+        var col = Blockly.JavaScript.valueToCode(block, 'COL', Blockly.JavaScript.ORDER_NONE) || '0';
+        return 'karel.spawnStone("' + color + '", ' + row + ', ' + col + ');\n';
+    };
+
     Blockly.JavaScript['karel_move'] = function () {
         return 'karel.move();\n'
     };
@@ -162,6 +197,20 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
         var code = statements;
         return code;
     };
+
+    Blockly.JavaScript['math_random_int'] = function(block) {
+        var a = Blockly.JavaScript.valueToCode(block, 'FROM', Blockly.JavaScript.ORDER_NONE) || '0';
+        var b = Blockly.JavaScript.valueToCode(block, 'TO', Blockly.JavaScript.ORDER_NONE) || '0';
+        return [`Math.floor(Math.random() * (${b} - ${a} + 1) + ${a})`, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+    }
+
+    var wait_counter = 0;
+    Blockly.JavaScript['karel_wait'] = function (block) {
+        var time = Blockly.JavaScript.valueToCode(block, 'TIME', Blockly.JavaScript.ORDER_NONE) || '0';
+        var code = 'for (let wait_counter_' + wait_counter + ' = 0; wait_counter_' + wait_counter + ' < ' + time + '; ++wait_counter_' + wait_counter + ') { await step(); }\n';
+        ++wait_counter;
+        return code
+    }
 
     var while_count = 0;
     Blockly.JavaScript['karel_while_dropdown'] = function (block) {

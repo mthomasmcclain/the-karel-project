@@ -103,6 +103,18 @@ function Karel(world) {
         }
     }
 
+    this.spawnStone = (color, row, column) => {
+        row = row - 1
+        column = column - 1
+        if (row < 0 || row >= world.nRows) this.error = 'Row out of bounds!'
+        else if (column < 0 || column >= world.nCols) this.error = 'Column out of bounds!'
+        else {
+            const stones = stonesAtLocation(row, column, color)
+            if (!stones) world.stones.push({ r: row, c: column, n: 1, color })
+            else stones.n += 1
+        }
+    }
+
     this.frontIsClear = () => {
         if (world.karelDir === 'South' && world.karelRow === world.nRows - 1) return false
         if (world.karelDir === 'East' && world.karelCol === world.nCols - 1) return false
@@ -161,7 +173,7 @@ export default function KarelWorld(world, source) {
             activeBlocks: Object.keys(openBlocks).filter(k => openBlocks[k] > 0),
             world: karel.world,
             error: karel.error,
-            isDone: finalStep === index,
+            isDone: karel.world.endConditions ? await karel.world.endConditions(karel) : finalStep === index,
             step: index
         })
 
