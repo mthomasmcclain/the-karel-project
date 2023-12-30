@@ -41,7 +41,7 @@ export default {
     loadedContent: state => () => state.loadedContent,
     mapIds: state => () => state.mapIds,
     mapIdsByDifficulty: state => difficulty => {
-      const validChoices = [ 'Beginner', 'Intermediate', 'Advanced' ]
+      const validChoices = [ 'beginner', 'intermediate', 'challenge' ]
       if (validChoices.includes(difficulty)) {
         return state.mapIds.filter(id => mapIdToDifficulty[id] === difficulty)
       } else {

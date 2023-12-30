@@ -10,7 +10,7 @@
         <div @click="$emit('toggleBlock', name)">
           <span class="checkbox">{{ active ? '☑' : '☐' }}</span>
           <span :class="!active ? 'inactive-name' : ''">
-            {{ t(name) }}
+            {{ tBlockName(name) }}
           </span>
         </div>
         <div v-show="active">
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import _ from 'lodash'
+
 export default {
   props: {
     settings: {
@@ -69,7 +71,11 @@ export default {
     possibleKarelBlocks() { return Object.entries(this.settings.blocks) },
   },
   methods: {
-    t(slug) { return this.$store.getters.t(slug) }
+    t(slug) { return this.$store.getters.t(slug) },
+    tBlockName(blockName) {
+      const nameAsSlug = _.kebabCase(blockName)  // e.g. has_while => has-while
+      return this.t(nameAsSlug)
+    }
   }
 }
 </script>

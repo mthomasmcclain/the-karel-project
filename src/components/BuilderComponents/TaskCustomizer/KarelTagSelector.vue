@@ -30,12 +30,13 @@
 <script>
 const TAG_CHOICES = [ "beginner", "intermediate", "challenge" ]
 export default {
-  name: 'App',
+  name: 'karel-tag-selector',
   props: [ 'tags' ],
   computed: {
     customTagChoices() { return TAG_CHOICES }
   },
   methods: {
+    t(slug) { return this.$store.getters.t(slug) },
     toggleSelected(tag) {
       const newCustomTags = [ ...this.tags.customTags ]
       const index = newCustomTags.indexOf(tag)

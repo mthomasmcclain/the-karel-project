@@ -203,6 +203,7 @@ export default {
   margin: 6px 12px;
   font-size: 0.9em;
   cursor: pointer;
+  text-align: center;
 }
 .navbar .back-button svg {
   padding-top:6px;

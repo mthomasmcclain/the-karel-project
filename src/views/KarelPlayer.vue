@@ -75,8 +75,8 @@ export default {
   data() {
     return {
       activeMap: null,
-      tabs: [ 'beginner', 'intermediate', 'advanced', 'custom'],
-      activeTab: 'Beginner',
+      tabs: [ 'beginner', 'intermediate', 'challenge', 'custom'],
+      activeTab: 'beginner',
     }
   },
   computed: {
