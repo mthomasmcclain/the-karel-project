@@ -136,6 +136,7 @@ export default {
     postWorld() { return this.content.worlds[0].postWorld },
     tags() {
       if (!this.content.tags) return []
+      // the kebabCase below handles old tags named e.g. "Has 'Repeat'" instead of new tags which would be "has-repeat", etc.
       else return [ ...this.content.tags.customTags, ...this.content.tags.systemTags ].map(tag => _.kebabCase(tag))
     }
   },

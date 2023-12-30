@@ -1,6 +1,6 @@
 export default {
     // srcLanguage added by customizer
-    name: "New Karel Task",
+    name: undefined, // customizer write to t('new-karel-task') if undefined
     instructions: '',
     hint: '',
     maxBlocks: null,
