@@ -24,7 +24,10 @@
 <script>
 export default {
   name: 'navbar',
-  props: [ 'mode' ]
+  props: [ 'mode' ],
+  methods: {
+    t(slug) { return this.$store.getters.t(slug) }
+  }
 }
 </script>
 
