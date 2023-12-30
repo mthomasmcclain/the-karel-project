@@ -2,7 +2,7 @@
   <div id="karel-tag-selector">
 
     <div class="user-select-tag-section">
-      <span class="section-header">User Tags:</span>
+      <span class="section-header">{{ t('user-tags') }}:</span>
       <span class="tag"
         v-for="(tag, i) in customTagChoices"
         :key="`tag-select-${i}`"
@@ -10,7 +10,7 @@
         :style="tags.customTags.includes(tag) ? 'background: green; color: white': ''"
         >
         <span style="margin-right: 4px;">{{ tags.customTags.includes(tag) ? '☒' : '☐' }}</span>
-        <span> {{ tag }}</span>
+        <span> {{ t(tag) }}</span>
       </span>
     </div>
     
@@ -20,7 +20,7 @@
         v-for="(tag, i) in tags.systemTags"
         :key="`system-tag-${i}`"
         >
-        <span> {{ tag }}</span>
+        <span> {{ t(tag) }}</span>
       </span>
     </div>
   </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-const TAG_CHOICES = [ "Beginner", "Intermediate", "Challenge" ]
+const TAG_CHOICES = [ "beginner", "intermediate", "challenge" ]
 export default {
   name: 'App',
   props: [ 'tags' ],

@@ -4,7 +4,7 @@
     <div class="student-display" v-if="!activeMap">
       <div class="student-header">
         <img src="../assets/karelSide.png" />
-        <h2>Your Karel Maps</h2>
+        <h2>{{ t('your-karel-maps') }}</h2>
       </div>
 
       <div class="student-task-area">
@@ -18,7 +18,7 @@
               active: tab === activeTab
             }"
 
-          >{{ tab }}</div>
+          >{{ t(tab) }}</div>
         </div>
         <div v-for="id in filteredMaps" :key="id"
           class="map-display-line"
@@ -51,7 +51,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="green">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
         </svg>
-        <span>Add Map</span>
+        <span>{{ t('add-map') }}</span>
       </div>
     </div>
     
@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       activeMap: null,
-      tabs: [ 'Beginner', 'Intermediate', 'Advanced', 'Custom'],
+      tabs: [ 'beginner', 'intermediate', 'advanced', 'custom'],
       activeTab: 'Beginner',
     }
   },
