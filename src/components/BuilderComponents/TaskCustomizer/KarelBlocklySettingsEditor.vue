@@ -10,7 +10,7 @@
         <div @click="$emit('toggleBlock', name)">
           <span class="checkbox">{{ active ? '☑' : '☐' }}</span>
           <span :class="!active ? 'inactive-name' : ''">
-            {{ blockDisplayName(name) }}
+            {{ t(name) }}
           </span>
         </div>
         <div v-show="active">
@@ -69,21 +69,7 @@ export default {
     possibleKarelBlocks() { return Object.entries(this.settings.blocks) },
   },
   methods: {
-    t(slug) { return this.$store.getters.t(slug) },
-    blockDisplayName(rawName) {
-      const slug = {
-        karel_move: 'Move Forward',
-        karel_turn: 'Turn Left',
-        karel_place: 'Place Stone',
-        karel_pickup: 'Pickup Stone',
-        karel_if: "'If' Block",
-        karel_repeat: "'Repeat' Block",
-        karel_while: "'While' Block",
-        karel_define: "Define Function"
-      }[rawName]
-
-      return this.t(slug)
-    }
+    t(slug) { return this.$store.getters.t(slug) }
   }
 }
 </script>

@@ -7,16 +7,16 @@
 
       <div class="modal-buttons-wrapper">     
         <button class="karel-button modal-button" @click="$emit('close')">
-          {{ editing ? 'Cancel' : 'Close'}}
+          {{ editing ? t('cancel') : t('close') }}
         </button>
         <button class="karel-button modal-button"
           v-if="editing && id !== 'newTask' && id !== 'newMap'"
           @click="$emit('delete')"
         >
-          Delete
+          {{ t('delete') }}
         </button>
         <button class="karel-button modal-button" v-if="editing" @click="$emit('save')">
-          Save
+          {{ t('save') }}
         </button>
       </div>
     </div>
@@ -27,6 +27,9 @@
 export default {
     name: 'modal',
     props: ['id', 'editing'],
+    methods: {
+      t(slug) { return this.$store.getters.t(slug) }
+    }
 }
 </script>
 

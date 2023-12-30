@@ -186,7 +186,7 @@ export default {
 
     const taskToStartCustomizingFrom = taskAtId ? copy(taskAtId) : copy(defaultNewTaskState)
 
-    const {
+    let {
       name,
       instructions,
       maxBlocks,
@@ -195,6 +195,8 @@ export default {
       karelBlockly,
       tags
     } = taskToStartCustomizingFrom
+
+    if (!name) name = this.t('new-karel-task')
 
     // customizerMode toggles if uesr can lock/unlock fn blocks
     karelBlockly.settings.customizerMode = true
@@ -282,26 +284,26 @@ export default {
       let systemTags = []
       // destrusture all blocks from settings.blocks
       const { karel_move, karel_turn, karel_place, karel_pickup, karel_repeat, karel_if, karel_while, karel_define } = settings.blocks
-      if (karel_repeat.active) systemTags.push("Has 'Repeat'")
-      if (karel_if.active) systemTags.push("Has 'If'")
-      if (karel_while.active) systemTags.push("Has 'While'")
-      if (karel_define.active) systemTags.push("Has Function")
+      if (karel_repeat.active) systemTags.push('has-repeat')
+      if (karel_if.active) systemTags.push('has-if')
+      if (karel_while.active) systemTags.push('has-while')
+      if (karel_define.active) systemTags.push('has-function')
       if ( karel_move.active && karel_turn.active && karel_place.active  && karel_pickup.active &&
         !karel_repeat.active && !karel_if.active && !karel_while.active && !karel_define.active ) {
-        systemTags.push("Basic Toolbox")
+        systemTags.push('basic-toolbox')
       }
       const someBlockLimited = Object.values(settings.blocks).some(block => block.active && block.limit !== -1)
 
       const totalBlocksLimited = this.maxBlocks
-      if (this.worlds.length > 1) systemTags.push("Multi-World")
+      if (this.worlds.length > 1) systemTags.push('multi-world')
 
       if (someBlockLimited || totalBlocksLimited) {
-        systemTags.push("Limit Blocks")
+        systemTags.push('limit-blocks')
       }
       if (Object.values(settings.blocks).every(block => block.active)) {
-        systemTags.push("Full Toolbox")
+        systemTags.push('full-toolbox')
       }
-      if (!settings.showToolbox) systemTags.push("Parson's Problem")
+      if (!settings.showToolbox) systemTags.push('parsons-problem')
       
       return systemTags
     },
