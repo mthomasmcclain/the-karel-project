@@ -39,6 +39,7 @@ export default {
   align-items: center;
 }
 .selector {
+  text-align: center;
   flex-direction: column;
   align-items: center;
   margin: 6px 12px;

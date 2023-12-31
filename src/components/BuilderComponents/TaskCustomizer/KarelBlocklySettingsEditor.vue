@@ -72,9 +72,18 @@ export default {
   },
   methods: {
     t(slug) { return this.$store.getters.t(slug) },
-    tBlockName(blockName) {
-      const nameAsSlug = _.kebabCase(blockName)  // e.g. has_while => has-while
-      return this.t(nameAsSlug)
+    tBlockName(block) {
+      const blockToSlugMap = {
+        karel_move: 'move-forward',
+        karel_turn: 'turn-left',
+        karel_place: 'place-stone',
+        karel_pickup: 'pickup-stone',
+        karel_if: 'if-block',
+        karel_repeat: 'repeat-block',
+        karel_while: 'while-block',
+        karel_define: 'define-function',
+      }
+      return this.t(blockToSlugMap[block])
     }
   }
 }

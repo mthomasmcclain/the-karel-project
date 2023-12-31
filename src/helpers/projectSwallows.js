@@ -41,6 +41,7 @@ export function copyContentSwal(t) {
         text: t('you-cannot-edit-pre-loaded-expert-content-would-you-like-to-create-a-copy'),
         icon: 'question',
         showCancelButton: true,
+        cancelButtonText: t('cancel'),
         confirmButtonText: t('copy-task')
     })
 }
@@ -84,6 +85,7 @@ export function confirmDeleteSwal(t) {
         text: t('confirm-deletion-you-cannot-undo-this'),
         icon: 'question',
         showCancelButton: true,
+        cancelButtonText: t('cancel'),
         confirmButtonText: t('delete')
     })
 }
@@ -166,6 +168,7 @@ export function renameMapSwal(t, incomingName) {
         input: 'text',
         inputValue: incomingName,
         showCancelButton: true,
+        cancelButtonText: t('cancel'),
         confirmButtonText: t('update-map-name'),
     })
 }
@@ -176,6 +179,7 @@ export function importMapSwal(t) {
         text: t('paste-the-id-of-the-map-you-wish-to-import'),
         input: 'text',
         showCancelButton: true,
+        cancelButtonText: t('cancel'),
         confirmButtonText: t('import'),
     })
 }
