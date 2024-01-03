@@ -98,11 +98,11 @@ export async function karelBlocklyTranslateUUIDs(kb, map) {
       if (bl.$.type === 'procedures_callnoreturn') {
         const target = bl.mutation[0].$.name
         if (isUUID(target) && map[target]) bl.mutation[0].$.name = map[target]
-        else console.warn(`unable to translate user method ${target}`)
+        else console.warn(`Pt A. unable to translate user method ${target}`)
       } else if (bl.$.type === 'procedures_defnoreturn') {
         const target = bl.field[0]._
         if (isUUID(target) && map[target]) bl.field[0]._ = map[target]
-        else  console.warn(`unable to translate user method ${target}`) 
+        else  console.warn(`Pt B. unable to translate user method ${target}`) 
       }
     })
 
@@ -111,7 +111,7 @@ export async function karelBlocklyTranslateUUIDs(kb, map) {
       if (bl.$.type === 'procedures_callnoreturn' && bl.mutation)  { // the final one is a placeholder for new, no mutation w/name
         const target = bl.mutation[0].$.name
         if (isUUID(target) && map[target]) bl.mutation[0].$.name = map[target]
-        else console.warn(`unable to translate user method ${target}`)
+        else console.warn(`Pt C. unable to translate user method ${target}`)
       }
     })
     const builder = new Builder()
