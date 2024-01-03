@@ -24,13 +24,11 @@ export default {
 			type: String,
 			required: false,
 		},
-	
 		el: {
 			type: String,
 			required: false,
 			default: 'span'
 		}
-
 	},
 	data: () => ({
 		fetchedLanguage: null,
@@ -56,21 +54,15 @@ export default {
 			TRANS_DOMAIN
 		)
 		const translation = res?.[0]?.value
+
 		if (translation) {
 			this.displayString = translation
-		} else { // look for breadcrumb
-
-			const allBreadcrumbs = await Agent.query('translatable_targets', [], DOMAIN_SELF)
-			const breadcrumb = allBreadcrumbs.find(obj => obj.id === this.id)
-
-			const breadcrumbIsDesiredLanguage = breadcrumb?.language === this.fetchedLanguage
-
-			if (breadcrumbIsDesiredLanguage) {
-				this.displayString = breadcrumb.source_string
-			} else { // nothing found
-				this.displayString = `${this.fetchedLanguage} ${this.id}`
-			}
-		}	
+		} else { // fallback to breadcrumb
+			const res = await Agent.state(this.id)
+			this.displayString = (res && res.source_string)
+				? res.source_string
+				: `cannot find ${this.id}`
+		}
 	}
 }
 </script>
