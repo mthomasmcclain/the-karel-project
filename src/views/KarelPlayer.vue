@@ -32,7 +32,10 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4v16m14-8L6 20m14-8L6 4"/>
             </svg>
             <MapCorrectSvgIcon class="correct-svg" :correct="$store.getters.mapIsComplete(id)" />
-            <span class="map-name">{{ $store.getters.name(id) }}</span>
+            <TranslateId
+              class="map-name"
+              :id="$store.getters.name(id)"
+            />
           </div>
           <svg v-if="!$store.getters.isExpert(id)"
             class="trash-icon"
@@ -67,11 +70,21 @@
 import MapPlayer from '../components/MapPlayer/index.vue'
 import PilaLogoVueSvg from '../assets/PilaLogoVueSvg.vue'
 import MapCorrectSvgIcon from "../components/MapCorrectSvgIcon.vue"
-import { confirmDeleteSwal, importMapSwal, mapNotFoundSwal } from '../helpers/projectSwallows.js'
+import TranslateId from "../components/TranslateId.vue"
+import {
+  confirmDeleteSwal,
+  importMapSwal,
+  mapNotFoundSwal
+} from '../helpers/projectSwallows.js'
 
 export default {
   name: 'KarelPlayer',
-  components: { MapPlayer, MapCorrectSvgIcon, PilaLogoVueSvg },
+  components: {
+    MapPlayer,
+    MapCorrectSvgIcon,
+    PilaLogoVueSvg,
+    TranslateId,
+  },
   data() {
     return {
       activeMap: null,
