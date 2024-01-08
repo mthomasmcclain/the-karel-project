@@ -4,14 +4,32 @@ import matchNavigatorLanguage from './matchNavigatorLanguage.js'
 
 const language = matchNavigatorLanguage([ 'en' , 'pt', 'th' ])
 
-const TRANS_DOMAIN = 'translate-karel-alpha.netlify.app'
+const TRANSLATION_DOMAIN = 'translate-karel-alpha.netlify.app'
+const CONTENT_DOMAIN = 'the-karel-project.netlify.app'
+
 const Agent = browserAgent()
 
-// translatios expected, not breadcrumbs
-export default async function translateArrayOfTargets(targets) {
-	if (targets === 'all') targets = Object.values(translationSlugMap)
-
-	const res = await Agent.query('translationSetInLanguage', [ targets, language], TRANS_DOMAIN)
+// translations expected, not breadcrumbs
+export async function translateArrayOfTargets(targets) {
+	const res = await Agent.query(
+		'translationSetInLanguage',
+		[ targets, language],
+		TRANSLATION_DOMAIN
+	)
 	const translationMap = res.reduce((acc,cur) => ({ ...acc, [cur.target]: cur.value }), {})
 	return translationMap
+}
+
+export async function translationsForParent(parentId) {
+	const targets = await Agent.query(
+		'targets_for_parent',
+		[ parentId ],
+		CONTENT_DOMAIN
+	)
+	return translateArrayOfTargets(targets)
+}
+
+export function translateAllSlugs() {
+	const targets = Object.values(translationSlugMap)
+	return translateArrayOfTargets(targets)
 }
