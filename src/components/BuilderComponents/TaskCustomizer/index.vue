@@ -164,7 +164,7 @@ export default {
   },
   async created() {
 
-    const translations = await translationForParent(this.id) // gets browser language inside
+    const translations = await translationsForParent(this.id) // gets browser language inside
 
     // build localTranslationMap from found translation or fallback.
     // if any translations exist in that language, assume all exist

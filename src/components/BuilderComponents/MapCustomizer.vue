@@ -88,7 +88,7 @@ export default {
     }
   },
   async created() {
-    const translations = await translationForParent(this.id) // gets browser language inside
+    const translations = await translationsForParent(this.id) // gets browser language inside
     let translationMap = {}
 
     // build translationMap from found translation or fallback.
