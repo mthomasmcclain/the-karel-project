@@ -138,6 +138,7 @@
 import _ from 'lodash'
 import { validate as isUuid } from 'uuid'
 import { karelBlocklyTranslateUUIDs } from '../../../store/karelBlocklyUserMethodsToUUID.js'
+import { translationsForParent } from '../../../translateSet.js'
 import KarelWorldRendererAndEditor from './KarelWorldRendererAndEditor/index.vue'
 import KarelBlockly from '../../KarelBlockly/index.vue'
 import KarelTagSelector from './KarelTagSelector.vue'
