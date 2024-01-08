@@ -93,10 +93,11 @@ export default {
 
     // build translationMap from found translation or fallback.
     // if any translations exist in that language, assume all exist
-    if (translations.length > 0) {
+    if (translations.length) {
       translationMap = translations.reduce((acc, cur) => {
         return { ...acc, [cur.target]: cur.value}
       }, {})    
+      console.log('translation map found from actual translations', translationMap)
     } else {
       // fallback to initial strings for uuid from translation breadcrumbs
       translationMap = (await Agent.query('targets_for_parent', [this.id]))
