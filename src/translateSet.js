@@ -21,11 +21,12 @@ export async function translateArrayOfTargets(targets) {
 }
 
 export async function translationsForParent(parentId) {
-	const targets = await Agent.query(
+	const res = await Agent.query(
 		'targets_for_parent',
 		[ parentId ],
 		CONTENT_DOMAIN
 	)
+	const targets = res.map(obj => obj.id)
 	return translateArrayOfTargets(targets)
 }
 
