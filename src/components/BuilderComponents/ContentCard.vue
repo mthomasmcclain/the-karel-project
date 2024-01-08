@@ -92,7 +92,7 @@ import { copyContentSwal, copyConfirmSwal, getCodeSwal } from '../../helpers/pro
   and the slug map redoes some of that duplication anyway, but at least we don't have the fullstore.
 */
 import translationSlugMap from '../../store/translationSlugMap.js'
-import translateSet from '../../translateSet.js'
+import { translateAllSlugs } from '../../translateSet.js'
 
 export default {
   components: {
@@ -122,7 +122,7 @@ export default {
     }
   },
   async created() {
-    this.translationMap = await translateSet('all')
+    this.translationMap = await translateAllSlugs()
     this.loading = false
   },
   data() {
