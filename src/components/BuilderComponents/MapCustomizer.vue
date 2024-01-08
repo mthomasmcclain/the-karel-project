@@ -91,13 +91,9 @@ export default {
     const translations = await translationsForParent(this.id) // gets browser language inside
     let translationMap = {}
 
-    // build translationMap from found translation or fallback.
     // if any translations exist in that language, assume all exist
-    if (translations.length) {
-      translationMap = translations.reduce((acc, cur) => {
-        return { ...acc, [cur.target]: cur.value}
-      }, {})    
-      console.log('translation map found from actual translations', translationMap)
+    if (Object.values(translations)) {
+      translationMap = copy(translations)
     } else {
       // fallback to initial strings for uuid from translation breadcrumbs
       translationMap = (await Agent.query('targets_for_parent', [this.id]))

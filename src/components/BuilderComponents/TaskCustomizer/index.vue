@@ -146,7 +146,6 @@ import KarelBlocklySettingsEditor from './KarelBlocklySettingsEditor.vue'
 import defaultNewTaskState from '../../../store/defaultNewTaskState.js'
 import { invalidResizeWallsSwal, invalidResizeKarelSwal, invalidResizeStonesSwal } from '../../../helpers/projectSwallows.js'
 
-
 const copy = (val)  => JSON.parse(JSON.stringify(val))
 
 export default {
@@ -164,15 +163,11 @@ export default {
     KarelBlocklySettingsEditor
   },
   async created() {
-
     const translations = await translationsForParent(this.id) // gets browser language inside
 
-    // build localTranslationMap from found translation or fallback.
     // if any translations exist in that language, assume all exist
-    if (translations.length > 0) {
-      this.localTranslationMap = translations.reduce((acc, cur) => {
-        return { ...acc, [cur.target]: cur.value}
-      }, {})    
+    if (Object.values(translations).length) {
+      this.localTranslationMap = copy(translations)
     } else {
       // fallback to initial strings for uuid from translation breadcrumbs
       this.localTranslationMap = (await Agent.query('targets_for_parent', [this.id]))
