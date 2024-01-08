@@ -163,22 +163,27 @@ export default {
     KarelBlocklySettingsEditor
   },
   async created() {
-    // TODO:  look for translations
-    const translationsForIdInLanguage = false
-    if (translationsForIdInLanguage) {
-      // TODO inject translations for instructions, hint, name, and methods
-    } else { 
-      // fallback, get and inject initial strings for uuid translation breadcrumbs
-      const source_string_map = (await Agent.query('targets_for_parent', [this.id]))
-        .reduce((acc,{id, source_string}) => {
-          return { ...acc, [id]: source_string }
+
+    const translations = await translationForParent(this.id) // gets browser language inside
+
+    // build localTranslationMap from found translation or fallback.
+    // if any translations exist in that language, assume all exist
+    if (translations.length > 0) {
+      this.localTranslationMap = translations.reduce((acc, cur) => {
+        return { ...acc, [cur.target]: cur.value}
+      }, {})    
+    } else {
+      // fallback to initial strings for uuid from translation breadcrumbs
+      this.localTranslationMap = (await Agent.query('targets_for_parent', [this.id]))
+        .reduce((acc, cur) => {
+          return { ...acc, [cur.id]: cur.source_string }
         }, {})
-      const fields = ['instructions', 'name', 'hint']
-      fields
-        .filter(field => isUuid(this[field]) && !!source_string_map[this[field]])
-        .forEach(field => this[field] = source_string_map[this[field]])
-      this.karelBlockly = await karelBlocklyTranslateUUIDs(this.karelBlockly, source_string_map)
     }
+    const fields = ['instructions', 'name', 'hint']
+    fields
+      .filter(field => isUuid(this[field]) && !!this.localTranslationMap[this[field]])
+      .forEach(field => this[field] = this.localTranslationMap[this[field]])
+    this.karelBlockly = await karelBlocklyTranslateUUIDs(this.karelBlockly, this.localTranslationMap)
     
   },
   data() {
@@ -210,7 +215,8 @@ export default {
       hint,
       worlds,
       karelBlockly,
-      tags
+      tags,
+      localTranslationMap: {}
     }
   },
   computed: {

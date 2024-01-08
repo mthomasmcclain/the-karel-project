@@ -41,7 +41,6 @@ export default {
 			return
 		}
 
-
 		if (this.language) {
 			this.fetchedLanguage = this.language
 		} else {
@@ -58,7 +57,6 @@ export default {
 		if (translation) {
 			this.displayString = translation
 		} else { // fallback to breadcrumb
-			console.warn(`no translation for ${this.id} in ${this.fetchedLanguage}. attempting fallback from Agent.state(${this.id}).`)
 			const res = await Agent.state(this.id)
 			this.displayString = (res && res.source_string)
 				? res.source_string

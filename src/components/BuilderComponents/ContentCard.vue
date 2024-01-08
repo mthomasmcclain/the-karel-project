@@ -123,6 +123,7 @@ export default {
   },
   async created() {
     this.translationMap = await translateAllSlugs()
+    console.log('translation map from content card', this.translationMap)
     this.loading = false
   },
   data() {
