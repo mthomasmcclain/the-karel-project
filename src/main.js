@@ -21,7 +21,6 @@ const initialLoad = async () => {
     const { auth: { user, provider }, mode } = await Agent.environment()
 
     if (provider === 'anonymous') {
-        // TODO: render login page
         Agent.login()
     }
     else {

@@ -286,7 +286,7 @@ export default {
       dispatch('saveToKnowFireCore', { data, id: newId })
       return newId
     },
-    loadMapAndEmbedded: async ({ dispatch, commit }, id) => {
+    loadMapAndEmbedded: async ({ dispatch }, id) => {
       // verify it loads and is a map
       if (!isUUID(id)) return Promise.reject(new Error('Cannot load map'))
 
@@ -294,10 +294,11 @@ export default {
       if (!state.graph) {
         return Promise.reject(new Error('Cannot load map'))
       } else {
-        commit('addToMapIds', id)
+        await dispatch('addToMapIds', id)
         await dispatch('loadContent')
       }
     },
+    addToMapIds: ({commit}, id) => commit('addToMapIds', id),
 
     updateCustomizerState: ({ commit }, data) => commit('updateCustomizerState', data),
 
