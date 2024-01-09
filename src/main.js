@@ -20,6 +20,11 @@ window.Agent = browserAgent()
 const initialLoad = async () => {
     const { auth: { user, provider }, mode } = await Agent.environment()
 
+    console.log('auth', auth)
+    console.log('user', user)
+    console.log('provider', provider)
+    console.log('mode', mode)
+
     if (provider === 'anonymous') {
         Agent.login()
     }
@@ -31,6 +36,7 @@ const initialLoad = async () => {
         const id = pathname.slice(1)
 
         if (isUUID(id) && Agent.embedded) {
+            console.log('in isUUID and embedded')
             const metadata = await Agent.metadata(id)
             const data = await Agent.state(id)
             let app
@@ -52,9 +58,11 @@ const initialLoad = async () => {
                 //  TODO: use type...
                 const player = vuePersistentComponent( data.graph ? MapPlayer : TaskPlayer )
                 const store = createStore(storeDef)
-
+                console.log('before KitW app create')
                 app = createApp(player, { id }).use(store)
+                console.log('after KitW app create')
                 store.dispatch('setLoading', true)
+
                 await Promise.all([
                     store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt'])),
                     store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
@@ -65,6 +73,7 @@ const initialLoad = async () => {
             app.mount('#app')
         }
         else {
+            console.log('NOT in (isUUID and embedded)')
             const store = createStore(await vuePersistentStore(storeDef))
             createApp(App)
                 .use(store)
