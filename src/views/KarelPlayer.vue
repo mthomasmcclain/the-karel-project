@@ -89,7 +89,7 @@ export default {
     return {
       activeMap: null,
       tabs: [ 'beginner', 'intermediate', 'challenge', 'custom'],
-      activeTab: 'beginner',
+      activeTab: 'custom',
     }
   },
   computed: {
@@ -100,11 +100,15 @@ export default {
   methods: {
     t(slug) { return this.$store.getters.t(slug) },
     async addMap() {
-      const { value, isDismissed } = await importMapSwal(this.t)
-      if (!isDismissed) {
-        this.$store.dispatch('loadMapAndEmbedded', value)
-          .catch(() => mapNotFoundSwal(this.t) )
-      }
+      this.$store.dispatch('setLoading', true)
+        const { value, isDismissed } = await importMapSwal(this.t)
+        if (isDismissed) {
+          this.$store.dispatch('setLoading', false)
+        } else {
+          this.$store.dispatch('loadMapAndEmbedded', value)
+            .catch(() => mapNotFoundSwal(this.t) )
+            .finally(() => this.$store.dispatch('setLoading', false))
+        }
     },
     async confirmDelete(id) {
       const { isConfirmed } = await confirmDeleteSwal(this.t)

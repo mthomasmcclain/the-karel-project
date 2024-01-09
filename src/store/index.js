@@ -87,9 +87,7 @@ export default {
     isExpert: state => id => state.expertIds.includes(id),
     isFavorite: state => id => state.favorites.includes(id),
     taskIsComplete: state => id => state.completed.includes(id),
-    mapIsComplete: (_state, getters) => id => {
-      if (!getters.content(id)) return false // not loaded
-        
+    mapIsComplete: (_state, getters) => id => {        
       const mapData = getters.content(id)
       const mapTasks = Object.values(mapData.graph.nodes).map(nodeData => nodeData.taskId)
       return mapTasks.every(taskId => getters.taskIsComplete(taskId))
