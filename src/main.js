@@ -15,7 +15,11 @@ import './main.css'
 
 import './helpers/vue3DragEvents'
 
+console.log('kitw')
+
 window.Agent = browserAgent()
+
+console.log('kitw after browserAgent')
 
 const initialLoad = async () => {
     const { auth: { user, provider }, mode } = await Agent.environment()
