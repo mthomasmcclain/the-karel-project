@@ -20,7 +20,6 @@ window.Agent = browserAgent()
 const initialLoad = async () => {
     const { auth: { user, provider }, mode } = await Agent.environment()
 
-    console.log('auth', auth)
     console.log('user', user)
     console.log('provider', provider)
     console.log('mode', mode)
