@@ -75,12 +75,12 @@ const initialLoad = async () => {
                 async function loadTranslations() {
                     try {
                         console.log('2 in try')
-                        store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt'])
+                        store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt']))
                         console.log('2 after language dispatch')
                         await store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
                         console.log('2 after loadTranslationsForSlugMap dispatch')
                     } catch (error) {
-                        console.error('error in kitw loadTranslations:', error);
+                        console.error('error in kitw loadTranslations:', error)
                     }
                 }
 
