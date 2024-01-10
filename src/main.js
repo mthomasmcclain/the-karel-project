@@ -61,7 +61,7 @@ const initialLoad = async () => {
                 //  TODO: use type...
                 const player = vuePersistentComponent( data.graph ? MapPlayer : TaskPlayer )
                 const store = createStore(storeDef)
-                console.log('before KitW app create')
+                console.log('Test 2. Before KitW app create')
                 app = createApp(player, { id }).use(store)
                 console.log('after KitW app create')
                 store.dispatch('setLoading', true)

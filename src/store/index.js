@@ -178,7 +178,7 @@ export default {
       }
 
     },
-    async loadTranslationsForSlugMap: async ({ getters, commit }) => {
+    loadTranslationsForSlugMap: async ({ getters, commit }) => {
       const promiseArray = Object.values(translationSlugMap).map(getTranslation)
       let translationResults = []
       try {
