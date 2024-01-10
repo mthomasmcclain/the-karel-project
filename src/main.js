@@ -67,7 +67,7 @@ const initialLoad = async () => {
                 store.dispatch('setLoading', true)
                 console.log('store before', store.state)
                 console.log('before load translations')
-                loadTranslations()
+                await loadTranslations()
                 console.log('after load translations')
                 store.dispatch('setLoading', false)
                 console.log('store after', store.state)
