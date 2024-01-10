@@ -180,7 +180,14 @@ export default {
     },
     loadTranslationsForSlugMap: async ({ getters, commit }) => {
       const promiseArray = Object.values(translationSlugMap).map(getTranslation)
-      const translationResults = await Promise.all(promiseArray)
+      let translationResults = []
+      try {
+        translationResults = await Promise.all(promiseArray)
+        console.log('translation results:', translationResults)
+      } catch (error) {
+        console.error('error fetching translation results', error)
+      }
+
       translationResults.forEach((res,i) => {
         if (res?.[0]) commit('addTranslation', res[0])
         else console.warn(`no translation for ${Object.keys(translationSlugMap)[i]} in ${getters.language()}`)
