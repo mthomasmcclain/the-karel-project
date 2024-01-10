@@ -65,12 +65,12 @@ const initialLoad = async () => {
                 app = createApp(player, { id }).use(store)
                 console.log('after KitW app create')
                 store.dispatch('setLoading', true)
-
+                console.log('store before', store.state)
                 console.log('before load translations')
                 loadTranslations()
                 console.log('after load translations')
-
                 store.dispatch('setLoading', false)
+                console.log('store after', store.state)
 
                 async function loadTranslations() {
                     try {
