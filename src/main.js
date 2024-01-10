@@ -74,10 +74,11 @@ const initialLoad = async () => {
 
                 async function loadTranslations() {
                     try {
-                        await Promise.all([
-                            store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt'])),
-                            store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
-                        ])
+                        console.log('in try')
+                        await store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt'])
+                        console.log('after language dispatch')
+                        await store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
+                        console.log('after loadTranslationsForSlugMap dispatch')
                     } catch (error) {
                         console.error('error in kitw loadTranslations:', error);
                     }
