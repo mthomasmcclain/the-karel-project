@@ -66,11 +66,22 @@ const initialLoad = async () => {
                 console.log('after KitW app create')
                 store.dispatch('setLoading', true)
 
-                await Promise.all([
-                    store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt'])),
-                    store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
-                ])
+                console.log('before load translations')
+                loadTranslations()
+                console.log('after load translations')
+
                 store.dispatch('setLoading', false)
+
+                async function loadTranslations() {
+                    try {
+                        await Promise.all([
+                            store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt'])),
+                            store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
+                        ])
+                    } catch (error) {
+                        console.error('error in kitw loadTranslations:', error);
+                    }
+                }
 
             }
             app.mount('#app')
