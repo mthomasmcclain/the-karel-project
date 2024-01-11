@@ -181,11 +181,11 @@ export default {
     loadTranslationsForSlugMap: async ({ getters, commit }) => {
       console.log('>>>> starting')
       const start = Date.now()
-      const promiseArray = Object.values(translationSlugMap).slice(0, 20).map(getTranslation)
+      const promiseArray = Object.values(translationSlugMap).slice(0, 30).map(getTranslation)
       let translationResults = []
       try {
         translationResults = await Promise.all(promiseArray)
-        console.log('>>>> got 20 values in ', Date.now() - start)
+        console.log('>>>> got 30 values in ', Date.now() - start)
         console.log('>>>> translation results:', translationResults)
       } catch (error) {
         console.error('>>>> error fetching translation results', error)
