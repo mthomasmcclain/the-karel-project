@@ -178,13 +178,11 @@ export default {
       }
 
     },
-    loadTranslationsForSlugMap: async ({ getters, commit }) => {
-      const translationIds = Object.values(translationSlugMap)
-      const translationResults = []
-      for (let i=0; i<translationIds.length; i += 1) {
-        translationResults.push(await getTranslation(translationIds[i]))
-      }
+    async loadTranslationsForSlugMap: async ({ getters, commit }) => {
+      const promiseArray = Object.values(translationSlugMap).slice(0, 10).map(getTranslation)
+      let translationResults = []
       try {
+        translationResults = await Promise.all(promiseArray)
         console.log('translation results:', translationResults)
       } catch (error) {
         console.error('error fetching translation results', error)
