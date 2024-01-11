@@ -182,13 +182,13 @@ export default {
       console.log('>>>> starting')
       const start = Date.now()
       const promiseArray = Object.values(translationSlugMap).slice(0, 30).map(getTranslation)
-      console.log('>>>> got 30 values in ', Date.now() - start)
       let translationResults = []
       try {
         translationResults = await Promise.all(promiseArray)
-        console.log('translation results:', translationResults)
+        console.log('>>>> got 30 values in ', Date.now() - start)
+        console.log('>>>> translation results:', translationResults)
       } catch (error) {
-        console.error('error fetching translation results', error)
+        console.error('>>>> error fetching translation results', error)
       }
 
       translationResults.forEach((res,i) => {
