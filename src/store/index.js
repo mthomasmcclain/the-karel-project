@@ -181,24 +181,21 @@ export default {
     loadTranslationsForSlugMap: async ({ getters, commit }) => {
       console.log('>>>> starting')
       const start = Date.now()
-      const promiseArray = Object.values(translationSlugMap).slice(0, 30).map(getTranslation)
       let translationResults = []
       try {
-        translationResults = await Promise.all(promiseArray)
-        console.log('>>>> got 30 values in ', Date.now() - start)
+        translationResults = await Agent.query('translateAll', [Object.values(translationSlugMap), getters.language()], TRANS_DOMAIN)
+        console.log('>>>> got all values in ', Date.now() - start)
         console.log('>>>> translation results:', translationResults)
       } catch (error) {
         console.error('>>>> error fetching translation results', error)
       }
 
       translationResults.forEach((res,i) => {
-        if (res?.[0]) commit('addTranslation', res[0])
-        else console.warn(`no translation for ${Object.keys(translationSlugMap)[i]} in ${getters.language()}`)
+        commit('addTranslation', res)
+        //  TODO: add warning for missing translations
+        // console.warn(`no translation for ${Object.keys(translationSlugMap)[i]} in ${getters.language()}`)
       })
 
-      async function getTranslation(id) {
-        return Agent.query('translate', [ id, getters.language() ], TRANS_DOMAIN)
-      }
 
     },
     addToExpertIds: ({ commit }, id) => commit('addToExpertIds', id),
