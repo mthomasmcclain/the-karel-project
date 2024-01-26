@@ -15,6 +15,7 @@
         <KarelBlockly
             v-model:toolbox="karelBlockly.toolbox"
             v-model:workspace="karelBlockly.workspace"
+            v-model:worldWorkspace="karelBlockly.worldWorkspace"
             v-model:settings="karelBlockly.settings"
             v-model:highlight="karelBlockly.highlight"
         />
@@ -117,6 +118,18 @@
             >
               Remove World {{ i + 1 }}
             </button>
+            <br>
+            <div>
+              Blue starting count: {{ activeWorld.preWorld.pickedStones?.blue ?? 0 }}
+              <button @click="changeStartingCount('blue', -1)">-</button>
+              <button @click="changeStartingCount('blue', 1)">+</button>
+            </div>
+            <br>
+            <div>
+              Red starting count: {{ activeWorld.preWorld.pickedStones?.red ?? 0 }}
+              <button @click="changeStartingCount('red', -1)">-</button>
+              <button @click="changeStartingCount('red', 1)">+</button>
+            </div>
           </div>
         </div>
       </div>
@@ -163,6 +176,7 @@ export default {
       karelBlockly,
       tags
     } = taskToStartCustomizingFrom
+    if (!karelBlockly.worldWorkspace) karelBlockly.worldWorkspace = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="karel_world_main" id="world_main" deletable="false" x="44" y="0"></block><block type="karel_world_end_conditions" id="world_end_conditions" deletable="false" x="44" y="100"></block></xml>';
 
     // customizerMode toggles if uesr can lock/unlock fn blocks
     karelBlockly.settings.customizerMode = true
@@ -227,6 +241,11 @@ export default {
     removeWorld(i) {
       this.activeWorldIndex = 0
       this.worlds.splice(i,1)
+    },
+    changeStartingCount(color, delta) {
+      if (!this.activeWorld.preWorld.pickedStones) this.activeWorld.preWorld.pickedStones = { blue: 0, red: 0 }
+      this.activeWorld.preWorld.pickedStones[color] += delta
+      if (this.activeWorld.preWorld.pickedStones[color] < 0) this.activeWorld.preWorld.pickedStones[color] = 0
     },
     updateWorld(world) {
       const {

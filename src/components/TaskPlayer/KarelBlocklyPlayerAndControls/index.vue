@@ -46,7 +46,7 @@
 <script>
   import KarelBlocklyWorld from "./KarelBlocklyWorld"
   export default {
-    props: [ 'playing', 'stepSpeed', 'preWorld', 'workspace', 'toolbox' ],
+    props: [ 'playing', 'stepSpeed', 'preWorld', 'workspace', 'worldWorkspace', 'toolbox' ],
     data() {
       return {
         karelBlocklyWorld: null,
@@ -58,8 +58,8 @@
         if (this.playing) {
           if (this.karelBlocklyWorld) this.step()
           else {
-            const { preWorld, toolbox, workspace } = this
-            this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace })
+            const { preWorld, toolbox, workspace, worldWorkspace } = this
+            this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace, worldWorkspace })
             this.step(this.stopOnFirstStep)
             this.stopOnFirstStep = false
           }
@@ -102,8 +102,8 @@
       },
       stepByStep() {
         if (!this.karelBlocklyWorld) {
-            this.stopOnFirstStep = true;
-            this.$emit('play');
+          this.stopOnFirstStep = true;
+          this.$emit('play');
         }
         else this.step(true)
       }

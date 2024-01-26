@@ -39,6 +39,175 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
         }
     }
 
+    var karelWorldMain = {
+        "type": "karel_world_main",
+        "message0": "%{BKY_KAREL_WORLD_MAIN_TITLE} %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "program"
+            }
+        ],
+        "colour": 240,
+        "tooltip": "Main function",
+    }
+
+    Blockly.Blocks['karel_world_main'] = {
+        init: function () {
+            this.jsonInit(karelWorldMain);
+        }
+    }
+
+    var karelWorldEndConditions = {
+        "type": "karel_world_end_conditions",
+        "message0": "%{BKY_KAREL_WORLD_END_CONDITIONS_TITLE} %1 %2",
+        "args0": [
+            {
+                "type": "input_dummy"
+            },
+            {
+                "type": "input_statement",
+                "name": "end_conditions"
+            }
+        ],
+        "colour": 240,
+        "tooltip": "End conditions",
+    }
+
+    Blockly.Blocks['karel_world_end_conditions'] = {
+        init: function () {
+            this.jsonInit(karelWorldEndConditions);
+        }
+    }
+
+    var karelWorldFail = {
+        "type": "karel_world_fail",
+        "message0": "%{BKY_KAREL_WORLD_FAIL_TITLE}",
+        "previousStatement": null,
+        "colour": 240,
+    }
+
+    Blockly.Blocks['karel_world_fail'] = {
+        init: function () {
+            this.jsonInit(karelWorldFail);
+        }
+    }
+
+    var karelWorldSuccess = {
+        "type": "karel_world_success",
+        "message0": "%{BKY_KAREL_WORLD_SUCCESS_TITLE}",
+        "previousStatement": null,
+        "colour": 240,
+    }
+
+    Blockly.Blocks['karel_world_success'] = {
+        init: function () {
+            this.jsonInit(karelWorldSuccess);
+        }
+    }
+
+    var karelStoneCount = {
+        "type": "karel_stone_count",
+        "message0": "%{BKY_KAREL_STONE_COUNT} %1",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "COLOR",
+                "options": [
+                    [
+                        "%{BKY_KAREL_STONE_BLUE}",
+                        "blue"
+                    ],
+                    [
+                        "%{BKY_KAREL_STONE_RED}",
+                        "red"
+                    ]
+                ]
+            }
+        ],
+        "output": "Number",
+    }
+
+    Blockly.Blocks['karel_stone_count'] = {
+        init: function () {
+            this.jsonInit(karelStoneCount);
+            this.setStyle('variable_blocks');
+        }
+    }
+
+    var karelWorldStoneCount = {
+        "type": "karel_world_stone_count",
+        "message0": "%{BKY_KAREL_WORLD_STONE_COUNT} %1",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "COLOR",
+                "options": [
+                    [
+                        "%{BKY_KAREL_STONE_BLUE}",
+                        "blue"
+                    ],
+                    [
+                        "%{BKY_KAREL_STONE_RED}",
+                        "red"
+                    ]
+                ]
+            }
+        ],
+        "output": "Number",
+    }
+
+    Blockly.Blocks['karel_world_stone_count'] = {
+        init: function () {
+            this.jsonInit(karelWorldStoneCount);
+            this.setStyle('variable_blocks');
+        }
+    }
+
+    var karelWorldSpawnStone = {
+        "type": "karel_world_spawn_stone",
+        "message0": "%{BKY_KAREL_WORLD_SPAWN_STONE} %1 %2 %3",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "COLOR",
+                "options": [
+                    [
+                        "%{BKY_KAREL_STONE_BLUE}",
+                        "blue"
+                    ],
+                    [
+                        "%{BKY_KAREL_STONE_RED}",
+                        "red"
+                    ]
+                ]
+            },
+            {
+                "type": "input_value",
+                "name": "ROW",
+                "check": "Number",
+            },
+            {
+                "type": "input_value",
+                "name": "COL",
+                "check": "Number",
+            }
+        ],
+        "inputsInline": true,
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 160
+    }
+
+    Blockly.Blocks['karel_world_spawn_stone'] = {
+        init: function () {
+            this.jsonInit(karelWorldSpawnStone);
+        }
+    }
+
     var karelMove = {
         "type": "karel_move",
         "message0": "%{BKY_KAREL_MOVE_FORWARD}",
@@ -524,7 +693,7 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
         "output": "Boolean",
         "tooltip": "Check if a key is pressed"
     };
-    
+
     Blockly.Blocks['karel_is_key_pressed'] = {
         init: function () {
             this.jsonInit(karelIsKeyPressed);
@@ -570,6 +739,29 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
         init: function () {
             this.jsonInit(karelOnKeyPress);
             this.setStyle('logic_blocks');
+        }
+    };
+
+    var karelWait = {
+        "type": "karel_wait",
+        "message0": "%{BKY_KAREL_WAIT} %1",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "TIME",
+                "check": "Number",
+            }
+        ],
+        "inputsInline": true,
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 50,
+        "tooltip": "Wait for the specified amount of steps"
+    }
+
+    Blockly.Blocks['karel_wait'] = {
+        init: function () {
+            this.jsonInit(karelWait);
         }
     };
 

@@ -1,7 +1,14 @@
 <template>
   <div class="wrapper">
-    <div class="container" ref="container"
-      :style="{ 'pointer-events': settings.disabled ? 'none' : 'auto' }"
+    <div v-if="settings.blocks.karel_events.active" class="tabs-container">
+      <div class="tab" @click="() => activeTab = 'karel'">Karel</div>
+      <div class="tab" @click="() => activeTab = 'world'">World</div>
+    </div>
+    <div class="container" ref="karelContainer"
+      :style="{ 'pointer-events': settings.disabled ? 'none' : 'auto', display: activeTab === 'karel' ? 'block' : 'none' }"
+    />
+    <div id="worldContainer" class="container" ref="worldContainer"
+      :style="{ 'pointer-events': settings.disabled ? 'none' : 'auto', display: activeTab === 'world' ? 'block' : 'none' }"
     />
   </div>
 </template>
@@ -74,6 +81,13 @@ const generateToolbox = ({
     ${ karel_events ? `
     <Block type="karel_is_key_pressed" id="karel_is_key_pressed" />
     <Block type="karel_on_key_press" id="karel_on_key_press" />
+    <Block type="math_random_int" id="karel_random" />
+    <Block type="karel_wait" id="karel_wait" />
+    <Block type="karel_world_fail" id="karel_world_fail" />
+    <Block type="karel_world_success" id="karel_world_success" />
+    <Block type="karel_stone_count" id="karel_stone_count" />
+    <Block type="karel_world_stone_count" id="karel_world_stone_count" />
+    <Block type="karel_world_spawn_stone" id="karel_world_spawn_stone" />
     ` : '' }
   </xml>
 `
@@ -121,18 +135,42 @@ const lockProcedureBlock = (block, isLocked) => {
 
 export default {
   name: 'karel-blockly',
-  props: [ 'settings', 'toolbox', 'workspace', 'highlight' ],
+  props: [ 'settings', 'toolbox', 'workspace', 'worldWorkspace', 'highlight' ],
+  data() {
+    return {
+      activeTab: 'karel'
+    }
+  },
   mounted() {
+    this.workspaces = { karel: null, world: null }
     this.$emit('update:toolbox', generateToolbox(this.activeBlocks))
-    this.instantiateBlockly()
+    this.instantiateBlockly();
+
+    // Trick to wait for the world container to be displayed before instantiating the Blockly workspace
+    // Otherwise it would not fill the available space and coult not be used
+    const thisRef = this;
+    const observer = new MutationObserver(function(mutations, observer) {
+      mutations.forEach(function(mutationRecord) {
+        if (mutationRecord.target.style.display === 'block') {
+          thisRef.instantiateBlockly()
+          observer.disconnect();
+        }
+      });
+    });
+    const target = document.getElementById('worldContainer');
+    observer.observe(target, { attributes: true, attributeFilter: ['style'] })
   },
   beforeUnmount() {
-    this.workspaceInstance.dispose()
+    this.workspaces.karel?.instance?.dispose()
+    this.workspaces.world?.instance?.dispose()
   },
   watch: {
     injectedToolbox(n, o) {
-      if (n === null || o === null) this.instantiateBlockly()
-      else this.workspaceInstance.updateToolbox(this.injectedToolbox)
+      if (n === null || o === null) this.instantiateBlockly(this.activeTab)
+      else {
+        this.workspaces.karel?.instance?.updateToolbox(this.injectedToolbox)
+        this.workspaces.world?.instance?.updateToolbox(this.injectedToolbox)
+      }
       this.updateChips()
     },
     settings: {
@@ -145,9 +183,9 @@ export default {
     'settings.customizerMode'() {
       this.instantiateBlockly()
     },
-    highlight(n,o) {
-      o && o.forEach(id => this.workspaceInstance.highlightBlock(id, false))
-      n && n.forEach(id => this.workspaceInstance.highlightBlock(id, true))
+    highlight(n, o) {
+      o && o.forEach(id => this.workspaces[this.activeTab].instance.highlightBlock(id, false))
+      n && n.forEach(id => this.workspaces[this.activeTab].instance.highlightBlock(id, true))
     },
     blocksUsedByType() { this.updateChips() },
   },
@@ -183,9 +221,10 @@ export default {
   },
   methods: {
     instantiateBlockly() {
-      if (this.workspaceInstance) this.workspaceInstance.dispose()
+      if (!this.workspaces[this.activeTab]) this.workspaces[this.activeTab] = { instance: null }
+      if (this.workspaces[this.activeTab].instance) this.workspaces[this.activeTab].instance.dispose()
       // define and inject Blockly instance
-      this.workspaceInstance = Blockly.inject(this.$refs.container, {
+      this.workspaces[this.activeTab].instance = Blockly.inject(this.$refs[`${this.activeTab}Container`], {
         toolbox: this.injectedToolbox,
         maxInstances: this.maxInstances,
         zoom: {
@@ -199,7 +238,7 @@ export default {
         },
       })
       // Set Initial Workspace
-      Blockly.Xml.domToWorkspace( Blockly.Xml.textToDom(this.workspace), this.workspaceInstance)
+      Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(this.activeTab === 'karel' ? this.workspace : this.worldWorkspace), this.workspaces[this.activeTab].instance)
 
       // Turn Off Right Clicking on the Workspace -- Unregister All Found Items in ContextMenuRegistry
       this.disableBlockContextMenus()
@@ -208,11 +247,11 @@ export default {
       this.updateChips()
 
       // Attach Change Listeners
-      this.workspaceInstance.addChangeListener(this.blocklyChangeListeners)
+      this.workspaces[this.activeTab].instance.addChangeListener(this.blocklyChangeListeners)
 
       //  proxy connection checker logic so we can reject connections to locked blocks
-      const originalCanConnect = this.workspaceInstance.connectionChecker.canConnect
-      this.workspaceInstance.connectionChecker.canConnect = function (a, b) {
+      const originalCanConnect = this.workspaces[this.activeTab].instance.connectionChecker.canConnect
+      this.workspaces[this.activeTab].instance.connectionChecker.canConnect = function (a, b) {
         if (connectionInLockedProcedure(a) || connectionInLockedProcedure(b)) return false
         else return originalCanConnect.apply(this, arguments)
       }
@@ -232,20 +271,23 @@ export default {
         .forEach(item => registry.unregister(item.id))
     },
     updateWorkspace() {
-      const newWorkspace = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(this.workspaceInstance))
-      this.$emit('update:workspace', newWorkspace)
+      const newWorkspace = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(this.workspaces[this.activeTab].instance))
+      this.$emit(`update:${this.activeTab === 'karel' ? 'workspace' : 'worldWorkspace'}`, newWorkspace)
     },
     makeBlocksUndeletableIfToolboxHidden(e) {
       if (e.type === 'finished_loading' && !this.settings.showToolbox && !this.settings.customizerMode) {
-        const allBlocks = this.workspaceInstance.getAllBlocks()
+        const allBlocks = this.workspaces[this.activeTab].instance.getAllBlocks()
         allBlocks.forEach(block => block.setDeletable(false))
       }
     },
     updateSvgLockIcons() {
       const previousToDelete = document.querySelectorAll('.custom-lock-icon')
       previousToDelete.forEach(el => el.parentNode.removeChild(el) )
-      
-      const allFnBlocks = this.workspaceInstance.getAllBlocks().filter(block => block.type === 'procedures_defnoreturn' || block.type === 'procedures_defreturn')
+
+      const allFnBlocks = this.workspaces.karel.instance.getAllBlocks().filter(block => block.type === 'procedures_defnoreturn' || block.type === 'procedures_defreturn')
+      if (this.workspaces.world) {
+        allFnBlocks.push(...this.workspaces.world.instance.getAllBlocks().filter(block => block.type === 'procedures_defnoreturn' || block.type === 'procedures_defreturn'))
+      }
 
       if (this.settings.customizerMode) {
         allFnBlocks
@@ -310,7 +352,12 @@ export default {
       })
     },
     updateToolbox() {
-      const procedures = Blockly.Procedures.allProcedures(this.workspaceInstance)
+      const procedures = Blockly.Procedures.allProcedures(this.workspaces.karel.instance)
+      if (this.workspaces.world) {
+        const worldProcedures = Blockly.Procedures.allProcedures(this.workspaces.world.instance)
+        procedures[0].push(...worldProcedures[0])
+        procedures[1].push(...worldProcedures[1])
+      }
       const noreturnProcedures = procedures[0].map(
         ([name, parameters]) => `<Block type="procedures_callnoreturn"><mutation name="${name}">${
           parameters.map((parameter) => `<arg name="${parameter}" />`).join('')
@@ -332,7 +379,18 @@ export default {
 .wrapper { 
   position: relative;
   width: 100%;
-  height: 100%;  
+  height: 100%;
+}
+.tabs-container {
+  width: 100%;
+  display: flex;
+}
+.tab {
+  width: 100%;
+  text-align: center;
+  border: 1px solid grey;
+  cursor: pointer;
+  user-select: none;
 }
 .container {
   width: 100%;

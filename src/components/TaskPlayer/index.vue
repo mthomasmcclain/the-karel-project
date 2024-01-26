@@ -15,6 +15,15 @@
         <KarelWorldRenderer :world="world" :objective="activePostWorld" />
       </div>
 
+      <div style="display: flex;">
+        <div style="width: 64px" >
+          <StoneAndNumber :n="world.pickedStones?.blue ?? 0" obj="-1" numPosition="middle" color="blue" />
+        </div>
+        <div style="width: 64px" >
+          <StoneAndNumber :n="world.pickedStones?.red ?? 0" obj="-1" numPosition="middle" color="red" />
+        </div>
+      </div>
+
       <!-- Scenario Selector, if More Than One -->
       <div v-if="task.worlds.length > 1" class="scenario-selector">
         <div
@@ -44,6 +53,7 @@
           v-if="karelBlockly"
           :toolbox="karelBlockly.toolbox"
           :workspace="karelBlockly.workspace"
+          :world-workspace="karelBlockly.settings.blocks.karel_events.active ? karelBlockly.worldWorkspace : undefined"
           :stepSpeed="stepSpeed"
           :preWorld="activePreWorld"
           :playing="playing"
@@ -62,6 +72,7 @@
       <KarelBlockly
         v-model:toolbox="karelBlockly.toolbox"
         v-model:workspace="karelBlockly.workspace"
+        v-model:worldWorkspace="karelBlockly.worldWorkspace"
         v-model:settings="karelBlockly.settings"
         v-model:highlight="karelBlockly.highlight"
       />
@@ -81,13 +92,14 @@ import {
   taskTooManyBlocksSwal,
   taskHintSwal
 } from '../../helpers/projectSwallows.js'
+import StoneAndNumber from '../BuilderComponents/TaskCustomizer/KarelWorldRendererAndEditor/StoneAndNumberVueSvg.vue'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
 
 export default {
   name: 'task-player',
-  components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls },
+  components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls, StoneAndNumber },
   props: {
     id: {
       type: String,
@@ -96,6 +108,9 @@ export default {
   },
   data() {
     const task = copy(this.$store.getters.content(this.id))
+    if (task.karelBlockly && !task.karelBlockly.worldWorkspace) {
+      task.karelBlockly.worldWorkspace = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="karel_world_main" id="world_main" deletable="false" x="44" y="0"></block><block type="karel_world_end_conditions" id="world_end_conditions" deletable="false" x="44" y="100"></block></xml>'
+    }
     const { karelBlockly } = task
     karelBlockly.settings.customizerMode = false
     return {
@@ -182,7 +197,7 @@ export default {
     codeSolvesWorld() {
         if (!this.codeCompletelyRun) return null
         else if (this.error) return false
-        else return worldsMatch(this.currentStepData.world, this.activePostWorld)
+        else return this.currentStepData.world.endConditions ? this.currentStepData.isDone : worldsMatch(this.currentStepData.world, this.activePostWorld)
     }
   },
   methods: {

@@ -4,6 +4,7 @@ const copy = data => _.cloneDeep(data)
 
 function Karel(world) {
     world = copy(world)
+    if(!world.pickedStones) world.pickedStones = { blue: 0, red: 0 }
     this.world = world
 
     this.leftArrowPressed = false
@@ -85,7 +86,7 @@ function Karel(world) {
     this.pickStone = (color) => {
         if (!this.stonesPresent(color)) this.error = 'No ' + color + ' stones to pick!'
         else {
-            world.pickedStones += 1
+            world.pickedStones[color] += 1
             stonesUnderKarel(color).n -= 1
             // don't allow stones when n < 1
             world.stones = world.stones.filter(s => s.n > 0)
@@ -93,11 +94,23 @@ function Karel(world) {
     }
 
     this.placeStone = (color) => {
-        if (world.pickedStones === 0) this.error = 'Karel has no ' + color + ' stones to place!'
+        if (world.pickedStones[color] === 0) this.error = 'Karel has no ' + color + ' stones to place!'
         else {
-            if (world.pickedStones) world.pickedStones -= 1
+            world.pickedStones[color] -= 1
             const stones = stonesUnderKarel(color)
             if (!stones) world.stones.push({ r: world.karelRow, c: world.karelCol, n: 1, color })
+            else stones.n += 1
+        }
+    }
+
+    this.spawnStone = (color, row, column) => {
+        row = row - 1
+        column = column - 1
+        if (row < 0 || row >= world.nRows) this.error = 'Row out of bounds!'
+        else if (column < 0 || column >= world.nCols) this.error = 'Column out of bounds!'
+        else {
+            const stones = stonesAtLocation(row, column, color)
+            if (!stones) world.stones.push({ r: row, c: column, n: 1, color })
             else stones.n += 1
         }
     }
@@ -160,7 +173,7 @@ export default function KarelWorld(world, source) {
             activeBlocks: Object.keys(openBlocks).filter(k => openBlocks[k] > 0),
             world: karel.world,
             error: karel.error,
-            isDone: finalStep === index,
+            isDone: karel.world.endConditions ? await karel.world.endConditions(karel) : finalStep === index,
             step: index
         })
 

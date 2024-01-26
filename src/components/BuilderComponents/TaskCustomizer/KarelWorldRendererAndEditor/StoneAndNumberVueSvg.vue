@@ -1,6 +1,6 @@
 <template> 
   <svg viewBox="0 0 10 10">
-    <path v-if="n > 0"
+    <path v-if="obj < 0 || n > 0"
       d="M 5 0 l 5 5 l -5 5 l -5 -5 z"
       :fill="color"
     />
@@ -12,7 +12,7 @@
       stroke-dasharray="1,1"
     />
     <text class="no-select"
-      v-if="n > 0 || obj > 0"
+      v-if="n > 0 || obj != 0"
       x="5" :y="numberYPos"
       font-size="3.5"
       fill="white"
@@ -22,7 +22,7 @@
       text-anchor="middle"
       alignment-baseline="middle"
       user-select="none"
-    >{{ n }}/{{ obj }}</text>
+    >{{ n }}{{ obj >= 0 ? `/ ${obj}` : '' }}</text>
   </svg>
 </template>
 
