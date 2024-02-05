@@ -1,3 +1,8 @@
+authorize:
+  sameDomain:
+    postgres: same_domain_authorization
+  crossDomain:
+    postgres: cross_domain_authorization
 postgres:
   tables:
     translatable_targets:
@@ -6,6 +11,33 @@ postgres:
         language: TEXT
         source_string: TEXT
         parent_item: TEXT
+  functions:
+    same_domain_authorization:
+      returns: BOOLEAN
+      language: PLpgSQL
+      body: |
+        BEGIN
+          RETURN TRUE;
+        END;
+      arguments:
+      - name: requestingUser
+        type: TEXT
+      - name: requestedScope
+        type: TEXT
+    cross_domain_authorization:
+      returns: BOOLEAN
+      language: PLpgSQL
+      body: |
+        BEGIN
+          RETURN TRUE;
+        END;
+      arguments:
+      - name: requestingDomain
+        type: TEXT
+      - name: requestingUser
+        type: TEXT
+      - name: requestedScope
+        type: TEXT
   scopes:
     translatable_targets: SELECT * FROM translatable_targets
     parent_items: SELECT DISTINCT parent_item FROM translatable_targets
