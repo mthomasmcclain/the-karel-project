@@ -1,4 +1,4 @@
-import { browserAgent } from '@knowlearning/agents'
+import Agent from '@knowlearning/agents/browser.js'
 import translationSlugMap from './store/translationSlugMap.js'
 import matchNavigatorLanguage from './matchNavigatorLanguage.js'
 
@@ -6,8 +6,6 @@ const language = matchNavigatorLanguage([ 'en' , 'pt', 'th' ])
 
 const TRANSLATION_DOMAIN = 'translate-karel-alpha.netlify.app'
 const CONTENT_DOMAIN = 'the-karel-project.netlify.app'
-
-const Agent = browserAgent()
 
 // translations expected, not breadcrumbs
 export async function translateArrayOfTargets(targets) {
