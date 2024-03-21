@@ -179,13 +179,10 @@ export default {
 
     },
     loadTranslationsForSlugMap: async ({ getters, commit }) => {
-      console.log('>>>> starting')
       const start = Date.now()
       let translationResults = []
       try {
         translationResults = await Agent.query('translateAll', [Object.values(translationSlugMap), getters.language()], TRANS_DOMAIN)
-        console.log('>>>> got all values in ', Date.now() - start)
-        console.log('>>>> translation results:', translationResults)
       } catch (error) {
         console.error('>>>> error fetching translation results', error)
       }

@@ -15,18 +15,10 @@ import './main.css'
 
 import './helpers/vue3DragEvents'
 
-console.log('kitw')
-
 window.Agent = browserAgent()
-
-console.log('kitw after browserAgent')
 
 const initialLoad = async () => {
     const { auth: { user, provider }, mode } = await Agent.environment()
-
-    console.log('user', user)
-    console.log('provider', provider)
-    console.log('mode', mode)
 
     if (provider === 'anonymous') {
         Agent.login()
@@ -39,7 +31,6 @@ const initialLoad = async () => {
         const id = pathname.slice(1)
 
         if (isUUID(id) && Agent.embedded) {
-            console.log('in isUUID and embedded')
             const metadata = await Agent.metadata(id)
             const data = await Agent.state(id)
             let app
@@ -61,26 +52,16 @@ const initialLoad = async () => {
                 //  TODO: use type...
                 const player = vuePersistentComponent( data.graph ? MapPlayer : TaskPlayer )
                 const store = createStore(storeDef)
-                console.log('Test 2. Before KitW app create')
                 app = createApp(player, { id }).use(store)
-                console.log('after KitW app create')
                 store.dispatch('setLoading', true)
-                console.log('store before', store.state)
-                console.log('before load translations')
                 await loadTranslations()
-                console.log('after load translations')
                 store.dispatch('setLoading', false)
-                console.log('store after', store.state)
 
                 async function loadTranslations() {
                     try {
-                        console.log('2 in try')
                         store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt']))
-                        console.log('2 after language dispatch')
                         await store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
-                        console.log('2 after loadTranslationsForSlugMap dispatch')
                     } catch (error) {
-                        console.error('error in kitw loadTranslations:', error)
                     }
                 }
 
@@ -88,7 +69,6 @@ const initialLoad = async () => {
             app.mount('#app')
         }
         else {
-            console.log('NOT in (isUUID and embedded)')
             const store = createStore(await vuePersistentStore(storeDef))
             createApp(App)
                 .use(store)
