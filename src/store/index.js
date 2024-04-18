@@ -182,7 +182,7 @@ export default {
       const start = Date.now()
       let translationResults = []
       try {
-        translationResults = await Agent.query('translateAll', [Object.values(translationSlugMap), getters.language()], TRANS_DOMAIN)
+        translationResults = await Agent.query('translationSetInLanguage', [Object.values(translationSlugMap), getters.language()], TRANS_DOMAIN)
       } catch (error) {
         console.error('>>>> error fetching translation results', error)
       }
