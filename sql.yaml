@@ -38,11 +38,7 @@ postgres:
         type: TEXT
       - name: requestedScope
         type: TEXT
-  scopes:
-    translatable_targets: SELECT * FROM translatable_targets
-    parent_items: SELECT DISTINCT parent_item FROM translatable_targets
-    targets_for_parent: SELECT * FROM translatable_targets WHERE parent_item = $1
-  crossDomainQueries:
+  queries:
     translatable_targets:
       domains:
         - app.pilaproject.org
