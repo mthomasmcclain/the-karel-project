@@ -22,7 +22,8 @@
       @setMode="mode = $event"
     />
 
-    <div class="karel-builder-body">
+  <!-- UNPLUGGED MAP EDITOR ... ONLY SHOW BODY IF MODE TASKS... SHOULD ENSURE ALL BENEATH -->
+    <div class="karel-builder-body" v-if="mode === 'tasks'">
       <div class="add-card content-card" @click="customizeNewContent">
         <div class="add-card-inner">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -43,6 +44,9 @@
         @edit="launchCustomizer($event)"
         @copy="copyAndLaunchCustomizer($event)"
       />
+    </div>
+    <div v-else>
+      For Karel Map Builder, View create App
     </div>
   </div>
   
