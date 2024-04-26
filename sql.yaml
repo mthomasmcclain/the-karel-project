@@ -49,6 +49,20 @@ postgres:
         - f74e9cb3-2b53-4c85-9b0c-f1d61b032b3f.localhost:9898
         - thailand.pilaproject.org
       body: SELECT * FROM translatable_targets
+    translation_fallback:
+      domains:
+        - app.pilaproject.org
+        - pila-friday-demo.netlify.app
+        - create.pilaproject.org
+        - translate-karel-alpha.netlify.app
+        - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
+        - f74e9cb3-2b53-4c85-9b0c-f1d61b032b3f.localhost:9898
+        - thailand.pilaproject.org
+      body: |
+        SELECT t.source_string
+        FROM translatable_targets t
+        WHERE $1 = t.id
+        LIMIT 1
     parent_items:
       domains:
         - app.pilaproject.org
