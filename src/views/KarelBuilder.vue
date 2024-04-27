@@ -45,8 +45,27 @@
         @copy="copyAndLaunchCustomizer($event)"
       />
     </div>
-    <div v-else>
-      For Karel Map Builder, View create App
+
+    <div v-else class="direct-to-sequence-builder">
+
+      <h3>Karel Sequence Builder has Moved!</h3>
+      <p>
+        You can build and play seqences of Karel items by dragging them onto PILA's multi-content "sequence builder" application.
+      </p>
+
+      <img
+        class="gif-how-to"
+        src="../assets/how-to-gif-double-small.gif"
+      >
+
+      <a
+        class="pila-link"
+        target="_blank"
+        href="https://create.pilaproject.org"
+      >
+        Launch Pila Create Application
+      </a>
+
     </div>
   </div>
   
@@ -184,5 +203,41 @@ export default {
   border-right: 2px solid #ddd;
   background: #f5f5f5;
   padding: 20px;
+}
+.direct-to-sequence-builder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  font-size: 1.1rem;
+}
+.direct-to-sequence-builder h3 { margin: 0; }
+.direct-to-sequence-builder > * {
+  width: 500px;
+  text-align: center;
+  margin: 16px 0;
+}
+.direct-to-sequence-builder .pila-link {
+  text-decoration: none;
+
+}
+.pila-link {
+  display: inline-block;
+  width: unset;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+.pila-link:hover {
+  background-color: #0056b3;
+}
+.pila-link a {
+  text-decoration: none;
+  color: inherit;
 }
 </style>
