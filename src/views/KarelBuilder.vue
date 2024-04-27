@@ -55,7 +55,7 @@
 
       <img
         class="gif-how-to"
-        src="../assets/how-to-gif-double-small.gif"
+        src="/drag-and-drop-sequence-example.gif"
       >
 
       <a
