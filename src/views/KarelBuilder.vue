@@ -45,6 +45,7 @@
         @copy="copyAndLaunchCustomizer($event)"
       />
     </div>
+
     <div v-else class="direct-to-sequence-builder">
 
       <h3>Karel Sequence Builder has Moved!</h3>
