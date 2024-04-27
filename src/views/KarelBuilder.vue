@@ -55,7 +55,7 @@
 
       <img
         class="gif-how-to"
-        src="../assets/how-to-gif-double-small.gif"
+        src="/drag-and-drop-sequence-example.gif"
       >
 
       <a
@@ -239,5 +239,16 @@ export default {
 .pila-link a {
   text-decoration: none;
   color: inherit;
+}
+.content-card
+{
+  border: 2px solid white;
+  background: white;
+  cursor: grab;
+}
+.content-card:hover
+{
+  border: 2px solid #BBBBBB;
+  background: white;
 }
 </style>
