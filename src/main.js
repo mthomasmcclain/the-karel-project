@@ -1,4 +1,4 @@
-import { browserAgent } from '@knowlearning/agents'
+import Agent from '@knowlearning/agents/browser.js'
 import { vuePersistentStore, vuePersistentComponent, vueScopeComponent } from '@knowlearning/agents/vue.js'
 import { validate as isUUID } from 'uuid'
 import { createApp } from 'vue'
@@ -15,7 +15,7 @@ import './main.css'
 
 import './helpers/vue3DragEvents'
 
-window.Agent = browserAgent()
+window.Agent = Agent
 
 const initialLoad = async () => {
     const { auth: { user, provider }, mode } = await Agent.environment()

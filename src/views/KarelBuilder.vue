@@ -240,4 +240,15 @@ export default {
   text-decoration: none;
   color: inherit;
 }
+.content-card
+{
+  border: 2px solid white;
+  background: white;
+  cursor: grab;
+}
+.content-card:hover
+{
+  border: 2px solid #BBBBBB;
+  background: white;
+}
 </style>
