@@ -1,5 +1,4 @@
-import _ from 'lodash'
-const copy = data => _.cloneDeep(data)
+const copy = data => JSON.parse(JSON.stringify(data))
 
 function Karel(world) {
     world = copy(world)
