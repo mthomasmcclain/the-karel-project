@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="container" v-if="task">
     <div class="left-col">
       <div class="instructions-and-reset-wrapper">
@@ -174,7 +174,8 @@ export default {
       deep: true,
       async handler(val) {
         if (val.every(val => val)) {
-          await taskSuccessSwal(this.t)
+          // Unplug player correctness alert, handled by embedding sequence
+          // await taskSuccessSwal(this.t)
           // TODO: Think about how to get rid of this delay haaaack
           // which is needed because of sweetaltert using
           // a body style !important to get its transition to work
