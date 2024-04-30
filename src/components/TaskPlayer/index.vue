@@ -173,14 +173,11 @@ export default {
     correctScenarios: {
       deep: true,
       async handler(val) {
-        if (val.every(val => val)) {
-          // Unplug player correctness alert, handled by embedding sequence
-          // await taskSuccessSwal(this.t)
-          // TODO: Think about how to get rid of this delay haaaack
-          // which is needed because of sweetaltert using
-          // a body style !important to get its transition to work
-          await new Promise( res => setTimeout(res, 260))
+        const isCorrect = val.every(val => val)
+        if (isCorrect && Agent.embedded) {
           Agent.close({ success: true })
+        } else if (isCorrect) {
+          await taskSuccessSwal(this.t)
         }
       }
     }
