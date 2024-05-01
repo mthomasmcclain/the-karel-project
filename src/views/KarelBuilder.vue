@@ -48,9 +48,9 @@
 
     <div v-else class="direct-to-sequence-builder">
 
-      <h3>Karel Sequence Builder has Moved!</h3>
+      <h3>{{ t('karel-sequence-builder-has-moved') }}</h3>
       <p>
-        You can build and play seqences of Karel items by dragging them onto PILA's multi-content "sequence builder" application.
+        {{ t('you-can-build-and-play-seqences-of-karel-items-by-dragging-them-onto-pil-as-multi-content-sequence-builder-application') }}
       </p>
 
       <img
@@ -63,7 +63,7 @@
         target="_blank"
         href="https://create.pilaproject.org"
       >
-        Launch Pila Create Application
+         {{ t('launch-pila-create-application') }}
       </a>
 
     </div>
