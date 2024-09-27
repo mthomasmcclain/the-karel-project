@@ -1,5 +1,6 @@
  <template>
   <div class="container" v-if="task">
+    <div class="spoof-nav-bar">Sequence Nav Bar</div>
     <div class="left-col">
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
@@ -48,6 +49,7 @@
 
       <div class="controls-wrapper">
         <KarelBlocklyPlayerAndControls
+          style="flex-direction: row;"
           v-if="karelBlockly"
           :toolbox="karelBlockly.toolbox"
           :workspace="karelBlockly.workspace"
@@ -288,7 +290,7 @@ export default {
   margin-right: 5px;
 }
 
-.karel-button.reset {
+button.karel-button.reset {
   white-space: nowrap;
   background: darkred;
 }
@@ -329,14 +331,11 @@ export default {
 .left-col .world-col > div {
   flex-grow: 1;
 }
-.left-col .controls-wrapper {
-  height: 82px;
-}
+
 .left-col .karel-button.hint {
   background: purple;
   margin-top: 4px;
 }
-
 
 .scenario-selector {
   display: flex;
@@ -374,5 +373,33 @@ export default {
 .kb-select-button.active {
   color: #fff;
   background-color: #007bff;
+}
+
+.spoof-nav-bar { display: none; }
+
+@media only screen and (max-width: 600px) {
+  .container { flex-direction: column; }
+  .spoof-nav-bar {
+    background-color: #333;
+    color: white;
+    flex: 0 0 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .left-col { flex: 0 1 auto;  }
+  .left-col .instructions-box { width: 100%; }
+  button.karel-button.reset { display: none; }
+  .left-col .worlds-wrapper { min-height: revert; }
+
+  .right-col {
+    border: 1px solid black;
+    border-radius: 4px;
+    background: lightcoral;
+    flex: 1 1 0;
+    margin: 12px 40px;
+    cursor: pointer;
+  }
+
 }
 </style>
