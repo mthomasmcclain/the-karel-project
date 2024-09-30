@@ -400,6 +400,10 @@ button.karel-button.reset {
     margin: 12px 40px;
     cursor: pointer;
   }
+  button.karel-button.hint {
+    display: none;
+  }
 
+  .blocklyFlyout { display: none; }
 }
 </style>
