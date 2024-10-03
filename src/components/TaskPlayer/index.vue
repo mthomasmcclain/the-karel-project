@@ -453,7 +453,7 @@ button.karel-button.reset {
     border: 1px solid black;
     border-radius: 4px;
     flex: 1 1 100%;
-    margin: 12px 40px;
+    margin: 12px;
     cursor: pointer;
   }
   .right-col .mask {
