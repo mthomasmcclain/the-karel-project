@@ -78,6 +78,13 @@
     </div>
 
     <div class="right-col" @click="openMobileCodeMode">
+      <div class="mask">
+        <div class="edit-icon-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </div>
+      </div>
       <KarelBlockly
         v-if="karelBlockly"
         v-model:toolbox="karelBlockly.toolbox"
@@ -438,12 +445,31 @@ button.karel-button.reset {
   .left-col .worlds-wrapper { min-height: revert; }
 
   .right-col {
+    position: relative;
     border: 1px solid black;
     border-radius: 4px;
-    background: lightcoral;
     flex: 1 1 0;
     margin: 12px 40px;
     cursor: pointer;
+  }
+  .right-col .mask {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: lightblue;
+    z-index: 1000;
+    opacity: 0.4;
+    text-align: right;
+  }
+  .right-col .mask .edit-icon-wrapper {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 28px;
+    width: 28px;
+  }
+  .mobileCodeMode .right-col .mask {
+    display: none;
   }
   button.karel-button.hint {
     display: none;
