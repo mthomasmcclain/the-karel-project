@@ -387,7 +387,7 @@ button.karel-button.reset {
   background: purple;
   margin-top: 4px;
 }
-
+.right-col .mask { display: none; }
 .scenario-selector {
   display: flex;
 }
@@ -453,13 +453,18 @@ button.karel-button.reset {
     cursor: pointer;
   }
   .right-col .mask {
+    /* display: none; set outside of media query */
+    display: unset;
     position: absolute;
     height: 100%;
     width: 100%;
-    background-color: lightblue;
+    background-color: #FFCCCB;
     z-index: 1000;
     opacity: 0.4;
     text-align: right;
+  }
+  .mobileCodeMode .right-col .mask {
+    display: none;
   }
   .right-col .mask .edit-icon-wrapper {
     position: absolute;
@@ -468,9 +473,7 @@ button.karel-button.reset {
     height: 28px;
     width: 28px;
   }
-  .mobileCodeMode .right-col .mask {
-    display: none;
-  }
+
   button.karel-button.hint {
     display: none;
   }
