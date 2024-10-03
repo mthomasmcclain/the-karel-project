@@ -377,6 +377,8 @@ button.karel-button.reset {
   margin-top: 4px;
 }
 .right-col .mask { display: none; }
+.pulse-icon-wrapper.magnify { display: none; }
+
 .scenario-selector {
   display: flex;
 }
@@ -453,7 +455,7 @@ button.karel-button.reset {
     border: 1px solid black;
     border-radius: 4px;
     flex: 1 1 100%;
-    margin: 12px;
+    margin: 6px;
     cursor: pointer;
   }
   .right-col .mask {
@@ -470,6 +472,7 @@ button.karel-button.reset {
   .mobileCodeMode .right-col .mask {
     display: none;
   }
+
   .pulse-icon-wrapper {
     position: absolute;
     top: 2%;
@@ -478,16 +481,15 @@ button.karel-button.reset {
     width: 70px;
     animation: pulse 1.15s ease-in-out infinite alternate;
   }
-  .pulse-icon-wrapper.magnify {
-    top:unset;
+  /* set to display: none; outside of media query  */
+  .mobileCodeMode .pulse-icon-wrapper.magnify {
+    display: revert;
+    top: revert;
     bottom: 0%;
   }
-
   button.karel-button.hint {
     display: none;
   }
-
-  .blocklyFlyout { display: none; }
 }
 
 @keyframes pulse {
