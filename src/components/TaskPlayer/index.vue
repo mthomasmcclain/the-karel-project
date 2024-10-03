@@ -17,7 +17,7 @@
       </div>  <!-- Only mobile and code mode -->
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
-          <b>{{ t('challenge') }}:</b> {{ localT(task.instructions) }}
+          <b>Challenge:</b> {{ localT(task.instructions) }}
           <p v-if="task.maxBlocks" class="max-blocks-p">
             Solve the challenge using <b>{{task.maxBlocks}}</b> or fewer blocks. The current code uses <b :style="`color: ${blocksUsed > task.maxBlocks ? 'red' : 'green'};`">{{ blocksUsed }}</b> blocks.
           </p>
