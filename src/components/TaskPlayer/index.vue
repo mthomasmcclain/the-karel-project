@@ -10,6 +10,11 @@
   <!-- mobileCodeMode class only used inside small screen media query... that's why we don't need mobileScreen and mobileCodeMode -->
     <div class="spoof-nav-bar">Sequence Nav Bar</div>
     <div class="left-col" @click="closeMobileCodeMode">
+      <div class="pulse-icon-wrapper magnify">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+        </svg>
+      </div>  <!-- Only mobile and code mode -->
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
           <b>{{ t('challenge') }}:</b> {{ localT(task.instructions) }}
@@ -79,7 +84,7 @@
 
     <div class="right-col" @click="openMobileCodeMode">
       <div class="mask">
-        <div class="edit-icon-wrapper">
+        <div class="pulse-icon-wrapper">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black">
             <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
           </svg>
@@ -326,21 +331,6 @@ export default {
   background: #EEEEEE;
   border-bottom: 1px solid #AAAAAA;
 }
-.example-label {
-  display: flex;
-  height: 100%;
-  align-items: center;
-  cursor: pointer;
-  margin-left: 2px;
-  margin-right: 20px;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-.example-icon {
-  font-size: 0.8rem;
-  margin-right: 5px;
-}
-
 button.karel-button.reset {
   white-space: nowrap;
   background: darkred;
@@ -361,8 +351,7 @@ button.karel-button.reset {
 
 .left-col .worlds-wrapper {
   display: flex;
-  min-height: 300px;
-  max-height: 300px;
+  flex: 0 0 300px;
   margin: 10px 0;
 }
 .left-col .world-col {
@@ -438,17 +427,32 @@ button.karel-button.reset {
     justify-content: center;
     align-items: center;
   }
-  .left-col { flex: 0 1 auto; }
+  .left-col { flex: 0 0 auto; }
   .left-col .instructions-box { width: 100%; }
-  .mobileCodeMode .left-col .instructions-box { display: none; }
-  button.karel-button.reset { display: none; }
-  .left-col .worlds-wrapper { min-height: revert; }
+
+  .mobileCodeMode .left-col {
+    flex: 0 0 180px;
+    overflow: hidden;
+    position: relative;
+  }
+  .mobileCodeMode .left-col .instructions-and-reset-wrapper {
+    display: none;
+  }
+  .mobileCodeMode .left-col .worlds-wrapper {
+    flex: 1 1 0;
+    overflow: hidden;
+    margin: 0 auto;
+
+  }
+  .mobileCodeMode .left-col .controls-wrapper {
+    display: none;
+  }
 
   .right-col {
     position: relative;
     border: 1px solid black;
     border-radius: 4px;
-    flex: 1 1 0;
+    flex: 1 1 100%;
     margin: 12px 40px;
     cursor: pointer;
   }
@@ -466,13 +470,17 @@ button.karel-button.reset {
   .mobileCodeMode .right-col .mask {
     display: none;
   }
-  .right-col .mask .edit-icon-wrapper {
+  .pulse-icon-wrapper {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    height: 28px;
-    width: 28px;
+    top: 2%;
+    left: calc(50% - 35px);
+    height: 70px;
+    width: 70px;
     animation: pulse 1.15s ease-in-out infinite alternate;
+  }
+  .pulse-icon-wrapper.magnify {
+    top:unset;
+    bottom: 0%;
   }
 
   button.karel-button.hint {
