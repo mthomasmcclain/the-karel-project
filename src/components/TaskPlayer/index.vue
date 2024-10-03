@@ -1,7 +1,15 @@
  <template>
-  <div class="container" v-if="task">
+
+  <div
+    v-if="task"
+    :class="{
+      container: true,
+      mobileCodeMode: mobileCodeMode
+    }"
+  >
+  <!-- mobileCodeMode class only used inside small screen media query... that's why we don't need mobileScreen and mobileCodeMode -->
     <div class="spoof-nav-bar">Sequence Nav Bar</div>
-    <div class="left-col">
+    <div class="left-col" @click="closeMobileCodeMode">
       <div class="instructions-and-reset-wrapper">
         <div class="instructions-box">
           <b>{{ t('challenge') }}:</b> {{ localT(task.instructions) }}
@@ -69,7 +77,7 @@
       </div>
     </div>
 
-    <div class="right-col">
+    <div class="right-col" @click="openMobileCodeMode">
       <KarelBlockly
         v-if="karelBlockly"
         v-model:toolbox="karelBlockly.toolbox"
@@ -121,6 +129,8 @@ export default {
       activeScenarioIndex: 0,
       correctScenarios: null ,
 
+      mobileScreen: false,
+      mobileCodeMode: false,
       localTranslationMap: {}
     }
   },
@@ -133,11 +143,16 @@ export default {
       this.karelBlockly.settings.customizerMode = false
       this.correctScenarios = new Array(task.worlds.length).fill(null)
     }
-    
+
+    this.handleResize()
+    window.addEventListener('resize', this.handleResize)
+
     const language = this.$store.getters.language()
     this.localTranslationMap  = await translateGroupInLanguage(this.id, language)
     this.karelBlockly = await karelBlocklyTranslateUUIDs(this.karelBlockly, this.localTranslationMap)
-
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize)
   },
   watch: {
     async codeSolvesWorld(isCorrect) {
@@ -146,8 +161,6 @@ export default {
           await taskTooManyBlocksSwal(this.t)
           return
         }
-
-
         this.correctScenarios[this.activeScenarioIndex] = true
         const incompleteScenarios = this.correctScenarios.filter(d => !d).length
         if (incompleteScenarios) await taskPartialSuccessSwal(this.t)        
@@ -220,7 +233,34 @@ export default {
         return id
       }
     },
-
+    openMobileCodeMode() {
+      if (!this.mobileScreen || this.mobileCodeMode) return
+      this.mobileCodeMode = true
+      this.karelBlockly.settings.showToolbox = true
+      this.karelBlockly.settings.disabled = false
+    },
+    closeMobileCodeMode() {
+      if (!this.mobileScreen || !this.mobileCodeMode) return
+      this.mobileCodeMode = false
+      this.karelBlockly.settings.showToolbox = false
+      this.karelBlockly.settings.disabled = true
+    },
+    handleResize() {
+      const isSmall = window.innerWidth <= 600
+      const newlyMobile = isSmall && !this.mobileScreen
+      const newlyBig = !isSmall && this.mobileScreen
+      if (newlyMobile) {
+        this.mobileScreen = true
+        this.mobileCodeMode = false
+        this.karelBlockly.settings.showToolbox = false
+        this.karelBlockly.settings.disabled = true
+      } else if (newlyBig) {
+        this.mobileScreen = false
+        this.mobileCodeMode = false
+        this.karelBlockly.settings.showToolbox = true
+        this.karelBlockly.settings.disabled = false
+      }
+    },
     getScenarioLabel(i) {
       const start = `${this.t('scenario')} ${i+1}: `
       let end = this.t('not-tried')
@@ -253,13 +293,17 @@ export default {
   height: 100%;
 }
 .left-col {
-  flex: 1 0 200px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 200px;
   margin: 2px 2px 0 4px;
   display: flex;
   flex-direction: column;
 }
 .right-col {
-  flex: 1 0 500px;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 500px;
 }
 .left-col .instructions-and-reset-wrapper {
   display: flex;
@@ -387,8 +431,9 @@ button.karel-button.reset {
     justify-content: center;
     align-items: center;
   }
-  .left-col { flex: 0 1 auto;  }
+  .left-col { flex: 0 1 auto; }
   .left-col .instructions-box { width: 100%; }
+  .mobileCodeMode .left-col .instructions-box { display: none; }
   button.karel-button.reset { display: none; }
   .left-col .worlds-wrapper { min-height: revert; }
 
