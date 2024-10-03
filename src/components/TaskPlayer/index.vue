@@ -472,6 +472,7 @@ button.karel-button.reset {
     right: 10px;
     height: 28px;
     width: 28px;
+    animation: pulse 1.15s ease-in-out infinite alternate;
   }
 
   button.karel-button.hint {
@@ -479,5 +480,16 @@ button.karel-button.reset {
   }
 
   .blocklyFlyout { display: none; }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(0.8);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 </style>
