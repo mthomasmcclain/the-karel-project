@@ -27,11 +27,11 @@
 
       <div class="worlds-wrapper">
         <div class="world-col left">
-          <h2>{{ t('start') }}:</h2>
+          <h2>Start:</h2>
           <KarelWorldRenderer :world="world" key="active-world" />
         </div>
         <div class="world-col right">
-          <h2>{{ t('goal') }}:</h2>
+          <h2>Goal:</h2>
           <KarelWorldRenderer :world="activePostWorld" key="goal-world"/>
         </div>
       </div>
@@ -77,7 +77,7 @@
       </div>
       <div>
         <button class="karel-button hint" v-if="task.hint" @click="showHint">
-          {{ t('hint') }}
+          Hint
         </button>
       </div>
     </div>
@@ -99,7 +99,7 @@
       />
     </div>
   </div>
-  <div v-else> ... {{ t('loading') }} ... </div>
+  <div v-else> ... loading ... </div>
 </template>
 
 <script>
