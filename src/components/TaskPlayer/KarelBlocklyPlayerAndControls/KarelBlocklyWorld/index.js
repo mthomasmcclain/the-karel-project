@@ -11,7 +11,12 @@ Blockly.setLocale({ ...en, ...enTranslations })
 initializeKarelBlocks(Blockly)
 initializeKarelBlocklyGenerators(Blockly)
 
-const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
+const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace, isPython, pythonCode, highlight }) => {
+    if (isPython) {
+        console.log(pythonCode)
+        return new KarelWorld(world, pythonCode, highlight)
+    }
+
     // initialize new blockly instance with given workspace and toolbox
     // TODO find way to initialize blockly w/o DOM element
     const detachedDOMElement = document.createElement('div')
@@ -99,7 +104,8 @@ const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
         })
         
     const source = Object.values(functions).join(';') + (worldWorkspace ? '; world_main()' : '') + '; main().then(done);'
-    return new KarelWorld(world, source)
+    console.log(source)
+    return new KarelWorld(world, source, isPython)
 }
 
 export default KarelBlocklyWorld

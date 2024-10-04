@@ -19,7 +19,7 @@ import Blockly from 'blockly'
 import * as en from 'blockly/msg/en'
 import enTranslations from '../../helpers/karelTranslationsEN.js'
 import initializeKarelBlocks from '../../helpers/initializeKarelBlocks.js'
-  
+
 Blockly.setLocale({ ...en, ...enTranslations })
 initializeKarelBlocks(Blockly)
 
@@ -376,7 +376,10 @@ export default {
 </script>
 
 <style scoped>
-.wrapper { 
+.wrapper {
+  display: flex;
+  flex-direction: column;
+
   position: relative;
   width: 100%;
   height: 100%;

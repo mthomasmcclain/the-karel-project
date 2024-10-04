@@ -20,7 +20,14 @@ function Karel(world) {
     this.variables = {}
     this.eventFunctions = {}
 
+    this.blue = 'blue'
+    this.red = 'red'
+
+    if (!world.karelRoom) world.karelRoom = { row: 0, col: 0 }
+
     window.addEventListener('keydown', (e) => {
+        // e.preventDefault()
+
         if (e.key === 'ArrowLeft') {
             if (!this.leftArrowPressed) this.leftNextStep = true
             this.leftArrowPressed = true
@@ -61,7 +68,7 @@ function Karel(world) {
         }
     }
 
-    const stonesAtLocation = (r, c, color) => world.stones.find(s => s.r === r && s.c === c && (s.color ? s.color === color : color === 'blue'))
+    const stonesAtLocation = (r, c, color, room) => world.stones.find(s => s.r === r && s.c === c && (s.color ? s.color === color : color === 'blue') && (s.room && room ? s.room.row === room.row && s.room.col === room.col : true))
     const wallAtLocation = (r, c, d) => world.walls.find(w => {
         //  equivalent wall location, but with West and South transformed to North and East
         const eq = {
@@ -71,7 +78,7 @@ function Karel(world) {
         }
         return w.r === eq.r && w.c === eq.c && w.d === eq.d
     })
-    const stonesUnderKarel = (color) => stonesAtLocation(world.karelRow, world.karelCol, color)
+    const stonesUnderKarel = (color) => stonesAtLocation(world.karelRow, world.karelCol, color, world.karelRoom)
 
     this.move = () => {
         if (!this.frontIsClear()) this.error = 'Front is blocked!'
@@ -79,6 +86,23 @@ function Karel(world) {
         else if (world.karelDir === 'South') world.karelRow += 1
         else if (world.karelDir === 'East') world.karelCol += 1
         else if (world.karelDir === 'West') world.karelCol -= 1
+
+        if (world.karelRow < 0) {
+            world.karelRow = world.nRows - 1
+            world.karelRoom.row -= 1
+        }
+        if (world.karelRow >= world.nRows) {
+            world.karelRow = 0
+            world.karelRoom.row += 1
+        }
+        if (world.karelCol < 0) {
+            world.karelCol = world.nCols - 1
+            world.karelRoom.col -= 1
+        }
+        if (world.karelCol >= world.nCols) {
+            world.karelCol = 0
+            world.karelRoom.col += 1
+        }
     }
 
     this.turnLeft = () => world.karelDir = { North: 'West', West: 'South', South: 'East', East: 'North' }[world.karelDir]
@@ -98,28 +122,54 @@ function Karel(world) {
         else {
             world.pickedStones[color] -= 1
             const stones = stonesUnderKarel(color)
-            if (!stones) world.stones.push({ r: world.karelRow, c: world.karelCol, n: 1, color })
+            if (!stones) world.stones.push({ r: world.karelRow, c: world.karelCol, n: 1, color, room: {...world.karelRoom} })
             else stones.n += 1
         }
     }
 
-    this.spawnStone = (color, row, column) => {
+    this.spawnStone = (color, row, column, room) => {
         row = row - 1
         column = column - 1
+        if (!color) color = 'blue'
+        if (!room) room = world.karelRoom
         if (row < 0 || row >= world.nRows) this.error = 'Row out of bounds!'
         else if (column < 0 || column >= world.nCols) this.error = 'Column out of bounds!'
         else {
-            const stones = stonesAtLocation(row, column, color)
-            if (!stones) world.stones.push({ r: row, c: column, n: 1, color })
+            const stones = stonesAtLocation(row, column, color, room)
+            if (!stones) world.stones.push({ r: row, c: column, n: 1, color, room })
             else stones.n += 1
         }
     }
 
     this.frontIsClear = () => {
-        if (world.karelDir === 'South' && world.karelRow === world.nRows - 1) return false
-        if (world.karelDir === 'East' && world.karelCol === world.nCols - 1) return false
-        if (world.karelDir === 'North' && world.karelRow === 0) return false
-        if (world.karelDir === 'West' && world.karelCol === 0) return false
+        if (world.karelDir === 'South' && world.karelRow === world.nRows - 1) {
+          if (world.doors && world.doors.find(d => d.r === world.nRows && d.c === world.karelCol && d.d === 'North' && d.room.row === world.karelRoom.row && d.room.col === world.karelRoom.col)) {
+            return true
+          }
+
+          return false
+        }
+        if (world.karelDir === 'East' && world.karelCol === world.nCols - 1) {
+          if (world.doors && world.doors.find(d => d.r === world.karelRow && d.c === world.nCols && d.d === 'East' && d.room.row === world.karelRoom.row && d.room.col === world.karelRoom.col)) {
+            return true
+          }
+
+          return false
+        }
+        if (world.karelDir === 'North' && world.karelRow === 0) {
+          if (world.doors && world.doors.find(d => d.r === 0 && d.c === world.karelCol && d.d === 'North' && d.room.row === world.karelRoom.row && d.room.col === world.karelRoom.col)) {
+            return true
+          }
+
+          return false
+        }
+        if (world.karelDir === 'West' && world.karelCol === 0) {
+          if (world.doors && world.doors.find(d => d.r === world.karelRow && d.c === 0 && d.d === 'East' && d.room.row === world.karelRoom.row && d.room.col === world.karelRoom.col)) {
+            return true
+          }
+
+          return false
+        }
         return !wallAtLocation(world.karelRow, world.karelCol, world.karelDir)
     }
 
@@ -130,13 +180,14 @@ function Karel(world) {
     return this
 }
 
-export default function KarelWorld(world, source) {
+export default function KarelWorld(world, source, highlight) {
     const steps = [copy({
         openBlocks: {},
         world,
         error: null,
         isDone: false,
-        step: 0
+        step: 0,
+        pythonText: ''
     })]
     let finalStep = Infinity
 
@@ -145,6 +196,9 @@ export default function KarelWorld(world, source) {
     const startBlock = id => openBlocks[id] = openBlocks[id] ? openBlocks[id] + 1 : 1
     const endBlock = id => openBlocks[id] -= 1
     const done = () => finalStep = steps.length //  this is called before the last step is added to steps since our implementation looks to the step ahead
+
+    let textAccumulator = '';
+    const appendText = text => textAccumulator += text;
 
     let resolveCurrentPromise = []
     const step = () => new Promise(resolve => resolveCurrentPromise.push(resolve))
@@ -155,10 +209,10 @@ export default function KarelWorld(world, source) {
 
     //  functions is expected to be an object with keys corresponding to properly named
     //  async function definitions
-    const runner = new Function('karel', 'start_block', 'end_block', 'step', 'done', source)
+    const runner = new Function('karel', 'start_block', 'end_block', 'step', 'done', 'highlight', 'appendText', source)
 
     //  start runner, will execute first step so that state is ready for the caller
-    runner(karel, startBlock, endBlock, step, done)
+    runner(karel, startBlock, endBlock, step, done, highlight, appendText)
 
     this.step = async (index) => {
         // return previously computed step
@@ -174,7 +228,8 @@ export default function KarelWorld(world, source) {
             world: karel.world,
             error: karel.error,
             isDone: karel.world.endConditions ? await karel.world.endConditions(karel) : finalStep === index,
-            step: index
+            step: index,
+            pythonText: textAccumulator
         })
 
         //  resolve current promise so the next KarelWorldState is ready for next call to step

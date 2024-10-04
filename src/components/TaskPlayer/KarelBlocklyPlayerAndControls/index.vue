@@ -45,8 +45,9 @@
 
 <script>
   import KarelBlocklyWorld from "./KarelBlocklyWorld"
+  import { asyncRun } from './KarelBlocklyWorld/PythonWorker/workerInterface'
   export default {
-    props: [ 'playing', 'stepSpeed', 'preWorld', 'workspace', 'worldWorkspace', 'toolbox' ],
+    props: [ 'playing', 'stepSpeed', 'preWorld', 'workspace', 'worldWorkspace', 'toolbox', 'isPython', 'pythonCode', 'errorCallback', 'highlight', 'settings' ],
     data() {
       return {
         karelBlocklyWorld: null,
@@ -58,10 +59,38 @@
         if (this.playing) {
           if (this.karelBlocklyWorld) this.step()
           else {
-            const { preWorld, toolbox, workspace, worldWorkspace } = this
-            this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace, worldWorkspace })
-            this.step(this.stopOnFirstStep)
-            this.stopOnFirstStep = false
+            const { preWorld, toolbox, workspace, worldWorkspace, isPython, pythonCode, settings } = this
+
+            if (isPython) {
+              const translatePython = async () => {
+                try {
+                  const script = pythonCode
+                  const context = JSON.parse(JSON.stringify(settings))
+                  const { results, error } = await asyncRun(script, context)
+                  if (results) {
+                    if (results.type === 'success') {
+                      this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace, worldWorkspace, isPython, pythonCode: results.code, highlight: this.highlight })
+                      this.step(this.stopOnFirstStep)
+                      this.stopOnFirstStep = false
+                    } else {
+                      this.reset()
+                      this.errorCallback(results)
+                    }
+                  } else if (error) {
+                    console.error('pythonWorker error:', error);
+
+                    this.reset()
+                  }
+                } catch (e) {
+                  console.log(`Error in pythonWorker at ${e.filename}, line ${e.lineno}: ${e.message}`);
+                }
+              }
+              translatePython()
+            } else {
+              this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace, worldWorkspace, isPython, pythonCode })
+              this.step(this.stopOnFirstStep)
+              this.stopOnFirstStep = false
+            }
           }
         }
         else if (this.nextStep) clearTimeout(this.nextStep)
@@ -85,6 +114,7 @@
         this.currentStepData = null
         this.$emit('step', null)
         this.$emit('pause')
+        this.highlight(0)
       },
       step(stepByStep = false) {
         this

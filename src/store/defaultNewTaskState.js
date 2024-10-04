@@ -27,6 +27,8 @@ export default {
             }
         }
     ],
+    isPython: false,
+    pythonCode: 'import karel\n\n# Enter your code here',
     karelBlockly: {
         highlight: [],
         settings: {

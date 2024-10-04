@@ -13,18 +13,26 @@
       
       <div class="karel-blockly-wrapper">
         <KarelBlockly
+            v-if="!isPython"
             v-model:toolbox="karelBlockly.toolbox"
             v-model:workspace="karelBlockly.workspace"
             v-model:worldWorkspace="karelBlockly.worldWorkspace"
             v-model:settings="karelBlockly.settings"
             v-model:highlight="karelBlockly.highlight"
         />
+        <KarelPython
+            v-else
+            v-model="pythonCode"
+            :console-text="''"
+            :highlight="{ line: 0 }"
+            :error="{ line: 0, message: '' }"
+        />
       </div>
     </div>
     <div id="tabs">
       <div id="tab-bar"
       >
-        <span v-for="tabName in [ 'Basic', 'Toolbox', 'Multi-World', 'Tags'  ]"
+        <span v-for="tabName in [ 'Basic', ...(isPython ? [] : ['Toolbox']), 'Multi-World', 'Tags'  ]"
           :key="`tab-${tabName}`"
           @click="activeTab = tabName"
           :class="{ active: activeTab === tabName, tab: true }"
@@ -35,7 +43,7 @@
       </div>
       <div id="tab-body">
         <div id="tab-body-scroller">
-          <div v-show="activeTab === 'Toolbox'">
+          <div v-if="!isPython" v-show="activeTab === 'Toolbox'">
             <KarelBlocklySettingsEditor
               :settings="karelBlockly.settings"
               @toggleBlock="toggleBlock"
@@ -64,9 +72,9 @@
                   placeholder="Instructions go here..."
                   v-model="instructions"
                 />
-              </div>              
+              </div>
             </div>
-            
+
             <div id="basic-settings-right-side">
               <div>
                 Rows:
@@ -75,6 +83,11 @@
                 Cols:
                 <button @click="handleRowOrColChange('nCols', -1)">-</button>
                 <button @click="handleRowOrColChange('nCols', 1)">+</button>
+              </div>
+
+              <div>
+                Use Python:
+                <input type="checkbox" :checked="isPython" @click="isPython = !isPython" />
               </div>
 
               <div class="hint-wrapper">
@@ -142,6 +155,7 @@
 import _ from 'lodash'
 import KarelWorldRendererAndEditor from './KarelWorldRendererAndEditor/index.vue'
 import KarelBlockly from '../../KarelBlockly/index.vue'
+import KarelPython from '../../KarelPython/index.vue'
 import KarelTagSelector from './KarelTagSelector.vue'
 import KarelBlocklySettingsEditor from './KarelBlocklySettingsEditor.vue' 
 import defaultNewTaskState from '../../../store/defaultNewTaskState.js'
@@ -161,6 +175,7 @@ export default {
   components: {
     KarelWorldRendererAndEditor,
     KarelBlockly,
+    KarelPython,
     KarelTagSelector,
     KarelBlocklySettingsEditor
   },
@@ -173,6 +188,8 @@ export default {
       maxBlocks,
       hint,
       worlds,
+      isPython,
+      pythonCode,
       karelBlockly,
       tags
     } = taskToStartCustomizingFrom
@@ -189,6 +206,8 @@ export default {
       maxBlocks,
       hint,
       worlds,
+      isPython,
+      pythonCode,
       karelBlockly,
       tags
     }
@@ -249,22 +268,22 @@ export default {
     },
     updateWorld(world) {
       const {
-        nCols, nRows, karelRow, karelCol, karelDir, walls, stones,
-        objKarelRow, objKarelCol, objKarelDir, objStones
+        nCols, nRows, karelRow, karelCol, karelDir, karelRoom, walls, doors, rooms, stones,
+        objKarelRow, objKarelCol, objKarelDir, objKarelRoom, objStones
       } = world;
       this.activeWorld.preWorld = {
-        nCols, nRows, karelRow, karelCol, karelDir, walls, stones
+        nCols, nRows, karelRow, karelCol, karelDir, karelRoom, walls, doors, rooms, stones
       };
       this.activeWorld.postWorld = {
-        nCols, nRows, karelRow: objKarelRow, karelCol: objKarelCol, karelDir: objKarelDir, walls, stones: objStones
+        nCols, nRows, karelRow: objKarelRow, karelCol: objKarelCol, karelDir: objKarelDir, karelRoom: objKarelRoom, walls, doors, rooms, stones: objStones
       };
     },
     update() {
-      const { name, instructions, maxBlocks, hint, worlds, tags } = this
+      const { name, instructions, maxBlocks, hint, worlds, isPython, pythonCode, tags } = this
       // karelBlockly pulled separately, customizerMode false for save
       const karelBlockly = copy(this.karelBlockly)
       karelBlockly.settings.customizerMode = false
-      const customizerStateData = copy({ name, instructions, maxBlocks, hint, worlds, karelBlockly, tags })
+      const customizerStateData = copy({ name, instructions, maxBlocks, hint, worlds, isPython, pythonCode, karelBlockly, tags })
       this.$store.dispatch('updateCustomizerState', customizerStateData )
     },
     getSystemTags(settings) {

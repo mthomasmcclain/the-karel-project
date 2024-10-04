@@ -12,16 +12,28 @@
       </div>
 
       <div class="world-wrapper">
-        <KarelWorldRenderer :world="world" :objective="activePostWorld" />
+        <KarelWorldRenderer :world="world" :objective="activePostWorld" :activeRoom="playing ? world.karelRoom : activeRoom" />
       </div>
 
-      <div style="display: flex;">
-        <div style="width: 64px" >
-          <StoneAndNumber :n="world.pickedStones?.blue ?? 0" obj="-1" numPosition="middle" color="blue" />
+      <div style="display: flex; gap: 32px;">
+        <!-- Backpack -->
+        <div style="display: flex;">
+          <div style="width: 64px" >
+            <StoneAndNumber :n="world.pickedStones?.blue ?? 0" obj="-1" numPosition="middle" color="blue" />
+          </div>
+          <div style="width: 64px" >
+            <StoneAndNumber :n="world.pickedStones?.red ?? 0" obj="-1" numPosition="middle" color="red" />
+          </div>
         </div>
-        <div style="width: 64px" >
-          <StoneAndNumber :n="world.pickedStones?.red ?? 0" obj="-1" numPosition="middle" color="red" />
-        </div>
+
+        <!-- World map (multiple rooms) -->
+        <KarelWorldMap
+          :rooms="activePreWorld.rooms"
+          :doors="activePreWorld.doors"
+          :activeRoom="playing ? world.karelRoom : activeRoom"
+          :active="!playing"
+          @room-change="activeRoom = $event"
+        />
       </div>
 
       <!-- Scenario Selector, if More Than One -->
@@ -57,9 +69,14 @@
           :stepSpeed="stepSpeed"
           :preWorld="activePreWorld"
           :playing="playing"
+          :isPython="isPython"
+          :pythonCode="pythonCode"
+          :errorCallback="errorCallback"
+          :highlight="highlight"
+          :settings="karelBlockly.settings"
           @play="playing = true"
           @pause="playing = false"
-          @step="currentStepData = $event"
+          @step="currentStepData = $event; if (currentStepData) activeRoom = currentStepData.world.karelRoom"
           @setStepSpeed="stepSpeed = $event"
         />
       </div>
@@ -70,12 +87,32 @@
 
     <div class="right-col">
       <KarelBlockly
+        v-if="!isPython"
         v-model:toolbox="karelBlockly.toolbox"
         v-model:workspace="karelBlockly.workspace"
         v-model:worldWorkspace="karelBlockly.worldWorkspace"
         v-model:settings="karelBlockly.settings"
         v-model:highlight="karelBlockly.highlight"
       />
+      <div v-else style="display: flex; flex-direction: column; width: 100%; height: 100%">
+        <div style="background-color: lightgrey; padding: 2px">
+          Limits:
+          <button @click="showLimits = !showLimits" style="border: none; background-color: transparent; float: right; cursor: pointer">
+            {{ showLimits ? '◀' : '▼' }}
+          </button>
+          <ul :style="{ display: showLimits ? 'block' : 'none', padding: '0 20px', margin: 0 }">
+            <li v-for="limit in finalSettings">
+              {{ limit.name }}: {{ limit.limit }}
+            </li>
+          </ul>
+        </div>
+        <KarelPython
+          v-model="pythonCode"
+          :console-text="currentStepData?.pythonText ?? ''"
+          :highlight="pythonHighlight"
+          :error="pythonError"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -84,6 +121,7 @@
 import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls/index.vue'
 import KarelWorldRenderer from '../KarelWorldRenderer.vue'
 import KarelBlockly from '../KarelBlockly/index.vue'
+import KarelPython from '../KarelPython/index.vue'
 import worldsMatch from './karelWorldsMatch.js'
 import {
   taskSuccessSwal,
@@ -93,13 +131,13 @@ import {
   taskHintSwal
 } from '../../helpers/projectSwallows.js'
 import StoneAndNumber from '../BuilderComponents/TaskCustomizer/KarelWorldRendererAndEditor/StoneAndNumberVueSvg.vue'
+import KarelWorldMap from '../KarelWorldMap.vue'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
-
 export default {
   name: 'task-player',
-  components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls, StoneAndNumber },
+  components: { KarelBlockly, KarelPython, KarelWorldRenderer, KarelBlocklyPlayerAndControls, StoneAndNumber, KarelWorldMap },
   props: {
     id: {
       type: String,
@@ -114,12 +152,18 @@ export default {
     const { karelBlockly } = task
     karelBlockly.settings.customizerMode = false
     return {
+      isPython: task.isPython,
+      pythonCode: task.pythonCode,
       karelBlockly,
       currentStepData: null,
       playing: false,
       stepSpeed: 5,
       activeScenarioIndex: 0,
       correctScenarios: new Array(task.worlds.length).fill(null),
+      pythonError: { message: '', line: 0 },
+      pythonHighlight: { line: 0 },
+      activeRoom: { row: 0, col: 0 },
+      showLimits: false
     }
   },
   watch: {
@@ -170,6 +214,9 @@ export default {
           this.$emit('taskCorrect')
         }
       }
+    },
+    playing() {
+      if (this.playing) this.pythonError.line = 0
     }
   },
   computed: {
@@ -198,6 +245,23 @@ export default {
         if (!this.codeCompletelyRun) return null
         else if (this.error) return false
         else return this.currentStepData.world.endConditions ? this.currentStepData.isDone : worldsMatch(this.currentStepData.world, this.activePostWorld)
+    },
+    finalSettings() {
+      const nameMap = {
+        'karel_move': 'karel.move',
+        'karel_turn': 'karel.turnLeft',
+        'karel_place': 'karel.placeStone',
+        'karel_pickup': 'karel.pickupStone',
+        'karel_while': 'while loops',
+        'karel_define': 'functions',
+        'karel_variable': 'variables'
+      };
+
+      const settings = Object.entries(this.karelBlockly.settings.blocks).filter(([, value]) => value.active)
+      const final = settings.map(([key, value]) => {
+        return { name: nameMap[key] || key, limit: value.limit === -1 ? '∞' : value.limit }
+      })
+      return final;
     }
   },
   methods: {
@@ -214,6 +278,13 @@ export default {
       this.karelBlockly = copy(karelBlockly)
       this.playing = false
       this.currentStepData = null
+    },
+    errorCallback(error) {
+      this.pythonError.message = error.message
+      this.pythonError.line = error.line
+    },
+    highlight(line) {
+      this.pythonHighlight.line = line
     }
   },
 }

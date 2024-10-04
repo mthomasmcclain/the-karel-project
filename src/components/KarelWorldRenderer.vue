@@ -88,8 +88,27 @@
             stroke-width="0.2"
         />
 
+        <!-- DOORS -->
+        <line v-for="door in eastDoors" :key="`east-door-${door.r}-${door.c}`"
+          :x1="door.c * 10"
+          :y1="door.r * 10"
+          :x2="door.c * 10"
+          :y2="(door.r + 1) * 10"
+          stroke="white"
+          :stroke-width="borderWidth * 2"
+        />
+        <line v-for="door in northDoors" :key="`north-door-${door.r}-${door.c}`"
+          :x1="door.c * 10"
+          :y1="door.r * 10"
+          :x2="(door.c + 1) * 10"
+          :y2="door.r * 10"
+          stroke="white"
+          :stroke-width="borderWidth * 2"
+        />
+
         <!-- KAREL -->
         <SvgPositioner
+          v-if="(world.karelRoom?.row ?? 0) === activeRoom.row && (world.karelRoom?.col ?? 0) === activeRoom.col"
           :xPos="5 + 10*world.karelCol"
           :yPos="5 + 10*world.karelRow"
           :w="5"
@@ -101,6 +120,7 @@
 
         <!-- OBJECTIVE KAREL -->
         <SvgPositioner
+          v-if="(objective.karelRoom?.row ?? 0) === activeRoom.row && (objective.karelRoom?.col ?? 0) === activeRoom.col"
           :xPos="5 + 10*objective.karelCol"
           :yPos="5 + 10*objective.karelRow"
           :w="5"
@@ -163,12 +183,15 @@ export default {
       default: () => ({
         "nRows": 3,
         "nCols": 3,
-        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue" }],
+        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue", "room": {"row": 0, "col": 0} }],
         "pickedStones": { "blue": 0, "red": 0 },
         "walls": [],
+        "doors": [],
+        "rooms": [],
         "karelDir": "East",
         "karelRow": 2,
-        "karelCol": 0
+        "karelCol": 0,
+        "karelRoom": {row: 0, col: 0}
       })
     },
     objective: {
@@ -176,12 +199,21 @@ export default {
       default: () => ({
         "nRows": 3,
         "nCols": 3,
-        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue" }],
+        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue", "room": {"row": 0, "col": 0} }],
         "pickedStones": { "blue": 0, "red": 0 },
         "walls": [],
+        "doors": [],
+        "rooms": [],
         "karelDir": "East",
         "karelRow": 2,
         "karelCol": 0
+      })
+    },
+    activeRoom: {
+      type: Object,
+      default: () => ({
+        row: 0,
+        col: 0
       })
     }
   },
@@ -211,6 +243,8 @@ export default {
     viewBoxH() { return this.world.nRows * 10 },
     eastWalls()  { return this.world.walls.filter(wall => wall.d.toLowerCase() === 'east' )},
     northWalls() { return this.world.walls.filter(wall => wall.d.toLowerCase() === 'north')},
+    eastDoors() { return (this.world.doors ?? []).filter(door => door.d.toLowerCase() === 'east' && door.room.row === this.activeRoom.row && door.room.col === this.activeRoom.col)},
+    northDoors() { return (this.world.doors ?? []).filter(door => door.d.toLowerCase() === 'north' && door.room.row === this.activeRoom.row && door.room.col === this.activeRoom.col)},
     rotation() {
       const { karelDir } = this.world
       if (!karelDir) return 0
@@ -233,30 +267,37 @@ export default {
     },
     finalStones() {
       const arr = [];
-      const worldStones = this.world.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue' }));
-      const objectiveStones = this.objective.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue' }));
-      worldStones.forEach(stone =>
-        arr.push({
-          r: stone.r,
-          c: stone.c,
-          n: stone.n,
-          obj: this.objective.stones.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color)?.n ?? 0,
-          color: stone.color
-        })
-      );
+      const worldStones = this.world.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue', room: stone.room ? stone.room : {row: 0, col: 0} }));
+      const objectiveStones = this.objective.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue', room: stone.room ? stone.room : {row: 0, col: 0} }));
+      worldStones.forEach(stone => {
+        if (stone.room.row === this.activeRoom.row && stone.room.col === this.activeRoom.col) {
+          arr.push({
+            r: stone.r,
+            c: stone.c,
+            n: stone.n,
+            obj: objectiveStones.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color && obj.room.row === stone.room.row && obj.room.col === stone.room.col)?.n ?? 0,
+            color: stone.color,
+            room: stone.room
+          });
+        }
+      });
       objectiveStones.forEach(stone => {
-        if (!arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color)) {
+        if (
+          !arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color && obj.room.row === stone.room.row && obj.room.col === stone.room.col) &&
+          stone.room.row === this.activeRoom.row && stone.room.col === this.activeRoom.col
+        ) {
           arr.push({
             r: stone.r,
             c: stone.c,
             n: 0,
             obj: stone.n,
-            color: stone.color
+            color: stone.color,
+            room: stone.room
           });
         }
       });
       return arr.map(stone => {
-        if (arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color !== stone.color)) {
+        if (arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color !== stone.color && obj.room.row === stone.room.row && obj.room.col === stone.room.col)) {
           return {
             ...stone,
             multi: true
