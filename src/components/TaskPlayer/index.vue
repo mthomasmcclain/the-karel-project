@@ -247,6 +247,8 @@ export default {
     openMobileCodeMode() {
       if (!this.mobileScreen || this.mobileCodeMode) return
       this.mobileCodeMode = true
+      console.log('opening mobile code mode')
+      console.log('mobileCodeMode is now:: ', this.mobileCodeMode)
       this.karelBlockly.settings.showToolbox = true
       this.karelBlockly.settings.disabled = false
     },
