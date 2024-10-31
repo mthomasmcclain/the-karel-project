@@ -148,8 +148,8 @@ export default {
   async created() {
     // init new fields for old run states. gross
     // they'll be set properly on this.handleResize() below 
-    Vue.set(this, 'mobileScreen', false);
-    Vue.set(this, 'mobileCodeMode', false);
+    this.$set(this, 'mobileScreen', false);
+    this.$set(this, 'mobileCodeMode', false);
 
     if (!this.task) {
       const task = await Agent.state(this.id)
