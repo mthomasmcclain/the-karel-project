@@ -96,27 +96,41 @@
   align-items: flex-end;
 }
 .play-speed-wrapper {
-    display: flex;
-    color: #777;
-    height: 60px;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid lightgrey;
+  display: flex;
+  color: #777;
+  height: 60px;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid lightgrey;
 }
 .play-speed-wrapper .speed-labels-row {
-    display: flex;
-    width: 100%;
-    color: #888;
-    font-size: 0.8rem;
-    justify-content: space-between;
+  display: flex;
+  width: 100%;
+  color: #888;
+  font-size: 0.8rem;
+  justify-content: space-between;
 }
 .play-speed-wrapper input {
-    appearance: none;
-    background: none;
-    border: 2px solid gainsboro;
+  appearance: none;
+  background: none;
+  border: 2px solid gainsboro;
 }
+@media only screen and (max-width: 600px) {
+  .container {
+    justify-content: space-around;
+    align-items: center;
+  }
+  .play-speed-wrapper {
+    border: none;
+    height: revert;
+    flex-direction: row;
+  }
+  .play-speed-wrapper .speed-labels-row {
+    display: none;
+  }
+ }
 
 </style>
