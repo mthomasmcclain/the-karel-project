@@ -146,6 +146,10 @@ export default {
     }
   },
   async created() {
+    // init new fields for old run states. gross
+    // they'll be set properly on this.handleResize() below 
+    Vue.set(this, 'mobileScreen', false);
+    Vue.set(this, 'mobileCodeMode', false);
 
     if (!this.task) {
       const task = await Agent.state(this.id)
@@ -247,8 +251,6 @@ export default {
     openMobileCodeMode() {
       if (!this.mobileScreen || this.mobileCodeMode) return
       this.mobileCodeMode = true
-      console.log('opening mobile code mode')
-      console.log('this is now:: ', this)
       this.karelBlockly.settings.showToolbox = true
       this.karelBlockly.settings.disabled = false
     },
