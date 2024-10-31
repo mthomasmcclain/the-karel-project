@@ -148,8 +148,8 @@ export default {
   async created() {
     // init new fields for old run states. gross
     // they'll be set properly on this.handleResize() below 
-    this.$set(this, 'mobileScreen', false);
-    this.$set(this, 'mobileCodeMode', false);
+    this.$data.mobileScreen = false
+    this.$data.mobileCodeMode = false
 
     if (!this.task) {
       const task = await Agent.state(this.id)
