@@ -9,7 +9,7 @@ import sys
 import traceback
 from types import ModuleType
 
-from js import blocks
+from js import blocks, currentId, hasWorld, minAgentId
 limits = blocks.to_py()
 for key in limits:
     limits[key]['count'] = 0
@@ -66,6 +66,9 @@ reserved_functions = ['karel_main', 'done', 'highlight', 'step', 'appendText']
 
 
 def check_limit(name, display_name, lineno):
+    if currentId != 0:
+        return
+
     if name in limits:
         if not limits[name]['active']:
             raise KarelError(f'You are not allowed to use {display_name} in this problem.', lineno)
@@ -95,6 +98,12 @@ def parse_rec(node, context, indent):
     elif isinstance(node, ast.FunctionDef):
         check_limit('karel_define', 'functions', node.lineno)
 
+        if node.name == 'world_main' and currentId != -1:
+            raise KarelError('Function world_main is reserved', node.lineno)
+
+        if node.name == 'end_conditions' and currentId != -1:
+            raise KarelError('Function end_conditions is reserved', node.lineno)
+
         if node.name in reserved_functions:
             raise KarelError(f'Function {node.name} is reserved', node.lineno)
 
@@ -104,22 +113,42 @@ def parse_rec(node, context, indent):
         else: 
             context['functions'].append(node.name)
 
+        # Special case: end_conditions
+        if currentId == -1 and node.name == 'end_conditions':
+            if len(node.args.args) > 0:
+                raise KarelError('endconsitions should not have arguments', node.lineno)
+
+            end_conditions_context = copy.deepcopy(context)
+            end_conditions_context['code'] = ''
+
+            for child in node.body:
+                parse_rec(child, end_conditions_context, 1)
+
+            context['end_conditions'] = end_conditions_context['code']
+
+            return
+
         # Function header
-        context['code'] += indent_str
-        context['code'] += f'async function {node.name} ('
-        for i, arg in enumerate(node.args.args):
-            context['code'] += arg.arg
-            if i != len(node.args.args) - 1:
-                context['code'] += ', '
-        context['code'] += ') {\n'
+        if currentId == -1 and node.name == 'world_main':
+            if len(node.args.args) > 0:
+                raise KarelError('world_main should not have arguments', node.lineno)
+        else:
+            context['code'] += indent_str
+            context['code'] += f'async function {node.name}('
+            for i, arg in enumerate(node.args.args):
+                context['code'] += arg.arg
+                if i != len(node.args.args) - 1:
+                    context['code'] += ', '
+            context['code'] += ') {\n'
 
         # Function body
         for child in node.body:
-            parse_rec(child, context, indent + 1)
+            parse_rec(child, context, indent + (0 if currentId == -1 and node.name == 'world_main' else 1))
 
         # Function end
-        context['code'] += indent_str
-        context['code'] += '}\n'
+        if currentId != -1 or node.name != 'world_main':
+            context['code'] += indent_str
+            context['code'] += '}\n'
 
     # While loop
     elif isinstance(node, ast.While):
@@ -155,7 +184,7 @@ def parse_rec(node, context, indent):
         context['code'] += '{\n'
 
         context['code'] += indent_str
-        context['code'] += f'highlight({node.lineno - 1});\n'
+        context['code'] += f'highlight({currentId}, {node.lineno - 1});\n'
         context['code'] += indent_str
         context['code'] += 'await step();\n'
 
@@ -204,28 +233,55 @@ def parse_rec(node, context, indent):
 
     # Boolean operations
     elif isinstance(node, ast.BoolOp):
-        context['code'] += '('
+        first = context['first']
+        context['first'] = False
+
+        if not first:
+            context['code'] += '('
+
         parse_rec(node.values[0], context, 0)
         context['code'] += f' {bool_ops[type(node.op)]} '
         parse_rec(node.values[1], context, 0)
-        context['code'] += ')'
+
+        if not first:
+            context['code'] += ')'
+
+        context['first'] = first
 
     # Comparison operations
     elif isinstance(node, ast.Compare):
-        context['code'] += '('
+        first = context['first']
+        context['first'] = False
+
+        if not first:
+            context['code'] += '('
+
         parse_rec(node.left, context, 0)
         context['code'] += f' {bool_comps[type(node.ops[0])]} '
         parse_rec(node.comparators[0], context, 0)
-        context['code'] += ')'
+
+        if not first:
+            context['code'] += ')'
+
+        context['first'] = first
 
     # Unary operations
     elif isinstance(node, ast.UnaryOp):
-        context['code'] += '('
+        first = context['first']
+        context['first'] = False
+
+        if not first:
+            context['code'] += '('
+
         context['code'] += f'{bool_ops[type(node.op)]}'
         context['code'] += '('
         parse_rec(node.operand, context, 0)
         context['code'] += ')'
-        context['code'] += ')'
+
+        if not first:
+            context['code'] += ')'
+
+        context['first'] = first
 
     # Variable
     elif isinstance(node, ast.Name):
@@ -237,13 +293,14 @@ def parse_rec(node, context, indent):
     # Expression
     elif isinstance(node, ast.Expr):
         context['code'] += indent_str
-        parse_rec(node.value, context, 0)
+        skip = parse_rec(node.value, context, 0)
         context['code'] += ';\n'
 
-        context['code'] += indent_str
-        context['code'] += f'highlight({node.lineno - 1});\n'
-        context['code'] += indent_str
-        context['code'] += 'await step();\n'
+        if not skip:
+            context['code'] += indent_str
+            context['code'] += f'highlight({currentId}, {node.lineno - 1});\n'
+            context['code'] += indent_str
+            context['code'] += 'await step();\n'
 
     # Assignment
     elif isinstance(node, ast.Assign):
@@ -273,7 +330,7 @@ def parse_rec(node, context, indent):
         context['code'] += '}\n'
 
         context['code'] += indent_str
-        context['code'] += f'highlight({node.lineno - 1});\n'
+        context['code'] += f'highlight({currentId}, {node.lineno - 1});\n'
         context['code'] += indent_str
         context['code'] += 'await step();\n'
 
@@ -285,17 +342,26 @@ def parse_rec(node, context, indent):
         context['code'] += ';\n'
 
         context['code'] += indent_str
-        context['code'] += f'highlight({node.lineno - 1});\n'
+        context['code'] += f'highlight({currentId} {node.lineno - 1});\n'
         context['code'] += indent_str
         context['code'] += 'await step();\n'
 
     # Binary operations
     elif isinstance(node, ast.BinOp):
-        context['code'] += '('
+        first = context['firstExpression']
+        context['first'] = False
+
+        if not first:
+            context['code'] += '('
+
         parse_rec(node.left, context, 0)
         context['code'] += f' {bin_ops[type(node.op)]} '
         parse_rec(node.right, context, 0)
-        context['code'] += ')'
+
+        if not first:
+            context['code'] += ')'
+
+        context['first'] = first
 
     # Attribute
     elif isinstance(node, ast.Attribute):
@@ -323,11 +389,60 @@ def parse_rec(node, context, indent):
               else:
                 raise KarelError(f'Function {contextCopy['code']} is not defined', node.lineno)
 
-        context['code'] += '('
+        if contextCopy['code'] == 'karel.onKeyPress':
+            if len(node.args) != 2:
+                raise KarelError('Function onKeyPress should have two parameters', node.lineno)
+
+            context['code'] += 'karel.eventFunctions.Arrow'
+
+            contextCopy['code'] = ''
+            parse_rec(node.args[0], contextCopy, 0)
+            key = contextCopy['code']
+            if key == 'karel.up':
+                context['code'] += 'Up'
+            elif key == 'karel.down':
+                context['code'] += 'Down'
+            elif key == 'karel.left':
+                context['code'] += 'Left'
+            elif key == 'karel.right':
+                context['code'] += 'Right'
+            else:
+                raise KarelError('First argument should be a direction (e.g. karel.up)', node.lineno)
+
+            context['code'] += ' = {called: false, f: '
+
+            contextCopy['code'] = ''
+            parse_rec(node.args[1], contextCopy, 0)
+            context['code'] += contextCopy['code']
+
+            context['code'] += '}'
+
+            context['eventFunctions'].append({'name': contextCopy['code'], 'key': key[6:]})
+
+            return True
+
+        if contextCopy['code'] == 'karel.wait':
+            if len(node.args) != 1:
+                raise KarelError('Function wait should have one argument', node.lineno)
+
+            context['code'] += 'for (let wait_counter = 0; wait_counter < '
+
+            contextCopy['code'] = ''
+            parse_rec(node.args[0], contextCopy, 0)
+            context['code'] += contextCopy['code']
+
+            context['code'] += '; ++wait_counter) { await step(); }'
+
+            return True
+
         if has_await:
             context['code'] += 'await '
 
-        if contextCopy['code'] == 'print':
+        if contextCopy['code'][6:] == 'success':
+            context['code'] += 'return true'
+        elif contextCopy['code'][6:] == 'fail':
+            context['code'] += 'karel.error = "You failed, try again!"'
+        elif contextCopy['code'] == 'print':
             context['code'] += 'appendText(`'
             for i, arg in enumerate(node.args):
                 context['code'] += '${'
@@ -344,8 +459,6 @@ def parse_rec(node, context, indent):
                   context['code'] += ', '
           context['code'] += ')'
 
-        context['code'] += ')'
-
     # Constant
     elif isinstance(node, ast.Constant):
         if not isinstance(node.value, int):
@@ -355,6 +468,13 @@ def parse_rec(node, context, indent):
     # Pass
     elif isinstance(node, ast.Pass):
         pass
+
+    # Return
+    elif isinstance(node, ast.Return):
+        context['code'] += indent_str
+        context['code'] += 'return '
+        parse_rec(node.value, context, 0)
+        context['code'] += ';\n'
 
     else:
         raise KarelError(f'Unsupported node type: {type(node)}', node.lineno)
@@ -368,14 +488,60 @@ try:
     context = {
         'code': '',
         'variables': [],
-        'functions': []
+        'functions': [],
+        'eventFunctions': [],
+        'first': True
     }
-    context['code'] += 'async function karel_main() {\n try{'
-    parse_rec(tree, context, 1)
-    context['code'] += '} catch(e) {karel.error = e.message;}\n}\nkarel_main().then(done);'
+
+    if currentId == 0:
+        context['code'] += f'async function karel_main() {{\nawait step({currentId if hasWorld or minAgentId > 0 else ''});\ntry{{\n'
+        parse_rec(tree, context, 1)
+        context['code'] += f'{'while (true) { await step(); }' if hasWorld else ''}}} catch (e) {{ karel.error = e.message; }}\n}}\nkarel_main().then(done);\n'
+
+        if hasWorld:
+            for event_function in context['eventFunctions']:
+                i = context['code'].find(f'async function {event_function['name']}(')
+
+                while i < len(context['code']) and context['code'][i] != '{':
+                    i += 1
+
+                i += 1
+                context['code'] = context['code'][:i] + '\n    await step(0);' + context['code'][i:]
+
+                counter = 1
+                while i < len(context['code']) and counter > 0:
+                    if context['code'][i] == '{':
+                        counter += 1
+                    elif context['code'][i] == '}':
+                        counter -= 1
+
+                    i += 1
+
+                i -= 2
+                context['code'] = context['code'][:i] + f'    karel.eventFunctions.Arrow{event_function['key'].capitalize()}.called = false;\n' + context['code'][i:]
+
+    elif currentId == -1:
+        context['end_conditions'] = ''
+
+        context['code'] += 'async function world_main() {\ntry {\nwhile (true) {'
+        parse_rec(tree, context, 1)
+        context['code'] += '}\n} catch (e) { karel.error = e.message; }\n}\nworld_main();\n'
+
+        if 'world_main' not in context['functions']:
+            raise KarelError('Missing world_main function', 2)
+
+        if 'end_conditions' not in context['functions']:
+            raise KarelError('Missing end_conditions function', 2)
+    else:
+        context['code'] += f'async function agent_{currentId}_main() {{\n{f'await step({currentId});\n' if hasWorld or currentId > minAgentId else ''}try{{\nwhile (true) {{\n'
+        parse_rec(tree, context, 1)
+        context['code'] += f'}}\n}} catch (e) {{ karel.error = e.message; }}\n}}\nagent_{currentId}_main();\n'
 
     results['type'] = 'success'
     results['code'] = context['code']
+
+    if currentId == -1:
+        results['endConditions'] = context['end_conditions']
 
 except KarelError as e:
     results['type'] = 'error'
@@ -395,5 +561,4 @@ except Exception as e:
     results['message'] = str(e)
     results['line'] = lineno
 
-print(results)
 results

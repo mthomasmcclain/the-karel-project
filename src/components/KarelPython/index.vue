@@ -1,7 +1,7 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-
+import { computed, onMounted, onUnmounted, ref, toRaw, watch } from 'vue';
 import * as monaco from 'monaco-editor';
+import KarelTabs from '../KarelTabs.vue';
 
 /*
  * Task ids:
@@ -17,73 +17,164 @@ import * as monaco from 'monaco-editor';
 
 const props = defineProps({
   consoleText: String,
-  highlight: Object,
-  error: Object
+  highlights: Object,
+  error: Object,
+  readonly: Boolean,
+  runningTab: Number,
+  hasWorld: Boolean,
+  showConsole: Boolean
 });
+
+const code = defineModel('code');
+const world = defineModel('world');
+const agents = defineModel('agents');
+const activeTab = defineModel('activeTab');
+
+const editorDiv = ref();
+
+let instance;
+const models = {};
+const states = {};
+
+let lines = {};
+let decorations = null;
 
 const consoleFinalText = computed(() => {
   return `Karel output:\n${props.consoleText ?? ''}`;
 });
 
-const code = defineModel();
+const createModel = (id) => {
+  if (id === 0) {
+    models[id] = monaco.editor.createModel(code.value ?? '', 'python');
 
-const editorDiv = ref();
+    models[id].onDidChangeContent(() => {
+      code.value = instance.getValue();
+    });
+  } else if (id === -1) {
+    models[id] = monaco.editor.createModel(world.value ?? '', 'python');
 
-let editor;
-let decorations = null;
-onMounted(() => {
-  editor = monaco.editor.create(editorDiv.value, {
-    value: code.value,
-    language: 'python'
-  });
+    models[id].onDidChangeContent(() => {
+      world.value = instance.getValue();
+    });
+  } else {
+    const agent = agents.value.filter((agent) => agent.id === id)[0];
 
-  editor.getModel().onDidChangeContent(() => {
-    code.value = editor.getValue();
-  });
+    models[id] = monaco.editor.createModel(agent.pythonCode ?? '', 'python');
 
-  if (props.error.line !== 0) {
-    monaco.editor.setModelMarkers(editor.getModel(), 'python', [{
-      startLineNumber: props.error.line,
-      startColumn: 1,
-      endLineNumber: props.error.line,
-      endColumn: editor.getModel().getLineMaxColumn(props.error.line) + 1,
-      message: props.error.message,
-      severity: monaco.MarkerSeverity.Error
-    }]);
+    models[id].onDidChangeContent(() => {
+      agent.pythonCode = instance.getValue();
+    })
   }
+}
+
+const finalTabs = computed((previousTabs) => {
+  const tabs = {
+    0: {
+      id: 0,
+      name: 'Karel',
+      code
+    }
+  };
+
+  if (props.hasWorld) {
+    tabs[-1] = {
+      id: -1,
+      name: 'World',
+      code: world.value
+    }
+  }
+
+  if (agents.value) {
+    for (const agent of agents.value) {
+      tabs[agent.id] = {
+        id: agent.id,
+        name: agent.name,
+        code: ''
+      }
+    }
+  }
+
+  // Update models and states.
+  if (previousTabs) {
+    const previousIds = Object.values(previousTabs).map((tab) => tab.id);
+    const newIds = Object.values(tabs).map((tab) => tab.id);
+
+    for (const previousId of previousIds) {
+      if (newIds.every((id) => id !== previousId)) {
+        if (activeTab.value === previousId)
+        {
+          activeTab.value = 0;
+        }
+
+        models[previousId].dispose();
+        delete models[previousId];
+        delete states[previousId];
+      }
+    }
+
+    for (const newId of newIds) {
+      if (previousIds.every((id) => id !== newId)) {
+        createModel(newId);
+      }
+    }
+  }
+
+  return tabs;
 });
 
+onMounted(() => {
+  instance = monaco.editor.create(editorDiv.value, {
+    value: code.value,
+    language: 'python',
+    model: null,
+    automaticLayout: true,
+    renderValidationDecorations: 'on'
+  });
+
+  for (const tab of Object.values(finalTabs.value)) {
+    createModel(tab.id);
+  }
+
+  instance.setModel(models[activeTab.value]);
+});
+
+const errorModelId = ref();
 watch(() => props.error, (error) => {
-  if (editor) {
+  if (instance) {
     if (error.line === 0) {
-      monaco.editor.setModelMarkers(editor.getModel(), 'python', []);
+      monaco.editor.setModelMarkers(models[errorModelId.value], 'python', []);
+      errorModelId.value = null;
       return;
     }
 
-    monaco.editor.setModelMarkers(editor.getModel(), 'python', [{
+    errorModelId.value = parseInt(error.id);
+    activeTab.value = errorModelId.value;
+    monaco.editor.setModelMarkers(models[errorModelId.value], 'python', [{
       startLineNumber: error.line,
       startColumn: 1,
-      endLineNumber: error.line,
-      endColumn: editor.getModel().getLineMaxColumn(error.line) + 1,
+      endLineNumber: errorModelId.value,
+      endColumn: models[errorModelId.value].getLineMaxColumn(error.line) + 1,
       message: error.message,
       severity: monaco.MarkerSeverity.Error
     }]);
   }
 }, { deep: true });
 
-watch(() => props.highlight, (highlight) => {
-  if (editor) {
+watch(() => props.highlights, (highlights) => {
+  if (instance) {
     if (decorations) {
       decorations.clear();
       decorations = null;
     }
 
-    if (highlight.line === 0) {
+    lines = structuredClone(toRaw(highlights));
+
+    if (highlights[activeTab.value] == null || highlights[activeTab.value] === 0) {
       return;
     }
 
-    decorations = editor.createDecorationsCollection([{
-      range: new monaco.Range(highlight.line, 1, highlight.line, 1),
+    decorations = instance.createDecorationsCollection([{
+      range: new monaco.Range(highlights[activeTab.value], 1, highlights[activeTab.value], 1),
       options: {
         isWholeLine: true,
         className: 'line-highlight'
@@ -92,15 +183,58 @@ watch(() => props.highlight, (highlight) => {
   }
 }, { deep: true });
 
+watch(() => activeTab.value, (newActiveTab, previousActiveTab) => {
+  if (Object.values(finalTabs.value).some((tab) => tab.id === previousActiveTab)) {
+    states[previousActiveTab] = instance.saveViewState();
+  }
+
+  instance.setModel(models[newActiveTab]);
+
+  instance.updateOptions({ readOnly: props.readonly && newActiveTab !== 0 });
+
+  if (states[newActiveTab]) {
+    instance.restoreViewState(states[newActiveTab]);
+  }
+
+  if (lines[newActiveTab] > 0) {
+    if (decorations) {
+      decorations.clear();
+    }
+
+    decorations = instance.createDecorationsCollection([{
+      range: new monaco.Range(lines[newActiveTab], 1, lines[newActiveTab], 1),
+      options: {
+        isWholeLine: true,
+        className: 'line-highlight'
+      }
+    }]);
+  }
+});
+
 onUnmounted(() => {
-  monaco.editor.getModels()[0].dispose();
+  for (const tab of Object.values(finalTabs.value)) {
+    if (decorations) {
+      decorations.clear();
+    }
+
+    models[tab.id].dispose();
+  }
 });
 </script>
 
 <template>
   <div class="container">
-    <div ref="editorDiv" class="editor"></div>
-    <pre class="console">{{ consoleFinalText }}</pre>
+    <KarelTabs
+      v-if="Object.keys(finalTabs).length > 1"
+      v-model="activeTab"
+      :tabs="finalTabs"
+      :runningTab="runningTab"
+      :errorTabId="errorModelId"
+    />
+    <div class="container">
+      <div ref="editorDiv" class="editor"></div>
+      <pre v-if="showConsole" class="console">{{ consoleFinalText }}</pre>
+    </div>
   </div>
 </template>
 
@@ -115,12 +249,12 @@ onUnmounted(() => {
 
 .editor {
   width: 100%;
-  height: 80%;
+  flex: 1;
 }
 
 .console {
   width: 100%;
-  height: 20%;
+  height: 100px;
 
   box-sizing: border-box;
   padding: 5px;

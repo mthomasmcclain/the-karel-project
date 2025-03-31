@@ -223,9 +223,22 @@
     >
       <StoneAndNumber :n="stone.n" :obj="stone.obj" :color="stone.color" :numPosition="stone.multi ? 'middle' : 'top'" />
     </SvgPositioner>
+
+    <!-- AGENTS -->
+    <SvgPositioner v-for="agent, id in finalAgents"
+      :key="`agent-${id}`"
+      anchor="center center"
+      :xPos="5 + 10*agent.col"
+      :yPos="5 + 10*agent.row"
+      :w="7.5"
+      :rotation="agentRotation(agent.dir)"
+      @mousemove="editRow=agent.row+1; editCol=agent.col+1; editWallR=null; editWallC=null; editWallD=null; editDoorR=null; editDoorC=null; editDoorD=null;"
+    >
+      <StoneAndNumber :n="-1" :obj="-1" :color="agent.color" :numPosition="'middle'" />
+    </SvgPositioner>
       
     <!-- KAREL -->
-    <SvgPositioner v-if="karelRoom.row === this.activeRoom.row && karelRoom.col === this.activeRoom.col"
+    <SvgPositioner v-if="karelRoom.row === activeRoom.row && karelRoom.col === activeRoom.col"
       :w="5"
       anchor="center center"
       :xPos="5 + karelCol*10"
@@ -248,7 +261,7 @@
     >
       <KarelVueSvg />
     </SvgPositioner>
-                      
+
     <!-- EDIT CONTROLS -->
     <template v-for="(x,r) in nRows">
       <template v-for="(y,c) in nCols">
@@ -259,13 +272,24 @@
         >
           <!-- Karel Ghost (if karel not in square) -->
           <SvgPositioner
-            v-if="!(r === karelRow && c === karelCol && activeRoom.row === karelRoom.row && activeRoom.col === karelRoom.col) && editCell === 'KAREL'"
+            v-if="editCell === 'KAREL' && !(r === karelRow && c === karelCol && activeRoom.row === karelRoom.row && activeRoom.col === karelRoom.col)"
             :xPos="5" :yPos="5" w="5"
             :rotation="rotation"
             anchor="center center"
             style="opacity: 0.35;"
           >
             <KarelVueSvg />
+          </SvgPositioner>
+
+          <!-- Agent Ghost -->
+          <SvgPositioner
+            v-if="editCell.startsWith('AGENT')"
+            :xPos="5" :yPos="5" w="7.5"
+            :rotation="activeAgentRotation"
+            anchor="center center"
+            style="opacity: 0.35;"
+          >
+            <StoneAndNumber :n="-1" :obj="-1" :color="activeAgentColor" :numPosition="'middle'" />
           </SvgPositioner>
 
           <!-- Stone Ghost -->
@@ -280,7 +304,7 @@
 
           <!-- Cell edit switch -->
           <SvgPositioner
-            v-if="editCell === 'KAREL'"
+            v-if="editCell !== 'STONE'"
             :xPos="5-1.6" :yPos="2" h="2"
             anchor="center top"
             @click="toggleCellEdit()"
@@ -293,7 +317,8 @@
             anchor="center top"
             @click="toggleCellEdit()"
           >
-            <KarelBoxVueSvg />
+            <StoneBoxVueSvg v-if="activeTab > 0" :color="activeAgentColor" />
+            <KarelBoxVueSvg v-else />
           </SvgPositioner>
 
           <!-- Karel Icon -->
@@ -304,6 +329,16 @@
             @click="toggleKarel(r, c)"
           >
             <KarelBoxVueSvg />
+          </SvgPositioner>
+
+          <!-- Agent Icon -->
+          <SvgPositioner
+            v-else-if="editCell.startsWith('AGENT')"
+            :xPos="5-1.6" :yPos="8" h="2"
+            anchor="center bottom"
+            @click="toggleAgent(r, c)"
+          >
+            <StoneBoxVueSvg :color="activeAgentColor" />
           </SvgPositioner>
 
           <!-- Objective Karel Icon -->
@@ -408,7 +443,7 @@ export default {
     borderWidth: {
       type: Number,
       required: false,
-      default: 0.35,
+      default: 0.35
     },
     world: {
       type: Object,
@@ -417,6 +452,11 @@ export default {
     objective: {
       type: Object,
       required: true
+    },
+    activeTab: {
+      type: Number,
+      required: false,
+      default: 0
     }
   },
   data() {
@@ -436,11 +476,15 @@ export default {
     const { karelRow: objKarelRow, karelCol: objKarelCol, karelDir: objKarelDir, stones: objStones } = this.objective
     const objKarelRoom = this.objective.objKarelRoom ?? {row: 0, col: 0}
     for (const stone of objStones) {
+      if (!stone.color) stone.color = 'blue';
       if (!stone.room) stone.room = {row: 0, col: 0};
     }
+
+    const agents = this.world.agents ?? {};
+
     return {
       nCols, nRows, karelRow, karelCol, karelDir, karelRoom, walls, doors, rooms, stones,
-      objKarelRow, objKarelCol, objKarelDir, objKarelRoom, objStones,
+      objKarelRow, objKarelCol, objKarelDir, objKarelRoom, objStones, agents,
       editRow: null,
       editCol: null,
       editWallR: null,
@@ -449,8 +493,8 @@ export default {
       editDoorR: null,
       editDoorC: null,
       editDoorD: null,
-      editCell: "KAREL",
-      activeColor: "blue",
+      editCell: this.activeTab > 0 ? `AGENT${this.activeTab}` : 'KAREL',
+      activeColor: 'blue',
       activeRoom: {row: 0, col: 0}
     }
   },
@@ -478,6 +522,7 @@ export default {
         for (const stone of this.stones) {
           if (!stone.room) stone.room = {row: 0, col: 0};
         }
+        this.agents = val.agents ?? {}
       }
     },
     objective: {
@@ -493,17 +538,24 @@ export default {
           if (!stone.room) stone.room = {row: 0, col: 0};
         }
       }
+    },
+    activeTab: {
+      handler(val) {
+        if (this.editCell !== 'STONE') {
+          this.editCell = val > 0 ? `AGENT${val}` : 'KAREL';
+        }
+      }
     }
   },
   methods: {
     emitChange() {
       const {
         nCols, nRows, karelRow, karelCol, karelDir, karelRoom, walls, doors, rooms, stones,
-        objKarelRow, objKarelCol, objKarelDir, objKarelRoom, objStones
+        objKarelRow, objKarelCol, objKarelDir, objKarelRoom, objStones, agents
       } = this
       this.$emit('change', {
         nCols, nRows, karelRow, karelCol, karelDir, karelRoom, walls, doors, rooms, stones,
-        objKarelRow, objKarelCol, objKarelDir, objKarelRoom, objStones
+        objKarelRow, objKarelCol, objKarelDir, objKarelRoom, objStones, agents
       })
     },
     resetEditModes() {
@@ -573,6 +625,20 @@ export default {
       }
       this.emitChange()
     },
+    toggleAgent(r, c) {
+      const nextDirectionMap = { North: 'East', East: 'South', South: 'West', West: 'North' };
+
+      if (this.agents[this.activeTab].row === r && this.agents[this.activeTab].col === c && this.agents[this.activeTab].room.row === this.activeRoom.row && this.agents[this.activeTab].room.col === this.activeRoom.col) {
+        this.agents[this.activeTab].dir = nextDirectionMap[this.agents[this.activeTab].dir];
+      } else {
+        this.agents[this.activeTab].row = r;
+        this.agents[this.activeTab].col = c;
+        this.agents[this.activeTab].room.row = this.activeRoom.row;
+        this.agents[this.activeTab].room.col = this.activeRoom.col;
+      }
+
+      this.emitChange();
+    },
     toggleWall(r, c, d) {
       const index = this.walls.findIndex(wall => wall.r === r && wall.c === c && wall.d === d)
       if (index > -1) {
@@ -628,7 +694,7 @@ export default {
               }
               this.stones = [ ...this.stones ]
 
-              // Remove objectve stones
+              // Remove objective stones
               for (let i = this.objStones.length - 1; i >= 0; i--) {
                 if (this.objStones[i].room.row === this.activeRoom.row + rOff && this.objStones[i].room.col === this.activeRoom.col + cOff) {
                   this.objStones.splice(i, 1)
@@ -719,18 +785,27 @@ export default {
       this.emitChange()
     },
     toggleCellEdit() {
-      if (this.editCell === "KAREL") {
-        this.editCell = "STONE"
+      if (this.editCell !== 'STONE') {
+        this.editCell = 'STONE';
       } else {
-        this.editCell = "KAREL"
+        this.editCell = this.activeTab > 0 ? `AGENT${this.activeTab}` : 'KAREL';
       }
     },
     changeActiveColor() {
-      if (this.activeColor === "blue") {
-        this.activeColor = "red"
+      if (this.activeColor === 'blue') {
+        this.activeColor = 'red';
       } else {
-        this.activeColor = "blue"
+        this.activeColor = 'blue';
       }
+    },
+    agentRotation(d) {
+      if (!d) return 0;
+      const dir = d.toLowerCase();
+      if (dir === 'south') return 0;
+      else if (dir === 'west') return 90;
+      else if (dir === 'north') return 180;
+      else if (dir === 'east') return 270;
+      else return 0;
     }
   },
   computed: {
@@ -797,6 +872,38 @@ export default {
             return stone
           }
         });
+      },
+      finalAgents() {
+        const final = {};
+        for (const agentId in this.agents) {
+          const agent = this.agents[agentId];
+          if (agent.room.row === this.activeRoom.row && agent.room.col === this.activeRoom.col) {
+            final[agentId] = agent
+          }
+        }
+        return final;
+      },
+      activeAgentColor() {
+        if (this.activeTab <= 0) {
+          return;
+        }
+
+        for (const agentId in this.agents) {
+          if (parseInt(agentId) === this.activeTab) {
+            return this.agents[agentId].color;
+          }
+        }
+      },
+      activeAgentRotation() {
+        if (this.activeTab <= 0) {
+          return;
+        }
+
+        for (const agentId in this.agents) {
+          if (parseInt(agentId) === this.activeTab) {
+            return this.agentRotation(this.agents[agentId].dir);
+          }
+        }
       },
       nextColor() {
         if (this.activeColor === "blue") {

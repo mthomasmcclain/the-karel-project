@@ -47,7 +47,7 @@
   import KarelBlocklyWorld from "./KarelBlocklyWorld"
   import { asyncRun } from './KarelBlocklyWorld/PythonWorker/workerInterface'
   export default {
-    props: [ 'playing', 'stepSpeed', 'preWorld', 'workspace', 'worldWorkspace', 'toolbox', 'isPython', 'pythonCode', 'errorCallback', 'highlight', 'settings' ],
+    props: [ 'playing', 'stepSpeed', 'preWorld', 'workspace', 'worldWorkspace', 'toolbox', 'isPython', 'pythonCode', 'worldPython', 'errorCallback', 'highlight', 'settings', 'agentWorkspaces', 'agentPythonCodes' ],
     data() {
       return {
         karelBlocklyWorld: null,
@@ -59,35 +59,85 @@
         if (this.playing) {
           if (this.karelBlocklyWorld) this.step()
           else {
-            const { preWorld, toolbox, workspace, worldWorkspace, isPython, pythonCode, settings } = this
+            const { preWorld, toolbox, workspace, worldWorkspace, isPython, pythonCode, worldPython, settings, agentWorkspaces } = this
 
             if (isPython) {
               const translatePython = async () => {
                 try {
+                  let totalCode = '';
+                  const hasWorld = settings.blocks.karel_events.active;
+                  const minAgentId = Object.keys(this.agentPythonCodes).length > 0 ? parseInt(Object.keys(this.agentPythonCodes)[0]) : 0;
+
+                  // Translate agents.
+                  for (const agentId of Object.keys(this.agentPythonCodes)) {
+                    const script = this.agentPythonCodes[agentId]
+                    const context = JSON.parse(JSON.stringify({ ...settings, currentId: parseInt(agentId), hasWorld, minAgentId }))
+                    const { results, error } = await asyncRun(script, context)
+                    if (results) {
+                      if (results.type === 'success') {
+                        totalCode += results.code;
+                      } else {
+                        this.reset()
+                        this.errorCallback(agentId, results)
+                        return;
+                      }
+                    } else if (error) {
+                      console.error('pythonWorker error:', error);
+                      this.reset()
+                      return;
+                    }
+                  }
+
+                  // Translate world.
+                  let pythonEndConditions;
+                  if (hasWorld) {
+                    const script = worldPython
+                    const context = JSON.parse(JSON.stringify({ ...settings, currentId: -1, hasWorld, minAgentId }))
+                    const { results, error } = await asyncRun(script, context)
+                    if (results) {
+                      if (results.type === 'success') {
+                        totalCode += results.code;
+                        pythonEndConditions = results.endConditions;
+                      } else {
+                        this.reset()
+                        this.errorCallback(-1, results)
+                        return;
+                      }
+                    } else if (error) {
+                      console.error('pythonWorker error:', error);
+                      this.reset()
+                      return;
+                    }
+                  }
+
+                  // Translate Karel.
                   const script = pythonCode
-                  const context = JSON.parse(JSON.stringify(settings))
+                  const context = JSON.parse(JSON.stringify({ ...settings, currentId: 0, hasWorld, minAgentId }))
                   const { results, error } = await asyncRun(script, context)
                   if (results) {
                     if (results.type === 'success') {
-                      this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace, worldWorkspace, isPython, pythonCode: results.code, highlight: this.highlight })
-                      this.step(this.stopOnFirstStep)
-                      this.stopOnFirstStep = false
+                      totalCode += results.code;
                     } else {
                       this.reset()
-                      this.errorCallback(results)
+                      this.errorCallback(0, results)
+                      return;
                     }
                   } else if (error) {
                     console.error('pythonWorker error:', error);
-
                     this.reset()
+                    return;
                   }
+
+                  this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace, worldWorkspace, isPython, pythonCode: totalCode, pythonEndConditions, highlight: this.highlight })
+                  this.step(this.stopOnFirstStep)
+                  this.stopOnFirstStep = false
                 } catch (e) {
-                  console.log(`Error in pythonWorker at ${e.filename}, line ${e.lineno}: ${e.message}`);
+                  console.error(`Error in pythonWorker at ${e.filename}, line ${e.lineno}: ${e.message}`);
                 }
               }
               translatePython()
             } else {
-              this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace, worldWorkspace, isPython, pythonCode })
+              this.karelBlocklyWorld = KarelBlocklyWorld(preWorld, { toolbox, workspace, worldWorkspace, isPython, pythonCode, agentWorkspaces})
               this.step(this.stopOnFirstStep)
               this.stopOnFirstStep = false
             }
@@ -114,7 +164,6 @@
         this.currentStepData = null
         this.$emit('step', null)
         this.$emit('pause')
-        this.highlight(0)
       },
       step(stepByStep = false) {
         this

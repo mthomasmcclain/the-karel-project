@@ -65,18 +65,21 @@
           v-if="karelBlockly"
           :toolbox="karelBlockly.toolbox"
           :workspace="karelBlockly.workspace"
-          :world-workspace="karelBlockly.settings.blocks.karel_events.active ? karelBlockly.worldWorkspace : undefined"
+          :world-workspace="karelBlockly.settings.blocks.karel_events?.active ? karelBlockly.worldWorkspace : undefined"
           :stepSpeed="stepSpeed"
           :preWorld="activePreWorld"
           :playing="playing"
           :isPython="isPython"
           :pythonCode="pythonCode"
+          :worldPython="worldPython"
           :errorCallback="errorCallback"
           :highlight="highlight"
           :settings="karelBlockly.settings"
+          :agentWorkspaces="agentWorkspaces"
+          :agentPythonCodes="agentPythonCodes"
           @play="playing = true"
           @pause="playing = false"
-          @step="currentStepData = $event; if (currentStepData) activeRoom = currentStepData.world.karelRoom"
+          @step="currentStepData = $event; if (currentStepData) { activeRoom = currentStepData.world.karelRoom } else { pythonHighlights = {} }"
           @setStepSpeed="stepSpeed = $event"
         />
       </div>
@@ -93,6 +96,9 @@
         v-model:worldWorkspace="karelBlockly.worldWorkspace"
         v-model:settings="karelBlockly.settings"
         v-model:highlight="karelBlockly.highlight"
+        v-model:activeEditorTab="activeEditorTab"
+        :agents="agentTabs"
+        :runningTab="currentStepData?.currentId"
       />
       <div v-else style="display: flex; flex-direction: column; width: 100%; height: 100%">
         <div style="background-color: lightgrey; padding: 2px">
@@ -107,10 +113,17 @@
           </ul>
         </div>
         <KarelPython
-          v-model="pythonCode"
+          v-model:code="pythonCode"
           :console-text="currentStepData?.pythonText ?? ''"
-          :highlight="pythonHighlight"
+          :highlights="pythonHighlights"
           :error="pythonError"
+          :world="worldPython"
+          :hasWorld="karelBlockly.settings.blocks.karel_events.active"
+          :agents="agentTabs"
+          :activeTab="0"
+          :readonly="true"
+          :runningTab="currentStepData?.currentId"
+          :showConsole="true"
         />
       </div>
     </div>
@@ -149,11 +162,27 @@ export default {
     if (task.karelBlockly && !task.karelBlockly.worldWorkspace) {
       task.karelBlockly.worldWorkspace = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="karel_world_main" id="world_main" deletable="false" x="44" y="0"></block><block type="karel_world_end_conditions" id="world_end_conditions" deletable="false" x="44" y="100"></block></xml>'
     }
-    const { karelBlockly } = task
+    const { karelBlockly, agents } = task
     karelBlockly.settings.customizerMode = false
+    
+    const agentWorkspaces = {}
+    const agentPythonCodes = {}
+    const agentTabs = []
+    if (agents) {
+      for (const agent of agents) {
+        agentWorkspaces[agent.id] = agent.workspace
+        agentPythonCodes[agent.id] = agent.pythonCode
+
+        if (agent.showTab) {
+          agentTabs.push(agent)
+        }
+      }
+    }
+
     return {
       isPython: task.isPython,
       pythonCode: task.pythonCode,
+      worldPython: task.worldPython,
       karelBlockly,
       currentStepData: null,
       playing: false,
@@ -161,9 +190,13 @@ export default {
       activeScenarioIndex: 0,
       correctScenarios: new Array(task.worlds.length).fill(null),
       pythonError: { message: '', line: 0 },
-      pythonHighlight: { line: 0 },
+      pythonHighlights: {},
       activeRoom: { row: 0, col: 0 },
-      showLimits: false
+      showLimits: false,
+      agentWorkspaces,
+      agentPythonCodes,
+      agentTabs,
+      activeEditorTab: 0
     }
   },
   watch: {
@@ -174,10 +207,9 @@ export default {
           return
         }
 
-
         this.correctScenarios[this.activeScenarioIndex] = true
         const incompleteScenarios = this.correctScenarios.filter(d => !d).length
-        if (incompleteScenarios) await taskPartialSuccessSwal(incompleteScenarios)        
+        if (incompleteScenarios) await taskPartialSuccessSwal(incompleteScenarios)
       }
       else if (this.error) {
         this.correctScenarios[this.activeScenarioIndex] = false
@@ -279,12 +311,13 @@ export default {
       this.playing = false
       this.currentStepData = null
     },
-    errorCallback(error) {
+    errorCallback(id, error) {
+      this.pythonError.id = id
       this.pythonError.message = error.message
       this.pythonError.line = error.line
     },
-    highlight(line) {
-      this.pythonHighlight.line = line
+    highlight(id, line) {
+      this.pythonHighlights[id] = line
     }
   },
 }

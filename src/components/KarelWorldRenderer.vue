@@ -106,6 +106,18 @@
           :stroke-width="borderWidth * 2"
         />
 
+        <!-- AGENTS -->
+        <SvgPositioner v-for="agent, id in finalAgents"
+          :key="`agent-${id}`"
+          anchor="center center"
+          :xPos="5 + 10*agent.col"
+          :yPos="5 + 10*agent.row"
+          :w="7.5"
+          :rotation="agentRotation(agent.dir)"
+        >
+          <StoneAndNumber :n="-1" :obj="-1" :color="agent.color" :numPosition="'middle'" />
+        </SvgPositioner>
+
         <!-- KAREL -->
         <SvgPositioner
           v-if="(world.karelRoom?.row ?? 0) === activeRoom.row && (world.karelRoom?.col ?? 0) === activeRoom.col"
@@ -170,8 +182,9 @@
 <script>
 import SvgPositioner from './SvgPositioner.vue'
 import KarelVueSvg from '../assets/KarelVueSvg.vue'
+import StoneAndNumber from './BuilderComponents/TaskCustomizer/KarelWorldRendererAndEditor/StoneAndNumberVueSvg.vue';
 export default {
-  components: { SvgPositioner, KarelVueSvg },
+  components: { SvgPositioner, KarelVueSvg, StoneAndNumber },
   props: {
     borderWidth: {
       type: Number,
@@ -191,7 +204,8 @@ export default {
         "karelDir": "East",
         "karelRow": 2,
         "karelCol": 0,
-        "karelRoom": {row: 0, col: 0}
+        "karelRoom": {row: 0, col: 0},
+        "agents": []
       })
     },
     objective: {
@@ -236,6 +250,15 @@ export default {
         wall = { r, c, d: 'East' }
       }
       this.$emit('worldClick', { r, c, wall, timestamp: Date.now() })
+    },
+    agentRotation(d) {
+      if (!d) return 0;
+      const dir = d.toLowerCase();
+      if (dir === 'south') return 0;
+      else if (dir === 'west') return 90;
+      else if (dir === 'north') return 180;
+      else if (dir === 'east') return 270;
+      else return 0;
     }
   },
   computed: {
@@ -306,6 +329,19 @@ export default {
           return stone;
         }
       });
+    },
+    finalAgents() {
+      const final = {};
+      if (!this.world.agents) {
+        this.world.agents = [];
+      }
+      for (const agentId in this.world.agents) {
+        const agent = this.world.agents[agentId];
+        if (agent.room.row === this.activeRoom.row && agent.room.col === this.activeRoom.col) {
+          final[agentId] = agent
+        }
+      }
+      return final;
     }
   } // end computed
 }

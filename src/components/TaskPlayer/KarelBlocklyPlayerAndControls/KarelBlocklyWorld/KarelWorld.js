@@ -2,9 +2,11 @@ import _ from 'lodash'
 
 const copy = data => _.cloneDeep(data)
 
-function Karel(world) {
-    world = copy(world)
-    if(!world.pickedStones) world.pickedStones = { blue: 0, red: 0 }
+function Karel(context) {
+    const world = copy(context.world);
+    if (!world.pickedStones) {
+      world.pickedStones = { blue: 0, red: 0 };
+    }
     this.world = world
 
     this.leftArrowPressed = false
@@ -23,7 +25,9 @@ function Karel(world) {
     this.blue = 'blue'
     this.red = 'red'
 
-    if (!world.karelRoom) world.karelRoom = { row: 0, col: 0 }
+    if (!world.karelRoom) {
+      world.karelRoom = { row: 0, col: 0 };
+    }
 
     window.addEventListener('keydown', (e) => {
         // e.preventDefault()
@@ -68,6 +72,13 @@ function Karel(world) {
         }
     }
 
+    const nextDir = {
+      North: 'West',
+      West: 'South',
+      South: 'East',
+      East: 'North'
+    };
+
     const stonesAtLocation = (r, c, color, room) => world.stones.find(s => s.r === r && s.c === c && (s.color ? s.color === color : color === 'blue') && (s.room && room ? s.room.row === room.row && s.room.col === room.col : true))
     const wallAtLocation = (r, c, d) => world.walls.find(w => {
         //  equivalent wall location, but with West and South transformed to North and East
@@ -81,31 +92,98 @@ function Karel(world) {
     const stonesUnderKarel = (color) => stonesAtLocation(world.karelRow, world.karelCol, color, world.karelRoom)
 
     this.move = () => {
-        if (!this.frontIsClear()) this.error = 'Front is blocked!'
-        else if (world.karelDir === 'North') world.karelRow -= 1
-        else if (world.karelDir === 'South') world.karelRow += 1
-        else if (world.karelDir === 'East') world.karelCol += 1
-        else if (world.karelDir === 'West') world.karelCol -= 1
+        if (context.currentId === 0) {
+            if (!this.frontIsClear(world.karelRow, world.karelCol, world.karelDir, world.karelRoom)) {
+              this.error = 'Front is blocked!';
+            }
+            else if (world.karelDir === 'North') world.karelRow -= 1
+            else if (world.karelDir === 'South') world.karelRow += 1
+            else if (world.karelDir === 'East') world.karelCol += 1
+            else if (world.karelDir === 'West') world.karelCol -= 1
 
-        if (world.karelRow < 0) {
-            world.karelRow = world.nRows - 1
-            world.karelRoom.row -= 1
-        }
-        if (world.karelRow >= world.nRows) {
-            world.karelRow = 0
-            world.karelRoom.row += 1
-        }
-        if (world.karelCol < 0) {
-            world.karelCol = world.nCols - 1
-            world.karelRoom.col -= 1
-        }
-        if (world.karelCol >= world.nCols) {
-            world.karelCol = 0
-            world.karelRoom.col += 1
+            if (world.karelRow < 0) {
+                world.karelRow = world.nRows - 1
+                world.karelRoom.row -= 1
+            }
+            if (world.karelRow >= world.nRows) {
+                world.karelRow = 0
+                world.karelRoom.row += 1
+            }
+            if (world.karelCol < 0) {
+                world.karelCol = world.nCols - 1
+                world.karelRoom.col -= 1
+            }
+            if (world.karelCol >= world.nCols) {
+                world.karelCol = 0
+                world.karelRoom.col += 1
+            }
+        } else {
+          const id = context.currentId;
+
+          if (!this.frontIsClear(world.agents[id].row, world.agents[id].col, world.agents[id].dir, world.agents[id].room)) {
+            this.error = 'Front is blocked!';
+          }
+          else if (world.agents[id].dir === 'North') {
+            world.agents[id].row -= 1;
+          }
+          else if (world.agents[id].dir === 'South') {
+            world.agents[id].row += 1;
+          }
+          else if (world.agents[id].dir === 'East') {
+            world.agents[id].col += 1;
+          }
+          else if (world.agents[id].dir === 'West') {
+            world.agents[id].col -= 1;
+          }
+
+          if (world.agents[id].row < 0) {
+              world.agents[id].row = world.nRows - 1;
+              world.agents[id].room.row--;
+          }
+          if (world.agents[id].row >= world.nRows) {
+              world.agents[id].row = 0;
+              world.agents[id].room.row++;
+          }
+          if (world.agents[id].col < 0) {
+              world.agents[id].col = world.nCols - 1;
+              world.agents[id].room.col--;
+          }
+          if (world.agents[id].col >= world.nCols) {
+              world.agents[id].col = 0;
+              world.agents[id].room.col++;
+          }
         }
     }
 
-    this.turnLeft = () => world.karelDir = { North: 'West', West: 'South', South: 'East', East: 'North' }[world.karelDir]
+    this.bounce = () => {
+      if (!world.agents || Object.keys(world.agents).length === 0) {
+        throw new Error("Used bounce without agents");
+      }
+
+      const id = context.currentId;
+
+      if (!this.frontIsClear(world.agents[id].row, world.agents[id].col, world.agents[id].dir, world.agents[id].room)) {
+        world.agents[id].dir = nextDir[nextDir[world.agents[id].dir]];
+      }
+
+      if (world.agents[id].dir === 'West' && world.nCols > 1) {
+        --world.agents[id].col;
+      } else if (world.agents[id].dir === 'East' && world.nCols > 1) {
+        ++world.agents[id].col;
+      } else if (world.agents[id].dir === 'North' && world.nRows > 1) {
+        --world.agents[id].row;
+      } else if (world.agents[id].dir === 'South' && world.nRows > 1) {
+        ++world.agents[id].row;
+      }
+    }
+
+    this.turnLeft = () => {
+      if (context.currentId === 0) {
+        world.karelDir = nextDir[world.karelDir];
+      } else {
+        world.agents[context.currentId].dir = nextDir[world.agents[context.currentId].dir];
+      }
+    }
 
     this.pickStone = (color) => {
         if (!this.stonesPresent(color)) this.error = 'No ' + color + ' stones to pick!'
@@ -141,39 +219,51 @@ function Karel(world) {
         }
     }
 
-    this.frontIsClear = () => {
-        if (world.karelDir === 'South' && world.karelRow === world.nRows - 1) {
-          if (world.doors && world.doors.find(d => d.r === world.nRows && d.c === world.karelCol && d.d === 'North' && d.room.row === world.karelRoom.row && d.room.col === world.karelRoom.col)) {
+    this.frontIsClear = (r, c, d, room) => {
+        if (d === 'South' && r === world.nRows - 1) {
+          if (world.doors && world.doors.find(door => door.r === world.nRows && door.c === c && door.d === 'North' && door.room.row === room.row && door.room.col === room.col)) {
             return true
           }
 
           return false
         }
-        if (world.karelDir === 'East' && world.karelCol === world.nCols - 1) {
-          if (world.doors && world.doors.find(d => d.r === world.karelRow && d.c === world.nCols && d.d === 'East' && d.room.row === world.karelRoom.row && d.room.col === world.karelRoom.col)) {
+        if (d === 'East' && c === world.nCols - 1) {
+          if (world.doors && world.doors.find(door => door.r === r && door.c === world.nCols && door.d === 'East' && door.room.row === room.row && door.room.col === room.col)) {
             return true
           }
 
           return false
         }
-        if (world.karelDir === 'North' && world.karelRow === 0) {
-          if (world.doors && world.doors.find(d => d.r === 0 && d.c === world.karelCol && d.d === 'North' && d.room.row === world.karelRoom.row && d.room.col === world.karelRoom.col)) {
+        if (d === 'North' && r === 0) {
+          if (world.doors && world.doors.find(door => door.r === 0 && door.c === c && door.d === 'North' && door.room.row === room.row && door.room.col === room.col)) {
             return true
           }
 
           return false
         }
-        if (world.karelDir === 'West' && world.karelCol === 0) {
-          if (world.doors && world.doors.find(d => d.r === world.karelRow && d.c === 0 && d.d === 'East' && d.room.row === world.karelRoom.row && d.room.col === world.karelRoom.col)) {
+        if (d === 'West' && c === 0) {
+          if (world.doors && world.doors.find(door => door.r === r && door.c === 0 && door.d === 'East' && door.room.row === room.row && door.room.col === room.col)) {
             return true
           }
 
           return false
         }
-        return !wallAtLocation(world.karelRow, world.karelCol, world.karelDir)
+        return !wallAtLocation(r, c, d)
     }
 
     this.stonesPresent = (color) => !!stonesUnderKarel(color)
+
+    this.random = (a, b) => {
+      return Math.floor(Math.random() * (b - a + 1) + a);
+    }
+
+    this.karelStoneCount = (color) => {
+      return world.pickedStones[color];
+    }
+
+    this.worldStoneCount = (color) => {
+      return world.stones.filter(stone => stone.color === color).reduce((acc, stone) => acc + stone.n, 0);
+    }
 
     this.error = null
 
@@ -200,9 +290,29 @@ export default function KarelWorld(world, source, highlight) {
     let textAccumulator = '';
     const appendText = text => textAccumulator += text;
 
-    let resolveCurrentPromise = []
-    const step = () => new Promise(resolve => resolveCurrentPromise.push(resolve))
-    const karel = new Karel(world)
+    const context = {
+      world,
+      currentId: 0
+    };
+    if (world.endConditions) {
+      context.currentId = -1
+    } else if (world.agents && Object.keys(world.agents).length > 0) {
+      context.currentId = parseInt(Object.keys(world.agents)[0])
+    }
+
+    const resolveCurrentPromise = {0: []}
+    if (world.endConditions) {
+      resolveCurrentPromise[-1] = []
+    }
+    if (world.agents && Object.keys(world.agents).length > 0)
+    {
+      for (const agentId of Object.keys(world.agents)) {
+        resolveCurrentPromise[agentId] = []
+      }
+    }
+    const step = (i) => new Promise(resolve => resolveCurrentPromise[i ?? context.currentId].push(resolve))
+
+    const karel = new Karel(context);
 
     // Expose karel for variable inspector
     this.karel = karel
@@ -229,15 +339,36 @@ export default function KarelWorld(world, source, highlight) {
             error: karel.error,
             isDone: karel.world.endConditions ? await karel.world.endConditions(karel) : finalStep === index,
             step: index,
-            pythonText: textAccumulator
+            pythonText: textAccumulator,
+            currentId: context.currentId
         })
 
+        if ((world.agents && Object.keys(world.agents).length > 0) || world.endConditions) {
+          const agentIds = Object.keys(world.agents).map(k => parseInt(k))
+
+          if (context.currentId === 0) {
+            context.currentId = world.endConditions ? -1 : agentIds[0]
+          } else if (context.currentId === -1) {
+            context.currentId = (world.agents && Object.keys(world.agents).length > 0) ? agentIds[0] : 0
+          } else {
+            for (let i = 0; i < agentIds.length; i++) {
+              if (context.currentId === agentIds[i] && i < agentIds.length - 1) {
+                context.currentId = agentIds[i + 1]
+                break
+              } else if (context.currentId === agentIds[i] && i === agentIds.length - 1) {
+                context.currentId = 0
+                break
+              }
+            }
+          }
+        }
+
         //  resolve current promise so the next KarelWorldState is ready for next call to step
-        for (const resolve of resolveCurrentPromise) resolve()
-        resolveCurrentPromise = []
+        for (const resolve of resolveCurrentPromise[context.currentId]) resolve()
+        resolveCurrentPromise[context.currentId] = []
 
         steps[index] = currentKarelWorldState
-        
+
         if ('ArrowLeft' in karel.eventFunctions && !karel.eventFunctions.ArrowLeft.called && karel.leftNextStep) {
             karel.eventFunctions.ArrowLeft.called = true
             karel.eventFunctions.ArrowLeft.f()

@@ -3,6 +3,7 @@ export default {
     PROCEDURES_DEFNOARGSNORETURN_TITLE: "define",
     KAREL_MAIN_TITLE: "define main",
     KAREL_MOVE_FORWARD: "move forward",
+    KAREL_BOUNCE: "bounce",
     KAREL_TURN_LEFT: "turn left",
     KAREL_PLACE_STONE: "place stone",
     KAREL_PICKUP_STONE: "pickup stone",
