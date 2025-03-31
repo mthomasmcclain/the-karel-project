@@ -222,6 +222,20 @@ export default function initializeKarelBlocklyBlocks(Blockly) {
         }
     };
 
+    var karelBounce = {
+        "type": "karel_bounce",
+        "message0": "%{BKY_KAREL_BOUNCE}",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 160
+    }
+
+    Blockly.Blocks['karel_bounce'] = {
+        init: function () {
+            this.jsonInit(karelBounce);
+        }
+    };
+
     // mostly so that we can make a pretty block in
     // problem description...
     var karelCall = {

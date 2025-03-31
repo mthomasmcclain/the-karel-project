@@ -12,16 +12,28 @@
       </div>
 
       <div class="world-wrapper">
-        <KarelWorldRenderer :world="world" :objective="activePostWorld" />
+        <KarelWorldRenderer :world="world" :objective="activePostWorld" :activeRoom="playing ? world.karelRoom : activeRoom" />
       </div>
 
-      <div style="display: flex;">
-        <div style="width: 64px" >
-          <StoneAndNumber :n="world.pickedStones?.blue ?? 0" obj="-1" numPosition="middle" color="blue" />
+      <div style="display: flex; gap: 32px;">
+        <!-- Backpack -->
+        <div style="display: flex;">
+          <div style="width: 64px" >
+            <StoneAndNumber :n="world.pickedStones?.blue ?? 0" obj="-1" numPosition="middle" color="blue" />
+          </div>
+          <div style="width: 64px" >
+            <StoneAndNumber :n="world.pickedStones?.red ?? 0" obj="-1" numPosition="middle" color="red" />
+          </div>
         </div>
-        <div style="width: 64px" >
-          <StoneAndNumber :n="world.pickedStones?.red ?? 0" obj="-1" numPosition="middle" color="red" />
-        </div>
+
+        <!-- World map (multiple rooms) -->
+        <KarelWorldMap
+          :rooms="activePreWorld.rooms"
+          :doors="activePreWorld.doors"
+          :activeRoom="playing ? world.karelRoom : activeRoom"
+          :active="!playing"
+          @room-change="activeRoom = $event"
+        />
       </div>
 
       <!-- Scenario Selector, if More Than One -->
@@ -53,13 +65,21 @@
           v-if="karelBlockly"
           :toolbox="karelBlockly.toolbox"
           :workspace="karelBlockly.workspace"
-          :world-workspace="karelBlockly.settings.blocks.karel_events.active ? karelBlockly.worldWorkspace : undefined"
+          :world-workspace="karelBlockly.settings.blocks.karel_events?.active ? karelBlockly.worldWorkspace : undefined"
           :stepSpeed="stepSpeed"
           :preWorld="activePreWorld"
           :playing="playing"
+          :isPython="isPython"
+          :pythonCode="pythonCode"
+          :worldPython="worldPython"
+          :errorCallback="errorCallback"
+          :highlight="highlight"
+          :settings="karelBlockly.settings"
+          :agentWorkspaces="agentWorkspaces"
+          :agentPythonCodes="agentPythonCodes"
           @play="playing = true"
           @pause="playing = false"
-          @step="currentStepData = $event"
+          @step="currentStepData = $event; if (currentStepData) { activeRoom = currentStepData.world.karelRoom } else { pythonHighlights = {} }"
           @setStepSpeed="stepSpeed = $event"
         />
       </div>
@@ -70,12 +90,42 @@
 
     <div class="right-col">
       <KarelBlockly
+        v-if="!isPython"
         v-model:toolbox="karelBlockly.toolbox"
         v-model:workspace="karelBlockly.workspace"
         v-model:worldWorkspace="karelBlockly.worldWorkspace"
         v-model:settings="karelBlockly.settings"
         v-model:highlight="karelBlockly.highlight"
+        v-model:activeEditorTab="activeEditorTab"
+        :agents="agentTabs"
+        :runningTab="currentStepData?.currentId"
       />
+      <div v-else style="display: flex; flex-direction: column; width: 100%; height: 100%">
+        <div style="background-color: lightgrey; padding: 2px">
+          Limits:
+          <button @click="showLimits = !showLimits" style="border: none; background-color: transparent; float: right; cursor: pointer">
+            {{ showLimits ? '◀' : '▼' }}
+          </button>
+          <ul :style="{ display: showLimits ? 'block' : 'none', padding: '0 20px', margin: 0 }">
+            <li v-for="limit in finalSettings">
+              {{ limit.name }}: {{ limit.limit }}
+            </li>
+          </ul>
+        </div>
+        <KarelPython
+          v-model:code="pythonCode"
+          :console-text="currentStepData?.pythonText ?? ''"
+          :highlights="pythonHighlights"
+          :error="pythonError"
+          :world="worldPython"
+          :hasWorld="karelBlockly.settings.blocks.karel_events.active"
+          :agents="agentTabs"
+          :activeTab="0"
+          :readonly="true"
+          :runningTab="currentStepData?.currentId"
+          :showConsole="true"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -84,6 +134,7 @@
 import KarelBlocklyPlayerAndControls from './KarelBlocklyPlayerAndControls/index.vue'
 import KarelWorldRenderer from '../KarelWorldRenderer.vue'
 import KarelBlockly from '../KarelBlockly/index.vue'
+import KarelPython from '../KarelPython/index.vue'
 import worldsMatch from './karelWorldsMatch.js'
 import {
   taskSuccessSwal,
@@ -93,13 +144,13 @@ import {
   taskHintSwal
 } from '../../helpers/projectSwallows.js'
 import StoneAndNumber from '../BuilderComponents/TaskCustomizer/KarelWorldRendererAndEditor/StoneAndNumberVueSvg.vue'
+import KarelWorldMap from '../KarelWorldMap.vue'
 
 const copy = x => JSON.parse(JSON.stringify(x))
 
-
 export default {
   name: 'task-player',
-  components: { KarelBlockly, KarelWorldRenderer, KarelBlocklyPlayerAndControls, StoneAndNumber },
+  components: { KarelBlockly, KarelPython, KarelWorldRenderer, KarelBlocklyPlayerAndControls, StoneAndNumber, KarelWorldMap },
   props: {
     id: {
       type: String,
@@ -111,15 +162,41 @@ export default {
     if (task.karelBlockly && !task.karelBlockly.worldWorkspace) {
       task.karelBlockly.worldWorkspace = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="karel_world_main" id="world_main" deletable="false" x="44" y="0"></block><block type="karel_world_end_conditions" id="world_end_conditions" deletable="false" x="44" y="100"></block></xml>'
     }
-    const { karelBlockly } = task
+    const { karelBlockly, agents } = task
     karelBlockly.settings.customizerMode = false
+    
+    const agentWorkspaces = {}
+    const agentPythonCodes = {}
+    const agentTabs = []
+    if (agents) {
+      for (const agent of agents) {
+        agentWorkspaces[agent.id] = agent.workspace
+        agentPythonCodes[agent.id] = agent.pythonCode
+
+        if (agent.showTab) {
+          agentTabs.push(agent)
+        }
+      }
+    }
+
     return {
+      isPython: task.isPython,
+      pythonCode: task.pythonCode,
+      worldPython: task.worldPython,
       karelBlockly,
       currentStepData: null,
       playing: false,
       stepSpeed: 5,
       activeScenarioIndex: 0,
       correctScenarios: new Array(task.worlds.length).fill(null),
+      pythonError: { message: '', line: 0 },
+      pythonHighlights: {},
+      activeRoom: { row: 0, col: 0 },
+      showLimits: false,
+      agentWorkspaces,
+      agentPythonCodes,
+      agentTabs,
+      activeEditorTab: 0
     }
   },
   watch: {
@@ -130,10 +207,9 @@ export default {
           return
         }
 
-
         this.correctScenarios[this.activeScenarioIndex] = true
         const incompleteScenarios = this.correctScenarios.filter(d => !d).length
-        if (incompleteScenarios) await taskPartialSuccessSwal(incompleteScenarios)        
+        if (incompleteScenarios) await taskPartialSuccessSwal(incompleteScenarios)
       }
       else if (this.error) {
         this.correctScenarios[this.activeScenarioIndex] = false
@@ -170,6 +246,9 @@ export default {
           this.$emit('taskCorrect')
         }
       }
+    },
+    playing() {
+      if (this.playing) this.pythonError.line = 0
     }
   },
   computed: {
@@ -198,6 +277,23 @@ export default {
         if (!this.codeCompletelyRun) return null
         else if (this.error) return false
         else return this.currentStepData.world.endConditions ? this.currentStepData.isDone : worldsMatch(this.currentStepData.world, this.activePostWorld)
+    },
+    finalSettings() {
+      const nameMap = {
+        'karel_move': 'karel.move',
+        'karel_turn': 'karel.turnLeft',
+        'karel_place': 'karel.placeStone',
+        'karel_pickup': 'karel.pickupStone',
+        'karel_while': 'while loops',
+        'karel_define': 'functions',
+        'karel_variable': 'variables'
+      };
+
+      const settings = Object.entries(this.karelBlockly.settings.blocks).filter(([, value]) => value.active)
+      const final = settings.map(([key, value]) => {
+        return { name: nameMap[key] || key, limit: value.limit === -1 ? '∞' : value.limit }
+      })
+      return final;
     }
   },
   methods: {
@@ -214,6 +310,14 @@ export default {
       this.karelBlockly = copy(karelBlockly)
       this.playing = false
       this.currentStepData = null
+    },
+    errorCallback(id, error) {
+      this.pythonError.id = id
+      this.pythonError.message = error.message
+      this.pythonError.line = error.line
+    },
+    highlight(id, line) {
+      this.pythonHighlights[id] = line
     }
   },
 }

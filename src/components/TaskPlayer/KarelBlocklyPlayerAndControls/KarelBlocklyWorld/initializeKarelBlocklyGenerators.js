@@ -77,6 +77,10 @@ export default function initializeKarelBlocklyGenerators(Blockly) {
         return 'karel.move();\n'
     };
 
+    Blockly.JavaScript['karel_bounce'] = function() {
+      return 'karel.bounce();\n'
+    }
+
     //  Monkeypatch callnoreturn so we can make the await
     // TODO Fix Bug when Learner Defins Fn Name that Starts with a Number
     Blockly.JavaScript['procedures_callreturn'] = function (block) {

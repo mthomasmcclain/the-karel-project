@@ -81,7 +81,8 @@ export default {
         karel_repeat: "'Repeat' Block",
         karel_while: "'While' Block",
         karel_define: "Define Function",
-        karel_events: "Events"
+        karel_events: "Events",
+        karel_agents: "Agents"
       }[rawName]
     }
   }

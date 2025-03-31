@@ -27,6 +27,9 @@ export default {
             }
         }
     ],
+    isPython: false,
+    pythonCode: 'import karel\n\n# Enter your code here',
+    worldPython: 'import karel\n\ndef world_main():\n    pass\n\ndef end_conditions():\n    pass\n',
     karelBlockly: {
         highlight: [],
         settings: {
@@ -74,6 +77,10 @@ export default {
                 "karel_events": {
                     "active": false,
                     "limit": -1
+                },
+                "karel_agents": {
+                  "active": false,
+                  "limit": -1
                 }
             },
             "showToolbox": true,

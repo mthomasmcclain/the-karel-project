@@ -1,5 +1,5 @@
 //<script>//hack for syntax
-import Blockly from 'blockly/browser'
+import Blockly from 'blockly'
 import * as en from 'blockly/msg/en'
 import initializeKarelBlocklyGenerators from './initializeKarelBlocklyGenerators'
 import enTranslations from '../../../../helpers/karelTranslationsEN'
@@ -11,7 +11,20 @@ Blockly.setLocale({ ...en, ...enTranslations })
 initializeKarelBlocks(Blockly)
 initializeKarelBlocklyGenerators(Blockly)
 
-const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
+const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace, isPython, pythonCode, pythonEndConditions, highlight, agentWorkspaces }) => {
+    if (isPython) {
+        if (pythonEndConditions) {
+          let endConditions = `try {\n${pythonEndConditions}\n} catch (e) {\nkarel.error = e.message;\n}`;
+          endConditions = endConditions.replaceAll('await step();', '');
+          endConditions = endConditions.replaceAll(/highlight\(.+?\);/g, '')
+          endConditions = endConditions.replaceAll('(return true;)', 'return true')
+          endConditions = endConditions.replace('} catch (e) {', '\treturn false;\n} catch (e) {');
+          world.endConditions = new Function('karel', endConditions);
+        }
+
+        return new KarelWorld(world, pythonCode, highlight)
+    }
+
     // initialize new blockly instance with given workspace and toolbox
     // TODO find way to initialize blockly w/o DOM element
     const detachedDOMElement = document.createElement('div')
@@ -23,6 +36,13 @@ const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
     if (worldWorkspace) {
         blocklyWorldInstance = Blockly.inject(detachedDOMElement, { toolbox })
         Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(worldWorkspace), blocklyWorldInstance)
+    }
+    let blocklyAgentInstances = {};
+    if (agentWorkspaces) {
+      for (const key of Object.keys(agentWorkspaces)) {
+        blocklyAgentInstances[key] = Blockly.inject(detachedDOMElement, { toolbox })
+        Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(agentWorkspaces[key]), blocklyAgentInstances[key])
+      }
     }
 
     Blockly.JavaScript.init(blocklyInstance) // required to use blockToCode... intuitive isn't it?
@@ -41,7 +61,7 @@ const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
         if (acc[name]) {
             duplicate = true;
         }
-        acc[name] = `async function ${name}() {\n${Blockly.JavaScript.blockToCode(block)}\nkarel.eventFunctions.${name}.called = false;\n}`
+        acc[name] = `async function ${name}() {\nawait step(0);\n${Blockly.JavaScript.blockToCode(block)}\nkarel.eventFunctions.${name}.called = false;\n}`
         return acc
     }, {})
 
@@ -51,7 +71,7 @@ const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
             duplicate ?
             'karel.error = "Multiple functions for a single event!";\n' :
             Object.keys(eventFunctions).map(key => `karel.eventFunctions.${key} = {called: false, f: ${key}}`).join(';\n')
-        }\ntry {\n${worldWorkspace ? 'while (true) { await step(); }' : Blockly.JavaScript.blockToCode(blocklyInstance.getBlockById('main'))}\n} catch (e) {\nkarel.error = e.message;\n}\n}`,
+        }\n${agentWorkspaces || worldWorkspace ? 'await step(0);\n' : ''}try {\n${worldWorkspace ? 'while (true) { await step(); }' : Blockly.JavaScript.blockToCode(blocklyInstance.getBlockById('main'))}\n} catch (e) {\nkarel.error = e.message;\n}\n}`,
         ...eventFunctions
     }
 
@@ -59,13 +79,22 @@ const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
         Blockly.JavaScript.init(blocklyWorldInstance)
 
         functions.world_main = `async function world_main() {\ntry {\nwhile (true) {\n${Blockly.JavaScript.blockToCode(blocklyWorldInstance.getBlockById('world_main'))}\n}\n} catch (e) {\nkarel.error = e.message;\n}\n}`;
-        
+
         let endConditions = `try {\n${Blockly.JavaScript.blockToCode(blocklyWorldInstance.getBlockById('world_end_conditions'))}\n} catch (e) {\nkarel.error = e.message;\n}`;
         endConditions = endConditions.replaceAll(';await step();', '');
         endConditions = endConditions.replaceAll(/start_block\('.+?'\);/g, '')
         endConditions = endConditions.replaceAll(/end_block\('.+?'\);/g, '')
         endConditions = endConditions.replace('} catch (e) {', '\treturn false;\n} catch (e) {');
         world.endConditions = new Function('karel', endConditions);
+    }
+
+    for (const key of Object.keys(blocklyAgentInstances)) {
+      Blockly.JavaScript.init(blocklyAgentInstances[key])
+
+      let agentCode = Blockly.JavaScript.blockToCode(blocklyAgentInstances[key].getBlockById('main'))
+      agentCode = agentCode.replace('start_block(\'main\');', '')
+      agentCode = agentCode.replace('await step(); end_block(\'main\');', '')
+      functions[`agent_${key}_main`] = `async function agent_${key}_main() {\n${key === Object.keys(blocklyAgentInstances)[0] ? '' : `await step(${key});\n`}try {\nwhile (true) {\n${agentCode}\n}\n} catch (e) {\nkarel.error = e.message;\n}\n}`;
     }
 
     const procedureNames = Blockly.Procedures.allProcedures(blocklyInstance).map(proc => proc.map(([name]) => name)).flat();
@@ -87,6 +116,14 @@ const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
         })
     }
 
+    for (const key of Object.keys(blocklyAgentInstances)) {
+      const agentProcedureNames = Blockly.Procedures.allProcedures(blocklyAgentInstances[key]).map(proc => proc.map(([name]) => name)).flat();
+      agentProcedureNames.forEach(name => {
+        const block = Blockly.Procedures.getDefinition(name, blocklyAgentInstances[key])
+        Blockly.JavaScript.blockToCode(block)
+      })
+    }
+
     // must access internal property... did I mention the jankness?
     // what is this % prefix you say? that is how the blockly folks decided
     // to keep user defined names from overwriting intenals... jjjjjj...ank
@@ -98,8 +135,13 @@ const KarelBlocklyWorld = (world, { toolbox, workspace, worldWorkspace }) => {
             }
         })
         
-    const source = Object.values(functions).join(';') + (worldWorkspace ? '; world_main()' : '') + '; main().then(done);'
-    return new KarelWorld(world, source)
+    let source = Object.values(functions).join(';') + (worldWorkspace ? '; world_main()' : '')
+    for (const key of Object.keys(blocklyAgentInstances)) {
+      source += `; agent_${key}_main()`
+    }
+    source += '; main().then(done);'
+
+    return new KarelWorld(world, source, isPython)
 }
 
 export default KarelBlocklyWorld

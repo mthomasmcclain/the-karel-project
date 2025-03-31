@@ -22,7 +22,8 @@
       text-anchor="middle"
       alignment-baseline="middle"
       user-select="none"
-    >{{ n }}{{ obj >= 0 ? `/ ${obj}` : '' }}</text>
+    >{{ n >= 0 ? n : '' }}{{ obj >= 0 ? `/ ${obj}` : '' }}</text>
+    <circle v-if="n < 0 && obj < 0" cx="5" cy="8" r="0.5" fill="white" />
   </svg>
 </template>
 

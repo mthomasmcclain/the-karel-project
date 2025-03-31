@@ -88,8 +88,39 @@
             stroke-width="0.2"
         />
 
+        <!-- DOORS -->
+        <line v-for="door in eastDoors" :key="`east-door-${door.r}-${door.c}`"
+          :x1="door.c * 10"
+          :y1="door.r * 10"
+          :x2="door.c * 10"
+          :y2="(door.r + 1) * 10"
+          stroke="white"
+          :stroke-width="borderWidth * 2"
+        />
+        <line v-for="door in northDoors" :key="`north-door-${door.r}-${door.c}`"
+          :x1="door.c * 10"
+          :y1="door.r * 10"
+          :x2="(door.c + 1) * 10"
+          :y2="door.r * 10"
+          stroke="white"
+          :stroke-width="borderWidth * 2"
+        />
+
+        <!-- AGENTS -->
+        <SvgPositioner v-for="agent, id in finalAgents"
+          :key="`agent-${id}`"
+          anchor="center center"
+          :xPos="5 + 10*agent.col"
+          :yPos="5 + 10*agent.row"
+          :w="7.5"
+          :rotation="agentRotation(agent.dir)"
+        >
+          <StoneAndNumber :n="-1" :obj="-1" :color="agent.color" :numPosition="'middle'" />
+        </SvgPositioner>
+
         <!-- KAREL -->
         <SvgPositioner
+          v-if="(world.karelRoom?.row ?? 0) === activeRoom.row && (world.karelRoom?.col ?? 0) === activeRoom.col"
           :xPos="5 + 10*world.karelCol"
           :yPos="5 + 10*world.karelRow"
           :w="5"
@@ -101,6 +132,7 @@
 
         <!-- OBJECTIVE KAREL -->
         <SvgPositioner
+          v-if="(objective.karelRoom?.row ?? 0) === activeRoom.row && (objective.karelRoom?.col ?? 0) === activeRoom.col"
           :xPos="5 + 10*objective.karelCol"
           :yPos="5 + 10*objective.karelRow"
           :w="5"
@@ -150,8 +182,9 @@
 <script>
 import SvgPositioner from './SvgPositioner.vue'
 import KarelVueSvg from '../assets/KarelVueSvg.vue'
+import StoneAndNumber from './BuilderComponents/TaskCustomizer/KarelWorldRendererAndEditor/StoneAndNumberVueSvg.vue';
 export default {
-  components: { SvgPositioner, KarelVueSvg },
+  components: { SvgPositioner, KarelVueSvg, StoneAndNumber },
   props: {
     borderWidth: {
       type: Number,
@@ -163,12 +196,16 @@ export default {
       default: () => ({
         "nRows": 3,
         "nCols": 3,
-        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue" }],
+        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue", "room": {"row": 0, "col": 0} }],
         "pickedStones": { "blue": 0, "red": 0 },
         "walls": [],
+        "doors": [],
+        "rooms": [],
         "karelDir": "East",
         "karelRow": 2,
-        "karelCol": 0
+        "karelCol": 0,
+        "karelRoom": {row: 0, col: 0},
+        "agents": []
       })
     },
     objective: {
@@ -176,12 +213,21 @@ export default {
       default: () => ({
         "nRows": 3,
         "nCols": 3,
-        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue" }],
+        "stones": [{ "r": 0, "c": 0, "n": 1, "color": "blue", "room": {"row": 0, "col": 0} }],
         "pickedStones": { "blue": 0, "red": 0 },
         "walls": [],
+        "doors": [],
+        "rooms": [],
         "karelDir": "East",
         "karelRow": 2,
         "karelCol": 0
+      })
+    },
+    activeRoom: {
+      type: Object,
+      default: () => ({
+        row: 0,
+        col: 0
       })
     }
   },
@@ -204,6 +250,15 @@ export default {
         wall = { r, c, d: 'East' }
       }
       this.$emit('worldClick', { r, c, wall, timestamp: Date.now() })
+    },
+    agentRotation(d) {
+      if (!d) return 0;
+      const dir = d.toLowerCase();
+      if (dir === 'south') return 0;
+      else if (dir === 'west') return 90;
+      else if (dir === 'north') return 180;
+      else if (dir === 'east') return 270;
+      else return 0;
     }
   },
   computed: {
@@ -211,6 +266,8 @@ export default {
     viewBoxH() { return this.world.nRows * 10 },
     eastWalls()  { return this.world.walls.filter(wall => wall.d.toLowerCase() === 'east' )},
     northWalls() { return this.world.walls.filter(wall => wall.d.toLowerCase() === 'north')},
+    eastDoors() { return (this.world.doors ?? []).filter(door => door.d.toLowerCase() === 'east' && door.room.row === this.activeRoom.row && door.room.col === this.activeRoom.col)},
+    northDoors() { return (this.world.doors ?? []).filter(door => door.d.toLowerCase() === 'north' && door.room.row === this.activeRoom.row && door.room.col === this.activeRoom.col)},
     rotation() {
       const { karelDir } = this.world
       if (!karelDir) return 0
@@ -233,30 +290,37 @@ export default {
     },
     finalStones() {
       const arr = [];
-      const worldStones = this.world.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue' }));
-      const objectiveStones = this.objective.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue' }));
-      worldStones.forEach(stone =>
-        arr.push({
-          r: stone.r,
-          c: stone.c,
-          n: stone.n,
-          obj: this.objective.stones.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color)?.n ?? 0,
-          color: stone.color
-        })
-      );
+      const worldStones = this.world.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue', room: stone.room ? stone.room : {row: 0, col: 0} }));
+      const objectiveStones = this.objective.stones.map(stone => ({ ...stone, color: stone.color ? stone.color : 'blue', room: stone.room ? stone.room : {row: 0, col: 0} }));
+      worldStones.forEach(stone => {
+        if (stone.room.row === this.activeRoom.row && stone.room.col === this.activeRoom.col) {
+          arr.push({
+            r: stone.r,
+            c: stone.c,
+            n: stone.n,
+            obj: objectiveStones.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color && obj.room.row === stone.room.row && obj.room.col === stone.room.col)?.n ?? 0,
+            color: stone.color,
+            room: stone.room
+          });
+        }
+      });
       objectiveStones.forEach(stone => {
-        if (!arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color)) {
+        if (
+          !arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color === stone.color && obj.room.row === stone.room.row && obj.room.col === stone.room.col) &&
+          stone.room.row === this.activeRoom.row && stone.room.col === this.activeRoom.col
+        ) {
           arr.push({
             r: stone.r,
             c: stone.c,
             n: 0,
             obj: stone.n,
-            color: stone.color
+            color: stone.color,
+            room: stone.room
           });
         }
       });
       return arr.map(stone => {
-        if (arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color !== stone.color)) {
+        if (arr.find(obj => obj.r === stone.r && obj.c === stone.c && obj.color !== stone.color && obj.room.row === stone.room.row && obj.room.col === stone.room.col)) {
           return {
             ...stone,
             multi: true
@@ -265,6 +329,19 @@ export default {
           return stone;
         }
       });
+    },
+    finalAgents() {
+      const final = {};
+      if (!this.world.agents) {
+        this.world.agents = [];
+      }
+      for (const agentId in this.world.agents) {
+        const agent = this.world.agents[agentId];
+        if (agent.room.row === this.activeRoom.row && agent.room.col === this.activeRoom.col) {
+          final[agentId] = agent
+        }
+      }
+      return final;
     }
   } // end computed
 }

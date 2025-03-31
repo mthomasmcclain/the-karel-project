@@ -1,14 +1,38 @@
 <template>
   <div class="wrapper">
-    <div v-if="settings.blocks.karel_events.active" class="tabs-container">
-      <div class="tab" @click="() => activeTab = 'karel'">Karel</div>
-      <div class="tab" @click="() => activeTab = 'world'">World</div>
-    </div>
-    <div class="container" ref="karelContainer"
-      :style="{ 'pointer-events': settings.disabled ? 'none' : 'auto', display: activeTab === 'karel' ? 'block' : 'none' }"
+    <KarelTabs
+      v-if="Object.keys(finalTabs).length > 1"
+      v-model="activeTab"
+      :tabs="finalTabs"
+      :runningTab="runningTab"
     />
-    <div id="worldContainer" class="container" ref="worldContainer"
-      :style="{ 'pointer-events': settings.disabled ? 'none' : 'auto', display: activeTab === 'world' ? 'block' : 'none' }"
+    <BlocklyRegion
+      v-for="tab of finalTabs" :key="`region-${tab.id}`"
+      :id="tab.id"
+      :styles="{ 'pointer-events': settings.disabled ? 'none' : 'auto', display: activeTab === tab.id ? 'block' : 'none' }"
+      @regionCreated="(region) => {
+        $options.workspaces[tab.id] = null;
+        regions[tab.id] = region;
+
+        if (tab.id === 0) {
+          instantiateBlockly();
+        } else {
+          addObserver(tab.id);
+        }
+      }"
+      @regionRemoved="() => {
+        delete $options.workspaces[tab.id];
+        delete regions[tab.id];
+
+        if (tab.id !== 0) {
+          observers[tab.id].disconnect();
+          delete observers[tab.id];
+        }
+
+        if (activeTab === tab.id) {
+          activeTab = 0;
+        }
+      }"
     />
   </div>
 </template>
@@ -19,7 +43,9 @@ import Blockly from 'blockly'
 import * as en from 'blockly/msg/en'
 import enTranslations from '../../helpers/karelTranslationsEN.js'
 import initializeKarelBlocks from '../../helpers/initializeKarelBlocks.js'
-  
+import BlocklyRegion from './BlocklyRegion.vue'
+import KarelTabs from '../KarelTabs.vue'
+
 Blockly.setLocale({ ...en, ...enTranslations })
 initializeKarelBlocks(Blockly)
 
@@ -28,13 +54,14 @@ const generateToolbox = ({
   karel_turn=true,
   karel_place=true,
   karel_pickup=true,
-  karel_if=true,
-  karel_ifelse=true,
-  karel_variable=true,
-  karel_repeat=true,
-  karel_while=true,
-  karel_define=true,
-  karel_events=true,
+  karel_if=false,
+  karel_ifelse=false,
+  karel_variable=false,
+  karel_repeat=false,
+  karel_while=false,
+  karel_define=false,
+  karel_events=false,
+  karel_agents=false,
   custom=''
 }={}) => `
   <xml>
@@ -89,6 +116,9 @@ const generateToolbox = ({
     <Block type="karel_world_stone_count" id="karel_world_stone_count" />
     <Block type="karel_world_spawn_stone" id="karel_world_spawn_stone" />
     ` : '' }
+    ${ karel_agents ? `
+    <Block type="karel_bounce" id="karel_bounce" />
+    ` : '' }
   </xml>
 `
 //  map for convenience so we can have friendly names in settings
@@ -103,7 +133,8 @@ const settingNameToTypeName = {
   karel_repeat: 'controls_repeat_ext',
   karel_while: 'karel_while_dropdown',
   karel_define: 'procedures_defnoreturn',
-  karel_events: 'karel_events'
+  karel_events: 'karel_events',
+  karel_agents: 'karel_agents'
 }
 
 // path data for lock/unlock icons from font-awesome, creative commons
@@ -135,41 +166,34 @@ const lockProcedureBlock = (block, isLocked) => {
 
 export default {
   name: 'karel-blockly',
-  props: [ 'settings', 'toolbox', 'workspace', 'worldWorkspace', 'highlight' ],
+  components: {
+    BlocklyRegion,
+    KarelTabs
+  },
+  // Here because reactivity messes with Blockly.
+  workspaces: {},
+  props: [ 'settings', 'toolbox', 'workspace', 'worldWorkspace', 'highlight', 'agents', 'activeEditorTab', 'runningTab' ],
   data() {
     return {
-      activeTab: 'karel'
+      regions: {},
+      observers: {}
     }
   },
   mounted() {
-    this.workspaces = { karel: null, world: null }
     this.$emit('update:toolbox', generateToolbox(this.activeBlocks))
-    this.instantiateBlockly();
-
-    // Trick to wait for the world container to be displayed before instantiating the Blockly workspace
-    // Otherwise it would not fill the available space and coult not be used
-    const thisRef = this;
-    const observer = new MutationObserver(function(mutations, observer) {
-      mutations.forEach(function(mutationRecord) {
-        if (mutationRecord.target.style.display === 'block') {
-          thisRef.instantiateBlockly()
-          observer.disconnect();
-        }
-      });
-    });
-    const target = document.getElementById('worldContainer');
-    observer.observe(target, { attributes: true, attributeFilter: ['style'] })
   },
   beforeUnmount() {
-    this.workspaces.karel?.instance?.dispose()
-    this.workspaces.world?.instance?.dispose()
+    for (const id of Object.keys(this.$options.workspaces)) {
+      this.$options.workspaces[id]?.instance?.dispose()
+    }
   },
   watch: {
     injectedToolbox(n, o) {
-      if (n === null || o === null) this.instantiateBlockly(this.activeTab)
+      if (n === null || o === null) this.instantiateBlockly()
       else {
-        this.workspaces.karel?.instance?.updateToolbox(this.injectedToolbox)
-        this.workspaces.world?.instance?.updateToolbox(this.injectedToolbox)
+        for (const id of Object.keys(this.$options.workspaces)) {
+          this.$options.workspaces[id]?.instance?.updateToolbox(this.injectedToolbox)
+        }
       }
       this.updateChips()
     },
@@ -184,12 +208,20 @@ export default {
       this.instantiateBlockly()
     },
     highlight(n, o) {
-      o && o.forEach(id => this.workspaces[this.activeTab].instance.highlightBlock(id, false))
-      n && n.forEach(id => this.workspaces[this.activeTab].instance.highlightBlock(id, true))
+      o && o.forEach(id => this.$options.workspaces[this.activeTab].instance.highlightBlock(id, false))
+      n && n.forEach(id => this.$options.workspaces[this.activeTab].instance.highlightBlock(id, true))
     },
-    blocksUsedByType() { this.updateChips() },
+    blocksUsedByType() { this.updateChips() }
   },
   computed: {
+    activeTab: {
+      get() {
+        return this.activeEditorTab;
+      },
+      set(newActiveTab) {
+        this.$emit('update:activeEditorTab', newActiveTab);
+      }
+    },
     injectedToolbox() {
       return this.settings.showToolbox ? this.toolbox : null;
     },
@@ -217,14 +249,47 @@ export default {
         .entries(this.settings.blocks)
         .forEach(([blockName, blockInfo]) => activeBlocks[blockName] = blockInfo.active)
       return activeBlocks
+    },
+    finalTabs() {
+      const tabs = {
+        0: {
+          id: 0,
+          name: 'Karel',
+          workspace: this.workspace
+        }
+      };
+
+      if (this.settings.blocks.karel_events?.active) {
+        tabs[-1] = {
+          id: -1,
+          name: 'World',
+          workspace: this.worldWorkspace
+        };
+      }
+
+      if (this.agents) {
+        for (const agent of this.agents) {
+          tabs[agent.id] = {
+            id: agent.id,
+            name: agent.name,
+            workspace: agent.workspace
+          };
+        }
+      }
+
+      return tabs;
     }
   },
   methods: {
     instantiateBlockly() {
-      if (!this.workspaces[this.activeTab]) this.workspaces[this.activeTab] = { instance: null }
-      if (this.workspaces[this.activeTab].instance) this.workspaces[this.activeTab].instance.dispose()
+      if (!this.$options.workspaces[this.activeTab]) {
+        this.$options.workspaces[this.activeTab] = { instance: null };
+      }
+      if (this.$options.workspaces[this.activeTab].instance) {
+        this.$options.workspaces[this.activeTab].instance.dispose();
+      }
       // define and inject Blockly instance
-      this.workspaces[this.activeTab].instance = Blockly.inject(this.$refs[`${this.activeTab}Container`], {
+      this.$options.workspaces[this.activeTab].instance = Blockly.inject(this.regions[this.activeTab], {
         toolbox: this.injectedToolbox,
         maxInstances: this.maxInstances,
         zoom: {
@@ -236,9 +301,10 @@ export default {
           scaleSpeed: 1.2,
           pinch: false
         },
+        readOnly: !this.settings.customizerMode && this.activeTab !== 0
       })
       // Set Initial Workspace
-      Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(this.activeTab === 'karel' ? this.workspace : this.worldWorkspace), this.workspaces[this.activeTab].instance)
+      Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(this.finalTabs[this.activeTab].workspace), this.$options.workspaces[this.activeTab].instance)
 
       // Turn Off Right Clicking on the Workspace -- Unregister All Found Items in ContextMenuRegistry
       this.disableBlockContextMenus()
@@ -247,11 +313,11 @@ export default {
       this.updateChips()
 
       // Attach Change Listeners
-      this.workspaces[this.activeTab].instance.addChangeListener(this.blocklyChangeListeners)
+      this.$options.workspaces[this.activeTab].instance.addChangeListener(this.blocklyChangeListeners)
 
       //  proxy connection checker logic so we can reject connections to locked blocks
-      const originalCanConnect = this.workspaces[this.activeTab].instance.connectionChecker.canConnect
-      this.workspaces[this.activeTab].instance.connectionChecker.canConnect = function (a, b) {
+      const originalCanConnect = this.$options.workspaces[this.activeTab].instance.connectionChecker.canConnect
+      this.$options.workspaces[this.activeTab].instance.connectionChecker.canConnect = function (a, b) {
         if (connectionInLockedProcedure(a) || connectionInLockedProcedure(b)) return false
         else return originalCanConnect.apply(this, arguments)
       }
@@ -271,12 +337,29 @@ export default {
         .forEach(item => registry.unregister(item.id))
     },
     updateWorkspace() {
-      const newWorkspace = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(this.workspaces[this.activeTab].instance))
-      this.$emit(`update:${this.activeTab === 'karel' ? 'workspace' : 'worldWorkspace'}`, newWorkspace)
+      const newWorkspace = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(this.$options.workspaces[this.activeTab].instance))
+
+      let workspaceText = '';
+      if (this.activeTab === -1) {
+        workspaceText = 'worldWorkspace';
+      } else if (this.activeTab === 0) {
+        workspaceText = 'workspace';
+      } else {
+        workspaceText = `workspace-${this.activeTab}`;
+      }
+      this.$emit(`update:${workspaceText}`, newWorkspace)
+
+      if (this.activeTab > 0) {
+        for (const agent of this.agents) {
+          if (agent.id === this.activeTab) {
+            agent.workspace = newWorkspace
+          }
+        }
+      }
     },
     makeBlocksUndeletableIfToolboxHidden(e) {
       if (e.type === 'finished_loading' && !this.settings.showToolbox && !this.settings.customizerMode) {
-        const allBlocks = this.workspaces[this.activeTab].instance.getAllBlocks()
+        const allBlocks = this.$options.workspaces[this.activeTab].instance.getAllBlocks()
         allBlocks.forEach(block => block.setDeletable(false))
       }
     },
@@ -284,9 +367,9 @@ export default {
       const previousToDelete = document.querySelectorAll('.custom-lock-icon')
       previousToDelete.forEach(el => el.parentNode.removeChild(el) )
 
-      const allFnBlocks = this.workspaces.karel.instance.getAllBlocks().filter(block => block.type === 'procedures_defnoreturn' || block.type === 'procedures_defreturn')
-      if (this.workspaces.world) {
-        allFnBlocks.push(...this.workspaces.world.instance.getAllBlocks().filter(block => block.type === 'procedures_defnoreturn' || block.type === 'procedures_defreturn'))
+      const allFnBlocks = this.$options.workspaces[0].instance.getAllBlocks().filter(block => block.type === 'procedures_defnoreturn' || block.type === 'procedures_defreturn')
+      if (this.$options.workspaces[-1]) {
+        allFnBlocks.push(...this.$options.workspaces[-1].instance.getAllBlocks().filter(block => block.type === 'procedures_defnoreturn' || block.type === 'procedures_defreturn'))
       }
 
       if (this.settings.customizerMode) {
@@ -352,9 +435,9 @@ export default {
       })
     },
     updateToolbox() {
-      const procedures = Blockly.Procedures.allProcedures(this.workspaces.karel.instance)
-      if (this.workspaces.world) {
-        const worldProcedures = Blockly.Procedures.allProcedures(this.workspaces.world.instance)
+      const procedures = Blockly.Procedures.allProcedures(this.$options.workspaces[0].instance)
+      if (this.$options.workspaces[-1]) {
+        const worldProcedures = Blockly.Procedures.allProcedures(this.$options.workspaces[-1].instance)
         procedures[0].push(...worldProcedures[0])
         procedures[1].push(...worldProcedures[1])
       }
@@ -371,28 +454,31 @@ export default {
       const custom = noreturnProcedures.concat(returnProcedures)
       this.$emit('update:toolbox', generateToolbox({ ...this.activeBlocks, custom }))
     },
+    addObserver(id) {
+      const thisRef = this;
+
+      this.observers[id] = new MutationObserver((mutations, observer) => {
+        mutations.forEach((mutationRecord) => {
+          if (mutationRecord.target.style.display === 'block') {
+            thisRef.instantiateBlockly();
+            observer.disconnect();
+          }
+        });
+      });
+
+      const target = document.getElementById(`region-${id}`);
+      this.observers[id].observe(target, { attributes: true, attributeFilter: ['style'] });
+    }
   }
 }
 </script>
 
 <style scoped>
-.wrapper { 
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.tabs-container {
-  width: 100%;
+.wrapper {
   display: flex;
-}
-.tab {
-  width: 100%;
-  text-align: center;
-  border: 1px solid grey;
-  cursor: pointer;
-  user-select: none;
-}
-.container {
+  flex-direction: column;
+
+  position: relative;
   width: 100%;
   height: 100%;
 }

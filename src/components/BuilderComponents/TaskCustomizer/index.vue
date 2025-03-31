@@ -7,24 +7,39 @@
           class="edit-start-world"
           :world="activeWorld.preWorld"
           :objective="activeWorld.postWorld"
+          :activeTab="activeEditorTab"
           @change="updateWorld($event)"
         />
       </div>
       
       <div class="karel-blockly-wrapper">
         <KarelBlockly
+            v-if="!isPython"
             v-model:toolbox="karelBlockly.toolbox"
             v-model:workspace="karelBlockly.workspace"
             v-model:worldWorkspace="karelBlockly.worldWorkspace"
             v-model:settings="karelBlockly.settings"
             v-model:highlight="karelBlockly.highlight"
+            v-model:agents="agents"
+            v-model:activeEditorTab="activeEditorTab"
+        />
+        <KarelPython
+            v-else
+            v-model:code="pythonCode"
+            v-model:world="worldPython"
+            :hasWorld="karelBlockly.settings.blocks.karel_events.active"
+            v-model:agents="agents"
+            v-model:activeTab="activeEditorTab"
+            :console-text="''"
+            :highlight="{ line: 0 }"
+            :error="{ line: 0, message: '' }"
         />
       </div>
     </div>
     <div id="tabs">
       <div id="tab-bar"
       >
-        <span v-for="tabName in [ 'Basic', 'Toolbox', 'Multi-World', 'Tags'  ]"
+        <span v-for="tabName in [ 'Basic', 'Toolbox', 'Multi-World', 'Tags', 'Agents' ]"
           :key="`tab-${tabName}`"
           @click="activeTab = tabName"
           :class="{ active: activeTab === tabName, tab: true }"
@@ -64,9 +79,9 @@
                   placeholder="Instructions go here..."
                   v-model="instructions"
                 />
-              </div>              
+              </div>
             </div>
-            
+
             <div id="basic-settings-right-side">
               <div>
                 Rows:
@@ -75,6 +90,11 @@
                 Cols:
                 <button @click="handleRowOrColChange('nCols', -1)">-</button>
                 <button @click="handleRowOrColChange('nCols', 1)">+</button>
+              </div>
+
+              <div>
+                Use Python:
+                <input id="use-python" type="checkbox" :checked="isPython" @click="isPython = !isPython" />
               </div>
 
               <div class="hint-wrapper">
@@ -131,6 +151,23 @@
               <button @click="changeStartingCount('red', 1)">+</button>
             </div>
           </div>
+
+          <div v-if="activeTab === 'Agents'">
+            <h4>Agents</h4>
+            <div v-for="agent in agents" :key="agent.id">
+              <input :id="`agent${agent.id}-name`" type="text" placeholder="Agent name" v-model="agent.name" />
+              <input :id="`agent${agent.id}-color`" type="text" placeholder="Agent color" v-model="agent.color" @input="(e) => {
+                for (world of worlds) {
+                  world.preWorld.agents[agent.id].color = e.target.value;
+                }
+              }" />
+              <input type="checkbox" :id="`agent${agent.id}-show`" v-model="agent.showTab" />
+              <label :for="`agent${agent.id}-show`">Show tab</label>
+              <button @click="removeAgent(agent.id)">Remove</button>
+              <br>
+            </div>
+            <button @click="addAgent()">Add agent</button>
+          </div>
         </div>
       </div>
     </div>
@@ -142,6 +179,7 @@
 import _ from 'lodash'
 import KarelWorldRendererAndEditor from './KarelWorldRendererAndEditor/index.vue'
 import KarelBlockly from '../../KarelBlockly/index.vue'
+import KarelPython from '../../KarelPython/index.vue'
 import KarelTagSelector from './KarelTagSelector.vue'
 import KarelBlocklySettingsEditor from './KarelBlocklySettingsEditor.vue' 
 import defaultNewTaskState from '../../../store/defaultNewTaskState.js'
@@ -161,6 +199,7 @@ export default {
   components: {
     KarelWorldRendererAndEditor,
     KarelBlockly,
+    KarelPython,
     KarelTagSelector,
     KarelBlocklySettingsEditor
   },
@@ -173,15 +212,20 @@ export default {
       maxBlocks,
       hint,
       worlds,
+      isPython,
+      pythonCode,
+      worldPython,
       karelBlockly,
       tags
     } = taskToStartCustomizingFrom
     if (!karelBlockly.worldWorkspace) karelBlockly.worldWorkspace = '<xml xmlns="https://developers.google.com/blockly/xml"><block type="karel_world_main" id="world_main" deletable="false" x="44" y="0"></block><block type="karel_world_end_conditions" id="world_end_conditions" deletable="false" x="44" y="100"></block></xml>';
 
-    // customizerMode toggles if uesr can lock/unlock fn blocks
+    // customizerMode toggles if user can lock/unlock fn blocks
     karelBlockly.settings.customizerMode = true
 
-    return  {
+    const agents = taskToStartCustomizingFrom.agents ?? []
+
+    return {
       activeTab: 'Basic',
       activeWorldIndex: 0,
       name,
@@ -189,8 +233,14 @@ export default {
       maxBlocks,
       hint,
       worlds,
+      isPython,
+      pythonCode,
+      worldPython,
       karelBlockly,
-      tags
+      tags,
+      agents,
+      agentId: agents.length === 0 ? 1 : (Math.max(...agents.map(agent => agent.id)) + 1),
+      activeEditorTab: 0
     }
   },
   computed: {
@@ -249,39 +299,40 @@ export default {
     },
     updateWorld(world) {
       const {
-        nCols, nRows, karelRow, karelCol, karelDir, walls, stones,
-        objKarelRow, objKarelCol, objKarelDir, objStones
+        nCols, nRows, karelRow, karelCol, karelDir, karelRoom, walls, doors, rooms, stones,
+        objKarelRow, objKarelCol, objKarelDir, objKarelRoom, objStones, agents
       } = world;
       this.activeWorld.preWorld = {
-        nCols, nRows, karelRow, karelCol, karelDir, walls, stones
+        nCols, nRows, karelRow, karelCol, karelDir, karelRoom, walls, doors, rooms, stones, agents
       };
       this.activeWorld.postWorld = {
-        nCols, nRows, karelRow: objKarelRow, karelCol: objKarelCol, karelDir: objKarelDir, walls, stones: objStones
+        nCols, nRows, karelRow: objKarelRow, karelCol: objKarelCol, karelDir: objKarelDir, karelRoom: objKarelRoom, walls, doors, rooms, stones: objStones
       };
     },
     update() {
-      const { name, instructions, maxBlocks, hint, worlds, tags } = this
+      const { name, instructions, maxBlocks, hint, worlds, isPython, pythonCode, worldPython, tags, agents } = this
       // karelBlockly pulled separately, customizerMode false for save
       const karelBlockly = copy(this.karelBlockly)
       karelBlockly.settings.customizerMode = false
-      const customizerStateData = copy({ name, instructions, maxBlocks, hint, worlds, karelBlockly, tags })
+      const customizerStateData = copy({ name, instructions, maxBlocks, hint, worlds, isPython, pythonCode, worldPython, karelBlockly, tags, agents })
       this.$store.dispatch('updateCustomizerState', customizerStateData )
     },
     getSystemTags(settings) {
       if (!settings) return []
       let systemTags = []
       // destrusture all blocks from settings.blocks
-      const { karel_move, karel_turn, karel_place, karel_pickup, karel_repeat, karel_if, karel_ifelse, karel_variable, karel_while, karel_define, karel_events } = settings.blocks
-      if (karel_repeat.active) systemTags.push("Has 'Repeat'")
-      if (karel_if.active || karel_ifelse.active) systemTags.push("Has 'If'")
-      if (karel_while.active) systemTags.push("Has 'While'")
-      if (karel_variable.active) systemTags.push("Has Variable")
-      if (karel_define.active) systemTags.push("Has Function")
-      if (karel_events.active) systemTags.push("Has Events")
-      if ( karel_move.active && karel_turn.active && karel_place.active  && karel_pickup.active &&
-        !karel_repeat.active && !karel_if.active && !karel_ifelse.active && !karel_while.active && !karel_define.active ) {
+      const { karel_move, karel_turn, karel_place, karel_pickup, karel_repeat, karel_if, karel_ifelse, karel_variable, karel_while, karel_define, karel_events, karel_agents } = settings.blocks
+      if (karel_repeat?.active) systemTags.push("Has 'Repeat'")
+      if (karel_if?.active || karel_ifelse.active) systemTags.push("Has 'If'")
+      if (karel_while?.active) systemTags.push("Has 'While'")
+      if (karel_variable?.active) systemTags.push("Has Variable")
+      if (karel_define?.active) systemTags.push("Has Function")
+      if (karel_events?.active) systemTags.push("Has Events")
+      if ( karel_move?.active && karel_turn?.active && karel_place?.active  && karel_pickup?.active &&
+        !karel_repeat?.active && !karel_if?.active && !karel_ifelse?.active && !karel_while?.active && !karel_define?.active ) {
         systemTags.push("Basic Toolbox")
       }
+      if (karel_agents?.active) systemTags.push("Has Agents")
       const someBlockLimited = Object.values(settings.blocks).some(block => block.active && block.limit !== -1)
 
       const totalBlocksLimited = this.maxBlocks
@@ -340,6 +391,40 @@ export default {
     },
     updateBlocklySetting(param, val) {
       this.karelBlockly.settings[param] = val
+    },
+    addAgent() {
+      this.agents.push({
+        id: this.agentId,
+        name: `Agent ${this.agentId}`,
+        color: '',
+        workspace: this.karelBlockly.workspace,
+        showTab: true
+      });
+
+      for (const world of this.worlds) {
+        if (!world.preWorld.agents) {
+          world.preWorld.agents = {};
+        }
+
+        world.preWorld.agents[this.agentId] = {
+            row: 0,
+            col: 0,
+            dir: 'East',
+            room: {row: 0, col: 0},
+            color: ''
+        };
+      }
+
+      this.agentId++;
+    },
+    removeAgent(id) {
+      this.agents = this.agents.filter(agent => agent.id !== id)
+
+      for (const world of this.worlds) {
+        if (world.preWorld.agents) {
+          delete world.preWorld.agents[id]
+        }
+      }
     }
   }
 }

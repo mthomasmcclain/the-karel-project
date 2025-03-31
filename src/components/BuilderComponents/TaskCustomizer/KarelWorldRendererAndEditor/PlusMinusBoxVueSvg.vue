@@ -17,7 +17,7 @@
       :opacity="opacity"
     />
     <g stroke="white" stroke-width="0.35">
-      <path d="M 5 5 l -1 0 l 2 0" />
+      <path v-if="symbol" d="M 5 5 l -1 0 l 2 0" />
       <!-- vertical bar shown only if 'plus' -->
       <path v-if="symbol === 'plus'" d="M 5 5 l 0 -1 l 0 2" />
     </g>
