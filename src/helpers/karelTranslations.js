@@ -64,5 +64,27 @@ export default {
         "KAREL_WHILE": "ขณะที่",
         "KAREL_WHILE_FRONT_IS": "ขณะที่ด้านหน้า",
         "KAREL_WHILE_STONES_ARE": "ขณะที่มีหิน"
+    },
+    "fr": {
+        "PROCEDURES_DEFAULT_NAME": "mon nom",
+        "PROCEDURES_DEFNOARGSNORETURN_TITLE": "définir",
+        "KAREL_MAIN_TITLE": "définir main",
+        "KAREL_MOVE_FORWARD": "avancer",
+        "KAREL_TURN_LEFT": "tourner à gauche",
+        "KAREL_PLACE_STONE": "poser pierre",
+        "KAREL_PICKUP_STONE": "prendre pierre",
+        "KAREL_FRONT_IS_CLEAR": "devant libre",
+        "KAREL_FRONT_IS_BLOCKED": "devant bloqué",
+        "KAREL_STONES_PRESENT": "pierres présentes",
+        "KAREL_STONES_NOT_PRESENT": "pas de pierres",
+        "KAREL_IF_FRONT_IS": "si devant est",
+        "KAREL_CLEAR": "libre",
+        "KAREL_BLOCKED": "bloqué",
+        "KAREL_IF_STONES_ARE": "si pierres sont",
+        "KAREL_PRESENT": "présentes",
+        "KAREL_NOT_PRESENT": "absentes",
+        "KAREL_WHILE": "tant que",
+        "KAREL_WHILE_FRONT_IS": "tant que devant est",
+        "KAREL_WHILE_STONES_ARE": "tant que pierres sont"
     }
 }

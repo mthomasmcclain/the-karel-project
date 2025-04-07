@@ -44,7 +44,7 @@ export default {
 		if (this.language) {
 			this.fetchedLanguage = this.language
 		} else {
-			this.fetchedLanguage = await matchNavigatorLanguage(['en', 'pt', 'th'])
+			this.fetchedLanguage = await matchNavigatorLanguage(['en', 'pt', 'th', 'fr'])
 		}
 
 		const res = await Agent.query(

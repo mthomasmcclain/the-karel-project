@@ -59,7 +59,7 @@ const initialLoad = async () => {
 
                 async function loadTranslations() {
                     try {
-                        store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt']))
+                        store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt', 'fr']))
                         await store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
                     } catch (error) {
                     }
@@ -76,7 +76,7 @@ const initialLoad = async () => {
                 .mount('#app')
             store.dispatch('setLoading', true)
             await store.dispatch('loadContent')
-            await store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt']))
+            await store.dispatch('language', matchNavigatorLanguage(['en', 'th', 'pt', 'fr']))
             await store.dispatch('loadTranslationsForSlugMap') // tasks/maps are dynamic
             store.dispatch('setLoading', false)
         }
