@@ -51,6 +51,7 @@ postgres:
         - cambodia.pilaproject.org
         - polska-rct-2025.pilaproject.org
         - france-rct-2025.pilaproject.org
+        - ui-dev.pilaproject.org
       body: SELECT * FROM translatable_targets
     translation_fallback:
       domains:
@@ -64,6 +65,7 @@ postgres:
         - cambodia.pilaproject.org
         - polska-rct-2025.pilaproject.org
         - france-rct-2025.pilaproject.org
+        - ui-dev.pilaproject.org
       body: |
         SELECT t.source_string
         FROM translatable_targets t
@@ -81,6 +83,7 @@ postgres:
         - cambodia.pilaproject.org
         - polska-rct-2025.pilaproject.org
         - france-rct-2025.pilaproject.org
+        - ui-dev.pilaproject.org
       body: SELECT DISTINCT parent_item FROM translatable_targets
     targets_for_parent:
       domains:
@@ -94,4 +97,5 @@ postgres:
         - cambodia.pilaproject.org
         - polska-rct-2025.pilaproject.org
         - france-rct-2025.pilaproject.org
+        - ui-dev.pilaproject.org
       body: SELECT * FROM translatable_targets WHERE parent_item = $1
