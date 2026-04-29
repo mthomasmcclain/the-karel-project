@@ -42,6 +42,7 @@ postgres:
     translatable_targets:
       domains:
         - "*.pilaproject.org"
+        - "*.knowlearning.systems"
         - pila-friday-demo.netlify.app
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
@@ -50,6 +51,7 @@ postgres:
     translation_fallback:
       domains:
         - "*.pilaproject.org"
+        - "*.knowlearning.systems"
         - pila-friday-demo.netlify.app
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
@@ -62,6 +64,7 @@ postgres:
     parent_items:
       domains:
         - "*.pilaproject.org"
+        - "*.knowlearning.systems"
         - pila-friday-demo.netlify.app
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
@@ -70,6 +73,7 @@ postgres:
     targets_for_parent:
       domains:
         - "*.pilaproject.org"
+        - "*.knowlearning.systems"
         - pila-friday-demo.netlify.app
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
