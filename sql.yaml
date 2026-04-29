@@ -41,7 +41,7 @@ postgres:
   queries:
     translatable_targets:
       domains:
-        - *.pilaproject.org
+        - "*.pilaproject.org"
         - pila-friday-demo.netlify.app
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
@@ -49,7 +49,7 @@ postgres:
       body: SELECT * FROM translatable_targets
     translation_fallback:
       domains:
-        - *.pilaproject.org
+        - "*.pilaproject.org"
         - pila-friday-demo.netlify.app
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
@@ -61,7 +61,7 @@ postgres:
         LIMIT 1
     parent_items:
       domains:
-        - *.pilaproject.org
+        - "*.pilaproject.org"
         - pila-friday-demo.netlify.app
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
@@ -69,7 +69,7 @@ postgres:
       body: SELECT DISTINCT parent_item FROM translatable_targets
     targets_for_parent:
       domains:
-        - *.pilaproject.org
+        - "*.pilaproject.org"
         - pila-friday-demo.netlify.app
         - translate-karel-alpha.netlify.app
         - 19188b19-bdaa-4a15-86ee-9bd442a13422.localhost:6061
