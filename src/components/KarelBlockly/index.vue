@@ -18,7 +18,7 @@ import initializeKarelBlocks from '../../helpers/initializeKarelBlocks.js'
 
 const blocklyLocales = { en, pt, th } // blockly general, not karel blockly
 const langChoices = Object.keys(karelTranslations) // choices for KAREL
-const lang = matchNavigatorLanguage(langChoices)
+const lang = await matchNavigatorLanguage(langChoices)
   
 Blockly.setLocale({ ...blocklyLocales[lang], ...karelTranslations[lang] })
 initializeKarelBlocks(Blockly)
